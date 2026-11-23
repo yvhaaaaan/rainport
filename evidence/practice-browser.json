@@ -1,0 +1,40 @@
+{
+  "source": "Chrome / file / offline practice",
+  "browser": "Chrome/158.0.8127.36",
+  "views": [
+    {
+      "nav": "比赛",
+      "heading": "雨港夜间竞速",
+      "notice": ""
+    },
+    {
+      "nav": "车库",
+      "heading": "改装车库",
+      "notice": ""
+    },
+    {
+      "nav": "展馆",
+      "heading": "数字藏品展馆",
+      "notice": ""
+    },
+    {
+      "nav": "市场",
+      "heading": "交易市场",
+      "notice": ""
+    },
+    {
+      "nav": "钱包",
+      "heading": "演示钱包",
+      "notice": ""
+    }
+  ],
+  "input": "Hold W, no steering",
+  "frame": {
+    "speed": "75 km/h",
+    "position": "P8 / 8",
+    "sector": "S1　港区湿弯"
+  },
+  "wallSeconds": 104,
+  "finish": "RAINPORT / FINISH\n雨港完赛\n最终名次\nP8 / 8\n总用时\n1:44.082\n赛事\n雨港\nS1　港区湿弯\n1:03.361\nS2　沿岸直道\n0:40.721\n普通 · R2 雨胎 #023\n本场掉落已登记\n查看展签\n八车完赛榜与赛事凭证\n装车再跑\n跟随本圈幽灵\n返回发车区",
+  "browserErrors": []
+}

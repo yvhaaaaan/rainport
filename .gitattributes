@@ -1,0 +1,8 @@
+* text=auto eol=lf
+/start.cmd text eol=crlf
+
+# Keep builds and LevelDB fixtures byte-for-byte reproducible after checkout
+/client.mjs -text -whitespace
+/practice.html -text -whitespace
+/demo-seed/chain/** binary
+/evidence/chain-*/node-data/chain/** binary

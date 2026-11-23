@@ -1,0 +1,10 @@
+{
+  "renderer": "webgl2",
+  "audio": "running",
+  "maxKmh": 174.5,
+  "gear": 6,
+  "braked": true,
+  "medianFrameMs": 6.099999999998545,
+  "p95FrameMs": 6.19999999999709,
+  "capturedFrames": 15139
+}

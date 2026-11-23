@@ -1,0 +1,45 @@
+{
+  "chainId": 31337,
+  "chainDirectory": "C:\\WINDOWS\\TEMP\\rainport-book-4R48xS",
+  "results": [
+    {
+      "check": "同价卖单按时间优先，买方剩余托管款立即返还",
+      "received": 14,
+      "limit": 75,
+      "paid": 58,
+      "returned": 17,
+      "buy": {
+        "hash": "0x4a6e56cecdeaffabb888f225ccd3b9ac6164e9757e5537a150fdfcefd43eb09c",
+        "block": 47
+      }
+    },
+    {
+      "check": "高价求购优先，同价先到先得",
+      "firstBid": 9,
+      "laterBid": 10,
+      "price": 52,
+      "match": {
+        "hash": "0xa8d32170271b177cb96e3795d85b6ab9e5c8f249a045d6786a372469944eec67",
+        "block": 50
+      }
+    },
+    {
+      "check": "到期后第三方可释放四件套锁并退还求购托管",
+      "ids": [
+        1,
+        2,
+        7,
+        4
+      ],
+      "refund": 35,
+      "releasedCar": {
+        "hash": "0xde8b0a8a8403a8455fed757cbfd4be9bec2ce5a2b37b94b3bad9bed3e37f849f",
+        "block": 54
+      },
+      "releasedBid": {
+        "hash": "0x2935ded4dd90fe8d44bcda9aacc188b1434dcf9808cad99823af3a9494cfb1a7",
+        "block": 55
+      }
+    }
+  ]
+}

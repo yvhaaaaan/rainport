@@ -1,0 +1,1055 @@
+{
+  "test": "Chrome 单文件离线，W 油门、固定时间键盘短按转向与制动，实时时钟，不调用 botPilot",
+  "firstHint": {
+    "t": 0.052,
+    "distance": 0,
+    "v": 0,
+    "visible": true,
+    "turn": "right",
+    "label": "90 m后右弯",
+    "detail": "准备入弯",
+    "braking": false,
+    "recovering": false
+  },
+  "firstLeft": {
+    "t": 17.404,
+    "distance": 477.75,
+    "v": 123,
+    "visible": true,
+    "turn": "left",
+    "label": "130 m后左弯",
+    "detail": "准备入弯",
+    "braking": false,
+    "recovering": false
+  },
+  "recovery": {
+    "t": 10.046,
+    "distance": 235.49,
+    "v": 120,
+    "visible": true,
+    "turn": "right",
+    "label": "向右回到路面",
+    "detail": "松油轻打方向",
+    "braking": false,
+    "recovering": true
+  },
+  "returned": {
+    "t": 14.186,
+    "distance": 373.24,
+    "v": 119,
+    "visible": true,
+    "turn": "right",
+    "label": "右弯",
+    "detail": "出弯回正",
+    "braking": false,
+    "recovering": false
+  },
+  "maxSpeed": 152,
+  "viewportChecks": {
+    "portrait": {
+      "width": 390,
+      "height": 844,
+      "x": 27.6875,
+      "y": 123.421875,
+      "bottom": 166.4375,
+      "right": 149.046875,
+      "actionLeft": 235.78125,
+      "obstructsActions": false,
+      "inViewport": true
+    },
+    "landscape": {
+      "width": 844,
+      "height": 390,
+      "x": 41.3125,
+      "y": 98.53125,
+      "bottom": 134.296875,
+      "right": 149.40625,
+      "actionLeft": 674.96875,
+      "obstructsActions": false,
+      "inViewport": true
+    },
+    "desktop": {
+      "width": 1280,
+      "height": 720,
+      "x": 54.390625,
+      "y": 140.96875,
+      "bottom": 183.984375,
+      "right": 184.390625,
+      "actionLeft": 1099.640625,
+      "obstructsActions": false,
+      "inViewport": true
+    }
+  },
+  "controls": [
+    [
+      7.4,
+      "d",
+      true
+    ],
+    [
+      7.65,
+      "d",
+      false
+    ],
+    [
+      8.5,
+      "d",
+      true
+    ],
+    [
+      8.68,
+      "d",
+      false
+    ],
+    [
+      10.9,
+      "d",
+      true
+    ],
+    [
+      11.08,
+      "d",
+      false
+    ],
+    [
+      12.7,
+      "a",
+      true
+    ],
+    [
+      12.82,
+      "a",
+      false
+    ],
+    [
+      13.35,
+      "w",
+      false
+    ],
+    [
+      13.35,
+      "d",
+      true
+    ],
+    [
+      14.45,
+      "d",
+      false
+    ],
+    [
+      14.45,
+      "w",
+      true
+    ],
+    [
+      15.6,
+      "a",
+      true
+    ],
+    [
+      15.9,
+      "s",
+      true
+    ],
+    [
+      15.95,
+      "a",
+      false
+    ],
+    [
+      16.24,
+      "s",
+      false
+    ],
+    [
+      17.8,
+      "a",
+      true
+    ],
+    [
+      18.04,
+      "a",
+      false
+    ],
+    [
+      19.6,
+      "a",
+      true
+    ],
+    [
+      19.78,
+      "a",
+      false
+    ],
+    [
+      21.5,
+      "a",
+      true
+    ],
+    [
+      21.7,
+      "a",
+      false
+    ]
+  ],
+  "trajectory": [
+    {
+      "t": 0,
+      "distance": null,
+      "v": 0,
+      "visible": false,
+      "label": "",
+      "detail": "",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 0.403,
+      "distance": 0.34,
+      "v": 7,
+      "visible": true,
+      "turn": "right",
+      "label": "90 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 0.713,
+      "distance": 1.31,
+      "v": 15,
+      "visible": true,
+      "turn": "right",
+      "label": "90 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 1.016,
+      "distance": 2.88,
+      "v": 22,
+      "visible": true,
+      "turn": "right",
+      "label": "90 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 1.319,
+      "distance": 5.06,
+      "v": 30,
+      "visible": true,
+      "turn": "right",
+      "label": "90 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 1.635,
+      "distance": 8,
+      "v": 37,
+      "visible": true,
+      "turn": "right",
+      "label": "80 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 1.943,
+      "distance": 11.52,
+      "v": 45,
+      "visible": true,
+      "turn": "right",
+      "label": "80 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 2.307,
+      "distance": 16.31,
+      "v": 50,
+      "visible": true,
+      "turn": "right",
+      "label": "80 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 2.616,
+      "distance": 20.88,
+      "v": 57,
+      "visible": true,
+      "turn": "right",
+      "label": "70 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 2.919,
+      "distance": 25.92,
+      "v": 63,
+      "visible": true,
+      "turn": "right",
+      "label": "70 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 3.536,
+      "distance": 37.68,
+      "v": 72,
+      "visible": true,
+      "turn": "right",
+      "label": "60 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 3.858,
+      "distance": 44.41,
+      "v": 78,
+      "visible": true,
+      "turn": "right",
+      "label": "50 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 4.587,
+      "distance": 61.31,
+      "v": 89,
+      "visible": true,
+      "turn": "right",
+      "label": "30 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 4.895,
+      "distance": 69.14,
+      "v": 94,
+      "visible": true,
+      "turn": "right",
+      "label": "20 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 5.204,
+      "distance": 77.25,
+      "v": 96,
+      "visible": true,
+      "turn": "right",
+      "label": "20 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 5.513,
+      "distance": 85.63,
+      "v": 100,
+      "visible": true,
+      "turn": "right",
+      "label": "10 m后右弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 5.822,
+      "distance": 94.34,
+      "v": 103,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "距弯心 80 m",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 6.131,
+      "distance": 103.33,
+      "v": 107,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "距弯心 70 m",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 6.434,
+      "distance": 112.44,
+      "v": 110,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "距弯心 60 m",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 6.737,
+      "distance": 121.82,
+      "v": 113,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "距弯心 50 m",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 7.046,
+      "distance": 131.68,
+      "v": 117,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "距弯心 40 m",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 7.349,
+      "distance": 141.51,
+      "v": 118,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "距弯心 30 m",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 7.658,
+      "distance": 151.76,
+      "v": 121,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "距弯心 20 m",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 7.961,
+      "distance": 162.03,
+      "v": 124,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "保持走线",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 8.27,
+      "distance": 172.73,
+      "v": 126,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "保持走线",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 8.58,
+      "distance": 183.66,
+      "v": 129,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "保持走线",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 8.883,
+      "distance": 194.59,
+      "v": 132,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "保持走线",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 9.246,
+      "distance": 207.71,
+      "v": 127,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "保持走线",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 9.616,
+      "distance": 220.58,
+      "v": 128,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "保持走线",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 9.925,
+      "distance": 231.36,
+      "v": 130,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "保持走线",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 10.598,
+      "distance": 253.23,
+      "v": 118,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 10.907,
+      "distance": 263.2,
+      "v": 119,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 11.21,
+      "distance": 273.07,
+      "v": 120,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 11.58,
+      "distance": 285.22,
+      "v": 121,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 11.943,
+      "distance": 297.28,
+      "v": 122,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 12.246,
+      "distance": 307.41,
+      "v": 122,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 12.549,
+      "distance": 317.62,
+      "v": 123,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 12.913,
+      "distance": 329.98,
+      "v": 124,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 13.216,
+      "distance": 340.35,
+      "v": 125,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 13.519,
+      "distance": 350.79,
+      "v": 125,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 13.883,
+      "distance": 363.16,
+      "v": 122,
+      "visible": true,
+      "turn": "right",
+      "label": "向右回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 14.186,
+      "distance": 373.24,
+      "v": 119,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 14.489,
+      "distance": 383.02,
+      "v": 116,
+      "visible": true,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 14.798,
+      "distance": 392.72,
+      "v": 114,
+      "visible": false,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 15.101,
+      "distance": 402.2,
+      "v": 115,
+      "visible": false,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 15.465,
+      "distance": 413.72,
+      "v": 119,
+      "visible": false,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 15.768,
+      "distance": 423.62,
+      "v": 121,
+      "visible": false,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 16.071,
+      "distance": 433.82,
+      "v": 123,
+      "visible": false,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 16.374,
+      "distance": 443.77,
+      "v": 115,
+      "visible": false,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 16.677,
+      "distance": 453.48,
+      "v": 116,
+      "visible": false,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 16.98,
+      "distance": 463.42,
+      "v": 119,
+      "visible": false,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 17.283,
+      "distance": 473.61,
+      "v": 122,
+      "visible": false,
+      "turn": "right",
+      "label": "右弯",
+      "detail": "出弯回正",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 18.01,
+      "distance": 499.01,
+      "v": 129,
+      "visible": true,
+      "turn": "left",
+      "label": "110 m后左弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 18.325,
+      "distance": 510.41,
+      "v": 131,
+      "visible": true,
+      "turn": "left",
+      "label": "90 m后左弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 18.628,
+      "distance": 521.6,
+      "v": 134,
+      "visible": true,
+      "turn": "left",
+      "label": "80 m后左弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 18.998,
+      "distance": 535.52,
+      "v": 137,
+      "visible": true,
+      "turn": "left",
+      "label": "70 m后左弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 19.301,
+      "distance": 547.16,
+      "v": 140,
+      "visible": true,
+      "turn": "left",
+      "label": "60 m后左弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 19.604,
+      "distance": 558.91,
+      "v": 140,
+      "visible": true,
+      "turn": "left",
+      "label": "50 m后左弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 19.907,
+      "distance": 570.78,
+      "v": 143,
+      "visible": true,
+      "turn": "left",
+      "label": "30 m后左弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 20.21,
+      "distance": 582.82,
+      "v": 145,
+      "visible": true,
+      "turn": "left",
+      "label": "20 m后左弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 20.574,
+      "distance": 597.46,
+      "v": 147,
+      "visible": true,
+      "turn": "left",
+      "label": "10 m后左弯",
+      "detail": "准备入弯",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 20.883,
+      "distance": 610.08,
+      "v": 149,
+      "visible": true,
+      "turn": "left",
+      "label": "左弯",
+      "detail": "距弯心 150 m",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 21.186,
+      "distance": 622.57,
+      "v": 151,
+      "visible": true,
+      "turn": "left",
+      "label": "左弯",
+      "detail": "距弯心 140 m",
+      "braking": false,
+      "recovering": false
+    },
+    {
+      "t": 21.55,
+      "distance": 637.66,
+      "v": 150,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 21.853,
+      "distance": 649.82,
+      "v": 146,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 22.156,
+      "distance": 661.83,
+      "v": 145,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 22.519,
+      "distance": 676.12,
+      "v": 144,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 22.828,
+      "distance": 688.13,
+      "v": 142,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 23.132,
+      "distance": 699.8,
+      "v": 141,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 23.434,
+      "distance": 711.34,
+      "v": 140,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 23.738,
+      "distance": 722.77,
+      "v": 138,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 24.041,
+      "distance": 734.08,
+      "v": 137,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 24.344,
+      "distance": 745.27,
+      "v": 136,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 24.707,
+      "distance": 758.55,
+      "v": 134,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 25.071,
+      "distance": 771.69,
+      "v": 133,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 25.374,
+      "distance": 782.54,
+      "v": 132,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 25.677,
+      "distance": 793.3,
+      "v": 131,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    },
+    {
+      "t": 26.041,
+      "distance": 806.13,
+      "v": 130,
+      "visible": true,
+      "turn": "left",
+      "label": "向左回到路面",
+      "detail": "松油轻打方向",
+      "braking": false,
+      "recovering": true
+    }
+  ],
+  "browserErrors": []
+}

@@ -1,0 +1,165 @@
+{
+  "clientSHA256": "73f572717fe21604b5dc526d41d5c325681ab5a6ef8606ed12f06a0e32d271b5",
+  "styleSHA256": "8df3db1fc8219284920af10722741cc0b3569fc5ffc5093d38c2a47d6c7caee1",
+  "snapshot": "demo-seed",
+  "chainId": 31337,
+  "receipts": {
+    "A": {
+      "transactionHash": "0x897316f330f39da0c197b1e9ed183cf5d56181addcaf3c5264060995f177c246",
+      "transactionIndex": "0x0",
+      "blockNumber": "0x35",
+      "blockHash": "0xeea1c7fdec1c12809bf5d0e583565829083fceacfc34af2970619b31921d806b",
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+      "cumulativeGasUsed": "0x27a8a",
+      "gasUsed": "0x27a8a",
+      "contractAddress": null,
+      "logs": [
+        {
+          "address": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+          "blockHash": "0xeea1c7fdec1c12809bf5d0e583565829083fceacfc34af2970619b31921d806b",
+          "blockNumber": "0x35",
+          "data": "0x",
+          "logIndex": "0x0",
+          "removed": false,
+          "topics": [
+            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+            "0x0000000000000000000000000000000000000000000000000000000000000000",
+            "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8",
+            "0x0000000000000000000000000000000000000000000000000000000000000017"
+          ],
+          "transactionHash": "0x897316f330f39da0c197b1e9ed183cf5d56181addcaf3c5264060995f177c246",
+          "transactionIndex": "0x0"
+        },
+        {
+          "address": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+          "blockHash": "0xeea1c7fdec1c12809bf5d0e583565829083fceacfc34af2970619b31921d806b",
+          "blockNumber": "0x35",
+          "data": "0x00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000017",
+          "logIndex": "0x1",
+          "removed": false,
+          "topics": [
+            "0x38ddfb1545d35d045d271c8eb109c2c9dec349862695ef12478d27d620a21165",
+            "0xca3fb3560aa46b8b97448c5fa12edf4ada6b7b41b7de0fe263c83b588e0cea62",
+            "0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8"
+          ],
+          "transactionHash": "0x897316f330f39da0c197b1e9ed183cf5d56181addcaf3c5264060995f177c246",
+          "transactionIndex": "0x0"
+        }
+      ],
+      "logsBloom": "0x00000000000000008002000000000000000010000000000000000000000000000000000000000000000000000000000000001000000040200000001000000000000000000000000000000008000000000000000000000000000000000000000000000800020000000000000002000800000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000400000000000000020000000000000000000000000020000000001000000000200400000000000080000",
+      "status": "0x1",
+      "effectiveGasPrice": "0x11e6ef",
+      "type": "0x2"
+    },
+    "B": {
+      "transactionHash": "0xb551895deb65d0f10296b1600c7d81680b2e30ab1dd7817f8e85dc8dfb617bd2",
+      "transactionIndex": "0x0",
+      "blockNumber": "0x37",
+      "blockHash": "0x2a3fd89907b3c661df90bf5cfdc08de383a05fce83486f430f6476392c42e13d",
+      "from": "0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+      "to": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+      "cumulativeGasUsed": "0x9e37",
+      "gasUsed": "0x9e37",
+      "contractAddress": null,
+      "logs": [
+        {
+          "address": "0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0",
+          "blockHash": "0x2a3fd89907b3c661df90bf5cfdc08de383a05fce83486f430f6476392c42e13d",
+          "blockNumber": "0x37",
+          "data": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+          "logIndex": "0x0",
+          "removed": false,
+          "topics": [
+            "0x38ddfb1545d35d045d271c8eb109c2c9dec349862695ef12478d27d620a21165",
+            "0x6a02640c0dab576e6ee582c08055828f49e36163d5d2ba6d0e37cddb4e0847f8",
+            "0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc"
+          ],
+          "transactionHash": "0xb551895deb65d0f10296b1600c7d81680b2e30ab1dd7817f8e85dc8dfb617bd2",
+          "transactionIndex": "0x0"
+        }
+      ],
+      "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000004002000000000800000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000400000000000000000000000000000000000000000020000000000000000000000400000000000000000",
+      "status": "0x1",
+      "effectiveGasPrice": "0xdbdc3",
+      "type": "0x2"
+    }
+  },
+  "checks": [
+    "真实完赛进入封箱、停卡居中揭晓并定位实际掉落件的装配预览",
+    "滚动中刷新后直接看到已登记的同一编号",
+    "离开滚动中的卡带，旧动画完成后仍停留在车库",
+    "390 像素屏无横向溢出，跳过动画得到同一编号",
+    "减少动态效果时直接显示本场结果",
+    "真实第八名的未掉落记录，动画、跳过及重看皆返回空结果",
+    "可在封箱盘直接查看结果",
+    "两场各一条链上 Reward 事件，所有开箱展示均未改变 NFT 数量"
+  ],
+  "screens": [
+    "sealed.png",
+    "spinning.png",
+    "landed.png",
+    "revealed.png",
+    "mobile.png",
+    "empty.png"
+  ],
+  "freshDriveSHA256": "68445728e9dd6c9de2e818a19dbeca8b7ad4e1d6bb6cec6e314f51349bf33fc8",
+  "mode": "在同一批已完赛记录和原始节点快照的副本上复核最终画面",
+  "finish": {
+    "race": "0xca3fb3560aa46b8b97448c5fa12edf4ada6b7b41b7de0fe263c83b588e0cea62",
+    "rank": 1,
+    "total": 86.958,
+    "wallet": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+    "prize": 23,
+    "rarityTier": 2,
+    "block": 53,
+    "drawTransaction": "0x897316f330f39da0c197b1e9ed183cf5d56181addcaf3c5264060995f177c246",
+    "events": 1,
+    "maxKmh": 174.5,
+    "part": {
+      "model": 2,
+      "edition": 1
+    }
+  },
+  "winner": {
+    "model": 2,
+    "edition": 1,
+    "offset": 0.171875
+  },
+  "reducedMotionMs": 41,
+  "empty": {
+    "race": "0x6a02640c0dab576e6ee582c08055828f49e36163d5d2ba6d0e37cddb4e0847f8",
+    "rank": 8,
+    "total": 110.988,
+    "wallet": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
+    "prize": 0,
+    "rarityTier": 0,
+    "block": 55,
+    "drawTransaction": "0xb551895deb65d0f10296b1600c7d81680b2e30ab1dd7817f8e85dc8dfb617bd2",
+    "events": 1,
+    "mockRoll": 3986,
+    "method": "独立测试链筛选公开模拟随机源的未掉落分支，B 延迟 24 秒起步，按真实计时驾驶借用车完赛"
+  },
+  "inventory": {
+    "initial": {
+      "all": 22,
+      "A": 6,
+      "B": 4
+    },
+    "afterSettlement": {
+      "all": 23,
+      "A": 7,
+      "B": 4
+    },
+    "afterReplay": {
+      "all": 23,
+      "A": 7,
+      "B": 4
+    }
+  },
+  "browserRevealQueries": [
+    "/api/state"
+  ],
+  "browserErrors": [],
+  "passed": true
+}

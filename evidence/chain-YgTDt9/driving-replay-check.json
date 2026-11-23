@@ -1,0 +1,26 @@
+[
+  {
+    "race": "0x190fa33efca2bc59b918f8387f9f0a6d9d591b8d100fd849a16633be16a77bc2",
+    "seconds": 84.988,
+    "rank": 1,
+    "tracePoints": 341,
+    "inputs": 238,
+    "identical": true
+  },
+  {
+    "race": "0x6a4efeeac6e3715721d7aa3433d24137c1543d8d884368b1a82a713cf53bde6b",
+    "seconds": 84.988,
+    "rank": 1,
+    "tracePoints": 341,
+    "inputs": 355,
+    "identical": true
+  },
+  {
+    "race": "0x7d80d697e040dcac67ad4ba85f94cf5e684d9216c24b7b04727bc642f3979036",
+    "seconds": 87.299,
+    "rank": 1,
+    "tracePoints": 351,
+    "inputs": 308,
+    "identical": true
+  }
+]

@@ -1,0 +1,68 @@
+{
+  "chainId": 31337,
+  "nodeData": "C:\\WINDOWS\\TEMP\\rainport-contract-sF8qUC",
+  "checks": [
+    {
+      "check": "获授权的钱包仅可转移已解锁并拆下的部件",
+      "mounted": {
+        "hash": "0x2f98c6c860307df83b4497ad4d634c4d0435975fc84ab76afcd7ba657c9a3664",
+        "block": 46,
+        "status": 0,
+        "reason": "PartMounted"
+      },
+      "listed": {
+        "hash": "0xaaa5787b0c2b12b12da78afdff7795cd0aa1588acabccc8c8bcf76e4b6dc0ccd",
+        "block": 47,
+        "status": 1
+      },
+      "locked": {
+        "hash": "0x9e1df33830041c0347c8a19711ea4aa0281452efaf0406ee9a541c8209895afe",
+        "block": 48,
+        "status": 0,
+        "reason": "AssetListed"
+      },
+      "chassis": {
+        "hash": "0xb0f26facc593e18bdb8a2004eb02fb4a343689d17f8f4cc3d3b0d1f0d12ad61e",
+        "block": 49,
+        "status": 0,
+        "reason": "AssetListed"
+      },
+      "close": {
+        "hash": "0x9b005c49a562e81ad9e3f7f3ac5b9a9a6a30976ed77a18c705b38944b7e1ec55",
+        "block": 50,
+        "status": 1
+      },
+      "free": {
+        "hash": "0xfaf121b8afe5f560288650757167396b0ad57e230a449fd0568ba7a7b8cf8a67",
+        "block": 52,
+        "status": 1
+      }
+    },
+    {
+      "check": "合约固定输入，第八名未掉落结算；重复调用保留零奖品及一次奖励事件",
+      "race": "0xcc209319d19d52e5c46fd8a5254cab6eac8d7395ee5c84acb210fe1b928e701a",
+      "roll": 5112,
+      "start": {
+        "hash": "0x0b41d9b48ffabf1e768edbc370ad5cb9e68f55d425b388629d50df27f59f5d03",
+        "block": 53,
+        "status": 1
+      },
+      "confirm": {
+        "hash": "0x242b0e536a85bee026d61c4b1437dcd17776dcb7f33a4079de0aa9963f474031",
+        "block": 54,
+        "status": 1
+      },
+      "draw": {
+        "hash": "0x4b77a79e6b6068ce8772d3f6b586e8914415ccee54a02d19e9573c8de780dff1",
+        "block": 55,
+        "status": 1
+      },
+      "repeat": {
+        "hash": "0xb2b469ad0008e7958d901765befd8f9e038a08cf9deb133f13ecc3b1d45928cc",
+        "block": 56,
+        "status": 1
+      },
+      "count": 21
+    }
+  ]
+}

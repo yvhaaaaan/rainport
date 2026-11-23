@@ -1,0 +1,26 @@
+{
+  "url": "http://127.0.0.1:8788",
+  "errors": [],
+  "log": [
+    {
+      "screen": "result.png",
+      "text": "弯道档案\nCURVE ARCHIVE\n比赛\n车库\n展馆\n市场\n钱包\n本地链 · 钱包 A\nRAINPORT / FINISH\n雨港完赛\n最终名次\nP1 / 8\n总用时\n1:24.988\n赛事\n雨港\nS1　港区湿弯\n0:44.481\nS2　沿岸直道\n0:40.507\n稀有 · R2 雨胎 #022\n本场掉落已登记\n查看展签\n八车完赛榜与赛事凭证\n装车再跑\n跟随本圈幽灵\n返回发车区"
+    },
+    {
+      "screen": "provenance.png",
+      "text": "弯道档案\nCURVE ARCHIVE\n比赛\n车库\n展馆\n市场\n钱包\n本地链 · 钱包 A\nWORKSHOP\n改装车库\n暂无自有车\n\n借用车已在发车区待命。可在市场购买整车。\n\n我的独立部件\nR2 雨胎 #022　稀有\n展签\n同款出售\n编号出售\nE3 高速引擎 #023　稀有\n展签\n同款出售\n编号出售\n藏品展签 · R2 雨胎 #022\n关闭\n稀有 · #022\n\n稀有 · 湿路摩擦系数约 0.86\n\n获得记录\n第 1 名 · A\n\n0x6a4efeeac6e3715721d7aa3433d24137c1543d8d884368b1a82a713cf53bde6b\n回看获得赛事\n实际参赛\nA · #001 · 第 1 名\n0x190fa33efca2bc59b918f8387f9f0a6d9d591b8d100fd849a16633be16a77bc2\n回放 1:24.988\n车主与成交\n首任 A　现任 A\n\n暂无成交\n\n查找同款"
+    },
+    {
+      "screen": "replay.png",
+      "text": "弯道档案\nCURVE ARCHIVE\n比赛\n车库\n展馆\n市场\n钱包\n本地链 · 钱包 A\nWORKSHOP\n改装车库\n暂无自有车\n\n借用车已在发车区待命。可在市场购买整车。\n\n我的独立部件\nR2 雨胎 #022　稀有\n展签\n同款出售\n编号出售\nE3 高速引擎 #023　稀有\n展签\n同款出售\n编号出售\n雨港赛事回放\n关闭\n\n链上三项摘要校验通过 · A · 1:24.988"
+    },
+    {
+      "screen": "buyer-order.png",
+      "text": "弯道档案\nCURVE ARCHIVE\n比赛\n车库\n展馆\n市场\n钱包\n本地链 · 钱包 B\nDRIVER WALLET\n演示钱包\nA\nB\nC\n可用余额\n9,242 CR\n求购托管\n0 CR\n持有编号\n12\n\n0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC\n\nGanache · chainId 31337 · 区块 78\n我的订单\n指定编号 · 在挂 · 68 CR\n订单 15\n整车 · 已撤单 · 500 CR\n订单 14\n指定编号 · 已成交 · 111 CR\n订单 13\n整车 · 已成交 · 500 CR\n订单 12\n型号求购 · 已撤单 · 40 CR\n订单 11\n同款卖单 · 已成交 · 52 CR\n订单 10\n型号求购 · 已成交 · 52 CR\n订单 8\n指定编号 · 已成交 · 95 CR\n订单 7\n合约地址与近期签名\n整车 · 订单 12\n关闭\n总价\n500 CR\n手续费\n10 CR\n卖家实收\n490 CR\n订单状态\n已成交\n有效至\n2026/12/21 16:58:32\n交付清单\nH01 潮汐底盘 #001 / E1 港湾引擎 #002 / T1 公路胎 #003 / W1 短尾翼 #004\n当前四件套最佳成绩\n1:27.299 · 车手 B\n底盘历史最佳成绩\n1:24.988 · 车手 A\n槽位\t创造纪录时的配置\t当前配置\n底盘\tH01 潮汐底盘 #001\tH01 潮汐底盘 #001\n引擎\tE1 港湾引擎 #002\tE1 港湾引擎 #002\n轮胎\tR2 雨胎 #007\tT1 公路胎 #003 已更换\n尾翼\tW1 短尾翼 #004\tW1 短尾翼 #004\n回执 0xa8a6074\n回执 0x7cf8d5e"
+    },
+    {
+      "screen": "receipt.png",
+      "text": "弯道档案\nCURVE ARCHIVE\n比赛\n车库\n展馆\n市场\n钱包\n本地链 · 钱包 B\nDRIVER WALLET\n演示钱包\nA\nB\nC\n可用余额\n9,242 CR\n求购托管\n0 CR\n持有编号\n12\n\n0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC\n\nGanache · chainId 31337 · 区块 78\n我的订单\n指定编号 · 在挂 · 68 CR\n订单 15\n整车 · 已撤单 · 500 CR\n订单 14\n指定编号 · 已成交 · 111 CR\n订单 13\n整车 · 已成交 · 500 CR\n订单 12\n型号求购 · 已撤单 · 40 CR\n订单 11\n同款卖单 · 已成交 · 52 CR\n订单 10\n型号求购 · 已成交 · 52 CR\n订单 8\n指定编号 · 已成交 · 95 CR\n订单 7\n合约地址与近期签名\n节点交易回执\n关闭\n区块号\n66\n状态\n已确认\n交易哈希\n0x7cf8d5e02085efd0ea40fa4d2f824dacc2f627909ab89317472dfea0ba2ff138\n发起地址\n0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc\n合约地址\n0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0\n事件条数\n7"
+    }
+  ]
+}

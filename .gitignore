@@ -1,0 +1,20 @@
+# Local installation, saves, and portable builds
+/node_modules/
+/data/
+/runtime/
+/.starting-*/
+*.zip
+*.next
+
+# Local configuration
+.env
+.env.*
+!.env.example
+
+# Ignore LevelDB lock files, but keep the logs in the demo snapshots
+**/chain/LOCK
+
+# Keep the acceptance snapshots referenced by the report and test scripts
+/evidence/chain-*/
+!/evidence/chain-YgTDt9/
+!/evidence/chain-JGz2Q4/

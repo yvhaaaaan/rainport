@@ -1,0 +1,1012 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>弯道档案 · 链上验收</title><style>
+*{box-sizing:border-box}body{margin:0;background:#101719;color:#f2f0e7;font:16px/1.65 system-ui,"Microsoft YaHei",sans-serif}main{max-width:940px;margin:auto;padding:42px 16px}h1{font-size:clamp(32px,5vw,54px);margin:0 0 12px}h2{margin:0;font-size:22px}.eyebrow,a{color:#ffab77}.eyebrow,.small{font-size:14px}.small{color:#adb9b6}section{padding:23px 0;border-top:1px solid #334449}details{padding:9px 12px;background:#1c282d;border-bottom:1px solid #38474b}summary{cursor:pointer}code{font:13px/1.4 monospace;overflow-wrap:anywhere}summary code{display:block;margin:4px 0;color:#b8c6c7}pre{white-space:pre-wrap;overflow-wrap:anywhere}nav{margin:24px 0}a{margin-right:10px}p{margin:8px 0 15px}</style>
+<main><div class="eyebrow">雨港 · 本地链 31337</div><h1>弯道档案验收记录</h1><p>七项通过。三场比赛使用自动车手输入，由服务器按真实经过时间计时。节点共返回 78 份交易回执。展开下列交易可查看原始状态、区块哈希和事件日志。</p><p class="small">实测时间 2026/11/22 17:31:01 至 17:36:19（北京时间）。验收库与日常试玩存档独立。</p>
+<nav><a href="chain-JGz2Q4/checks.json">断言与实测数值</a><a href="chain-JGz2Q4/node-receipts.json">全部节点回执</a><a href="chain-JGz2Q4/deployment.json">部署与钱包</a><a href="orderbook.json">撮合与到期补测</a><a href="driving-v3.json">驾驶对照</a></nav>
+<section id="case-1"><div class="eyebrow">已通过 · 1 / 7</div><h2>名次奖励与重复结算</h2><p>A 驾驶底盘 #001 以 1:24.765 获得第 1 名。刷新结果并再次调用抽奖后，奖励始终为 #022，全链已发行 NFT 数量保持 22 件。</p><p class="small">赛事编号 <code>0x8348488885db42bdade24d72e482917154d6f5481a11dbb8c7b202711ec70285</code></p><details><summary><b>区块 45</b>　已确认　锁定参赛配置 <code>0x6e20e42060bc21277ca200e24d7762eda3e40a772e86b4f29bea9358ff5390af</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x6e20e42060bc21277ca200e24d7762eda3e40a772e86b4f29bea9358ff5390af&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x2d&quot;,
+  &quot;blockHash&quot;: &quot;0x8fe4a8436e1b8b142ddc4a8df753c3771c5234593215415db430ae058ada109a&quot;,
+  &quot;from&quot;: &quot;0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x42bda&quot;,
+  &quot;gasUsed&quot;: &quot;0x42bda&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x8fe4a8436e1b8b142ddc4a8df753c3771c5234593215415db430ae058ada109a&quot;,
+      &quot;blockNumber&quot;: &quot;0x2d&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000070000000000000000000000000000000000000000000000000000000000000004055738c437abdd27d4f5dba11f66f4a52a806ef55a70c474400fae9faba64e2e00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xd0f659750e536f9c237f8e23d006ed97ef7aaccd30d0072b5125034207f876b9&quot;,
+        &quot;0x8348488885db42bdade24d72e482917154d6f5481a11dbb8c7b202711ec70285&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x6e20e42060bc21277ca200e24d7762eda3e40a772e86b4f29bea9358ff5390af&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200010000000000000000000000000000000000010000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000001000000000000000000000000000000000000000800000000000000000000000001000000000000410000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x33775a&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 46</b>　已确认　裁判确认成绩 <code>0xa2508c53f04295b88fca4b794686921f4d3e1b4dbfa9b6a83c44ca45628de23f</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xa2508c53f04295b88fca4b794686921f4d3e1b4dbfa9b6a83c44ca45628de23f&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x2e&quot;,
+  &quot;blockHash&quot;: &quot;0x97e12d3c1193e8639be934a721c788e0ffb0d9fa9547a805144169c76440db77&quot;,
+  &quot;from&quot;: &quot;0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x19bd5&quot;,
+  &quot;gasUsed&quot;: &quot;0x19bd5&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x97e12d3c1193e8639be934a721c788e0ffb0d9fa9547a805144169c76440db77&quot;,
+      &quot;blockNumber&quot;: &quot;0x2e&quot;,
+      &quot;data&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000014b1d85a9916fb3e5838c857157813cd8bdd7b38b80553eda97ca98f6d71c324943db04ac907fcee4d4ad4da7364998b9ff62006b39cbfee695691d6511a64460b06a&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xa06b3125603fcdb632a3c1ba65fd268234cd2aca0c721de45a5cfeb57fdec21e&quot;,
+        &quot;0x8348488885db42bdade24d72e482917154d6f5481a11dbb8c7b202711ec70285&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0xa2508c53f04295b88fca4b794686921f4d3e1b4dbfa9b6a83c44ca45628de23f&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200010000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000200000000000000000000000000000800000000200000000000000001000000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x2d2673&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 47</b>　已确认　奖励结算 <code>0x3feab3985c547617ffa6a395eea57db2f12bb69a53a23795b0877550ab4b6de7</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x3feab3985c547617ffa6a395eea57db2f12bb69a53a23795b0877550ab4b6de7&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x2f&quot;,
+  &quot;blockHash&quot;: &quot;0x946e75a68eab62e7fead6a72e9c7139dac7a0c81e09f2d2fa33232a658e7c64a&quot;,
+  &quot;from&quot;: &quot;0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x27a6a&quot;,
+  &quot;gasUsed&quot;: &quot;0x27a6a&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x946e75a68eab62e7fead6a72e9c7139dac7a0c81e09f2d2fa33232a658e7c64a&quot;,
+      &quot;blockNumber&quot;: &quot;0x2f&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000016&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x3feab3985c547617ffa6a395eea57db2f12bb69a53a23795b0877550ab4b6de7&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x946e75a68eab62e7fead6a72e9c7139dac7a0c81e09f2d2fa33232a658e7c64a&quot;,
+      &quot;blockNumber&quot;: &quot;0x2f&quot;,
+      &quot;data&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000016&quot;,
+      &quot;logIndex&quot;: &quot;0x1&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0x38ddfb1545d35d045d271c8eb109c2c9dec349862695ef12478d27d620a21165&quot;,
+        &quot;0x8348488885db42bdade24d72e482917154d6f5481a11dbb8c7b202711ec70285&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x3feab3985c547617ffa6a395eea57db2f12bb69a53a23795b0877550ab4b6de7&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200010000000000000000000000000000800000008000000000000000000000000000000000000000000000800020000000000000002000800200000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000020000000000000000000000000000400000000000000020000000000800000000000000020000000001000000000000400008000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x278bcc&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 48</b>　已确认　奖励结算 <code>0xb35b8591a455fd1eecd70df68b6743a776819d45a03a42bdd40ddc34fb3520c8</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xb35b8591a455fd1eecd70df68b6743a776819d45a03a42bdd40ddc34fb3520c8&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x30&quot;,
+  &quot;blockHash&quot;: &quot;0xfdb5e96e6f86e3e5b1d8fb409f6d73dbf59bad1e9545f42c8300b8d633f16d00&quot;,
+  &quot;from&quot;: &quot;0x70997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x7340&quot;,
+  &quot;gasUsed&quot;: &quot;0x7340&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x22a808&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><p><a href="screens/result.png">浏览器重开结算截图</a></p></section><section id="case-2"><div class="eyebrow">已通过 · 2 / 7</div><h2>掉落部件首次参赛</h2><p>#022 在首圈掉落，从第二圈起计入参赛配置。第二圈湿弯 46.438 秒，直道 40.710 秒。回放经成绩、配置、轨迹三项摘要核验。</p><p class="small">赛事编号 <code>0x07065cfb0f086f9cd061cd20e8ed0a06438823ca92ede343dae5225d2ea0e0b4</code></p><details><summary><b>区块 49</b>　已确认　装配变更 <code>0x2dc5593b5b8f04d764cdde5f914e9f8292515a7d1401aaa9378a6cb58a773f48</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x2dc5593b5b8f04d764cdde5f914e9f8292515a7d1401aaa9378a6cb58a773f48&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x31&quot;,
+  &quot;blockHash&quot;: &quot;0xf987cff51e27a9d0b3398459c2ad14c3feaf097955f57a9354d76119bd8aab45&quot;,
+  &quot;from&quot;: &quot;0x70997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x12b59&quot;,
+  &quot;gasUsed&quot;: &quot;0x12b59&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0xf987cff51e27a9d0b3398459c2ad14c3feaf097955f57a9354d76119bd8aab45&quot;,
+      &quot;blockNumber&quot;: &quot;0x31&quot;,
+      &quot;data&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000007&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xfefa03fe801f4e94c0fb7852f93255c93bf18700a088068d9f5bc8c33da2593e&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000001&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000016&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x2dc5593b5b8f04d764cdde5f914e9f8292515a7d1401aaa9378a6cb58a773f48&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200000000000040000000000000000000800000000000000000000000000040000000000000000000000000000000000000000100000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000800000000000000000000000000040000000000000000000000000000000000000000000000000400008000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x1e5536&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 50</b>　已确认　锁定参赛配置 <code>0x8650aba0923a7291c114d7ef99e6dec366c540754df873f5046c849f2f452907</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x8650aba0923a7291c114d7ef99e6dec366c540754df873f5046c849f2f452907&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x32&quot;,
+  &quot;blockHash&quot;: &quot;0x1b8215eb96f306a99b05562dac58683b87e9afe041c52962dc2092190f5864ca&quot;,
+  &quot;from&quot;: &quot;0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x3e90e&quot;,
+  &quot;gasUsed&quot;: &quot;0x3e90e&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x1b8215eb96f306a99b05562dac58683b87e9afe041c52962dc2092190f5864ca&quot;,
+      &quot;blockNumber&quot;: &quot;0x32&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000016000000000000000000000000000000000000000000000000000000000000000427dedbc221770b65dbbd9c183160d35e63d1400d9cb3041bb16c5029d779533c00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xd0f659750e536f9c237f8e23d006ed97ef7aaccd30d0072b5125034207f876b9&quot;,
+        &quot;0x07065cfb0f086f9cd061cd20e8ed0a06438823ca92ede343dae5225d2ea0e0b4&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x8650aba0923a7291c114d7ef99e6dec366c540754df873f5046c849f2f452907&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000200000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200000000000000000000000000000000000000010000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000001000000000008410000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x1a8f84&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 51</b>　已确认　裁判确认成绩 <code>0xcd9a54099fe49106e7308880f08e1afd4b2fc1a7400a65356cc923e21c1673b6</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xcd9a54099fe49106e7308880f08e1afd4b2fc1a7400a65356cc923e21c1673b6&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x33&quot;,
+  &quot;blockHash&quot;: &quot;0xf3a8d79421d61c5e4c55ba0330bfc44636e1abdee347a81c1eb600251b74308c&quot;,
+  &quot;from&quot;: &quot;0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x19be1&quot;,
+  &quot;gasUsed&quot;: &quot;0x19be1&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0xf3a8d79421d61c5e4c55ba0330bfc44636e1abdee347a81c1eb600251b74308c&quot;,
+      &quot;blockNumber&quot;: &quot;0x33&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000001546cdd9e79eb68cb0aeada147ea484301f768eaf5a4e78d15e8bc236e04d9d474ba16e4b9a445473718d75e1af0e75d67f0c861e7d8ac8a6c7df8805d128e11f5a07&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xa06b3125603fcdb632a3c1ba65fd268234cd2aca0c721de45a5cfeb57fdec21e&quot;,
+        &quot;0x07065cfb0f086f9cd061cd20e8ed0a06438823ca92ede343dae5225d2ea0e0b4&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0xcd9a54099fe49106e7308880f08e1afd4b2fc1a7400a65356cc923e21c1673b6&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000200000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200000000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000200000000000000000000000000000000000000200000000000000001000000000008400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x174c1a&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 52</b>　已确认　奖励结算 <code>0x7ff59107851122858cfda532fba1419e5f0b1ca2a52222741917bdaf918bac58</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x7ff59107851122858cfda532fba1419e5f0b1ca2a52222741917bdaf918bac58&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x34&quot;,
+  &quot;blockHash&quot;: &quot;0x7b92dba5b7182eda471362d532bfc0a8e805d0503ebb8192f7ff2994fa0580fe&quot;,
+  &quot;from&quot;: &quot;0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x27aa0&quot;,
+  &quot;gasUsed&quot;: &quot;0x27aa0&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x7b92dba5b7182eda471362d532bfc0a8e805d0503ebb8192f7ff2994fa0580fe&quot;,
+      &quot;blockNumber&quot;: &quot;0x34&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000017&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x7ff59107851122858cfda532fba1419e5f0b1ca2a52222741917bdaf918bac58&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x7b92dba5b7182eda471362d532bfc0a8e805d0503ebb8192f7ff2994fa0580fe&quot;,
+      &quot;blockNumber&quot;: &quot;0x34&quot;,
+      &quot;data&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000040000000000000000000000000000000000000000000000000000000000000017&quot;,
+      &quot;logIndex&quot;: &quot;0x1&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0x38ddfb1545d35d045d271c8eb109c2c9dec349862695ef12478d27d620a21165&quot;,
+        &quot;0x07065cfb0f086f9cd061cd20e8ed0a06438823ca92ede343dae5225d2ea0e0b4&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x7ff59107851122858cfda532fba1419e5f0b1ca2a52222741917bdaf918bac58&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000200000000000002000000000000000000000000000000000000000000000000000000000000000000000000000000001000000040200000001000000000000000000000000000000008000000000000000000000000000000000000000000000800020000000000000002000800000000000000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002002000000000000000000000000000000000000400000000000000020000000000000000000000000020000000001000000000008400000000000080000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x1467d5&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><p><a href="screens/provenance.png">获得和实际参赛履历截图</a></p></section><section id="case-3"><div class="eyebrow">已通过 · 3 / 7</div><h2>指定编号买入再装配</h2><p>A 将雨胎 #007 从车上拆下并按编号挂牌，B 买入后装在底盘 #005。使用记录仍记载 A 驾驶 #001 的成绩。</p><details><summary><b>区块 55</b>　已确认　挂牌 / 撮合 <code>0xb69063e347b663e5661cac783add35e55a1a2f0bfe89a46df9350785afa48196</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xb69063e347b663e5661cac783add35e55a1a2f0bfe89a46df9350785afa48196&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x37&quot;,
+  &quot;blockHash&quot;: &quot;0xa217bcd3a66d480039eab361f065ae8a2085e8de635e896e9a8e4c0f5e142424&quot;,
+  &quot;from&quot;: &quot;0x70997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x2e236&quot;,
+  &quot;gasUsed&quot;: &quot;0x2e236&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0xa217bcd3a66d480039eab361f065ae8a2085e8de635e896e9a8e4c0f5e142424&quot;,
+      &quot;blockNumber&quot;: &quot;0x37&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000005f0000000000000000000000000000000000000000000000000000000000000007000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xbaa1a07f78c9822854620fdb7be8b351b109a2ba2d6ced66458868cfdf454b6b&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000007&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0xb69063e347b663e5661cac783add35e55a1a2f0bfe89a46df9350785afa48196&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000002000000000000000000000000000000000000008000000000000000000000000000000000000000001000000040200000000000000000000020000001000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000001000000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0xdb4b3&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 56</b>　已确认　买入交割 <code>0x24ade3fdce4c97e8c3e34e711a191e45c01e51b28db0754f36fd424bb47c4385</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x24ade3fdce4c97e8c3e34e711a191e45c01e51b28db0754f36fd424bb47c4385&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x38&quot;,
+  &quot;blockHash&quot;: &quot;0xede0ac67c859abb63b22c13eddc57624e1ea57d1218423158e68ff52f59004e9&quot;,
+  &quot;from&quot;: &quot;0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x2c632&quot;,
+  &quot;gasUsed&quot;: &quot;0x2c632&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x5fbdb2315678afecb367f032d93f642f64180aa3&quot;,
+      &quot;blockHash&quot;: &quot;0xede0ac67c859abb63b22c13eddc57624e1ea57d1218423158e68ff52f59004e9&quot;,
+      &quot;blockNumber&quot;: &quot;0x38&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000005e&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x24ade3fdce4c97e8c3e34e711a191e45c01e51b28db0754f36fd424bb47c4385&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x5fbdb2315678afecb367f032d93f642f64180aa3&quot;,
+      &quot;blockHash&quot;: &quot;0xede0ac67c859abb63b22c13eddc57624e1ea57d1218423158e68ff52f59004e9&quot;,
+      &quot;blockNumber&quot;: &quot;0x38&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000001&quot;,
+      &quot;logIndex&quot;: &quot;0x1&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000009965507d1a55bcc2695c58ba16fb37d819b0a4dc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x24ade3fdce4c97e8c3e34e711a191e45c01e51b28db0754f36fd424bb47c4385&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0xede0ac67c859abb63b22c13eddc57624e1ea57d1218423158e68ff52f59004e9&quot;,
+      &quot;blockNumber&quot;: &quot;0x38&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: &quot;0x2&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000007&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x24ade3fdce4c97e8c3e34e711a191e45c01e51b28db0754f36fd424bb47c4385&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0xede0ac67c859abb63b22c13eddc57624e1ea57d1218423158e68ff52f59004e9&quot;,
+      &quot;blockNumber&quot;: &quot;0x38&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000005f00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000007000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+      &quot;logIndex&quot;: &quot;0x3&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xebef43c6612290aece1a7db69405a778f85969a060c8acfd952dee38c8889416&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000007&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x24ade3fdce4c97e8c3e34e711a191e45c01e51b28db0754f36fd424bb47c4385&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000004000000000002000000000000000100000000000000000000000000000000000000000000000000000000000000001000000040200000000000100000000020000000000000000008000000000000000000008000000000000000000000000840000000000000000000000000000800000000000000000010000000000000000000000000000000000000000000000000000000000000000200000000000000000000200000000000000000000000000000000000000000000000000000000042800000000000000000000000000000000000000000000100000000000000000000000000000000000000010081000000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0xc03a3&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details></section><section id="case-4"><div class="eyebrow">已通过 · 4 / 7</div><h2>同款求购、隔离与退款</h2><p>B 托管 52 CR，买到 C 主动按同款出售的 #020，成交 52 CR。指定编号订单 9 继续挂牌。B 的另一笔求购撤单后退回 40 CR。</p><details><summary><b>区块 58</b>　已确认　求购托管 <code>0xdaf71a89e8b58e7c772a266dc8e4f9bbf40faed405d0f7ca9b1384eb3af36f3d</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xdaf71a89e8b58e7c772a266dc8e4f9bbf40faed405d0f7ca9b1384eb3af36f3d&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x3a&quot;,
+  &quot;blockHash&quot;: &quot;0x03439e9cf9cdeb27fd22b1de0db2a67fc933b5fed701fda5e699f03651b806a2&quot;,
+  &quot;from&quot;: &quot;0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x2d03a&quot;,
+  &quot;gasUsed&quot;: &quot;0x2d03a&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x5fbdb2315678afecb367f032d93f642f64180aa3&quot;,
+      &quot;blockHash&quot;: &quot;0x03439e9cf9cdeb27fd22b1de0db2a67fc933b5fed701fda5e699f03651b806a2&quot;,
+      &quot;blockNumber&quot;: &quot;0x3a&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000034&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000009fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0xdaf71a89e8b58e7c772a266dc8e4f9bbf40faed405d0f7ca9b1384eb3af36f3d&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x03439e9cf9cdeb27fd22b1de0db2a67fc933b5fed701fda5e699f03651b806a2&quot;,
+      &quot;blockNumber&quot;: &quot;0x3a&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000340000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+      &quot;logIndex&quot;: &quot;0x1&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xbaa1a07f78c9822854620fdb7be8b351b109a2ba2d6ced66458868cfdf454b6b&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000008&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0xdaf71a89e8b58e7c772a266dc8e4f9bbf40faed405d0f7ca9b1384eb3af36f3d&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000080000000000000000000000004000000000000004000000000c0200000000000100000000000000001000000000008000000000000000000000000000000000000400000000040000000000000000000000000000800000000004000000010000000000080000000000000000000000000000000000000000000000000000200000000000000000000200000000000000000000000000000000000000000000000000040000042000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x93897&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 61</b>　已确认　挂牌 / 撮合 <code>0x2557f0c87c62fb47b8d064940d6a55875559267b1c7faee2f504bb35b964a634</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x2557f0c87c62fb47b8d064940d6a55875559267b1c7faee2f504bb35b964a634&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x3d&quot;,
+  &quot;blockHash&quot;: &quot;0x537764dbfacb307de0b69f4f54e8d4d4e1e686bb4352dbe0e7677f95663d20f3&quot;,
+  &quot;from&quot;: &quot;0x90f79bf6eb2c4f870365e785982e1f101e93b906&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x6db49&quot;,
+  &quot;gasUsed&quot;: &quot;0x6db49&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x537764dbfacb307de0b69f4f54e8d4d4e1e686bb4352dbe0e7677f95663d20f3&quot;,
+      &quot;blockNumber&quot;: &quot;0x3d&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000320000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xbaa1a07f78c9822854620fdb7be8b351b109a2ba2d6ced66458868cfdf454b6b&quot;,
+        &quot;0x000000000000000000000000000000000000000000000000000000000000000a&quot;,
+        &quot;0x00000000000000000000000090f79bf6eb2c4f870365e785982e1f101e93b906&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x2557f0c87c62fb47b8d064940d6a55875559267b1c7faee2f504bb35b964a634&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x5fbdb2315678afecb367f032d93f642f64180aa3&quot;,
+      &quot;blockHash&quot;: &quot;0x537764dbfacb307de0b69f4f54e8d4d4e1e686bb4352dbe0e7677f95663d20f3&quot;,
+      &quot;blockNumber&quot;: &quot;0x3d&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000033&quot;,
+      &quot;logIndex&quot;: &quot;0x1&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000009fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+        &quot;0x00000000000000000000000090f79bf6eb2c4f870365e785982e1f101e93b906&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x2557f0c87c62fb47b8d064940d6a55875559267b1c7faee2f504bb35b964a634&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x5fbdb2315678afecb367f032d93f642f64180aa3&quot;,
+      &quot;blockHash&quot;: &quot;0x537764dbfacb307de0b69f4f54e8d4d4e1e686bb4352dbe0e7677f95663d20f3&quot;,
+      &quot;blockNumber&quot;: &quot;0x3d&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000001&quot;,
+      &quot;logIndex&quot;: &quot;0x2&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000009fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+        &quot;0x0000000000000000000000009965507d1a55bcc2695c58ba16fb37d819b0a4dc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x2557f0c87c62fb47b8d064940d6a55875559267b1c7faee2f504bb35b964a634&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x537764dbfacb307de0b69f4f54e8d4d4e1e686bb4352dbe0e7677f95663d20f3&quot;,
+      &quot;blockNumber&quot;: &quot;0x3d&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: &quot;0x3&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x00000000000000000000000090f79bf6eb2c4f870365e785982e1f101e93b906&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000014&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x2557f0c87c62fb47b8d064940d6a55875559267b1c7faee2f504bb35b964a634&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x537764dbfacb307de0b69f4f54e8d4d4e1e686bb4352dbe0e7677f95663d20f3&quot;,
+      &quot;blockNumber&quot;: &quot;0x3d&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000003400000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000014000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+      &quot;logIndex&quot;: &quot;0x4&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xebef43c6612290aece1a7db69405a778f85969a060c8acfd952dee38c8889416&quot;,
+        &quot;0x000000000000000000000000000000000000000000000000000000000000000a&quot;,
+        &quot;0x00000000000000000000000090f79bf6eb2c4f870365e785982e1f101e93b906&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x2557f0c87c62fb47b8d064940d6a55875559267b1c7faee2f504bb35b964a634&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000004000000000000000000000000000100000000000000000000008000000000000000000000000400000000000000402000040040200020000000100000000000000001000000000008000000000000000000008000000000000000400000000040000000000000000000000000000800000000004000000010000000000000000000000000010000000000000000000000000400000400000200000000000000000000200020000000000000000000000000000000000000000000000000000042800000000000000000000000400000000000000000000000000000000000000000000000000010000000010080000000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x63397&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 63</b>　已确认　撤单 <code>0x30ea9447c3c516b3af533ab0c44288146ed3253d23b6d78083bae585c9aa12a2</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x30ea9447c3c516b3af533ab0c44288146ed3253d23b6d78083bae585c9aa12a2&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x3f&quot;,
+  &quot;blockHash&quot;: &quot;0x19fe04401db305b34ae174e0ebf44148f16bdc51d2f0155148dd052fd7dc144b&quot;,
+  &quot;from&quot;: &quot;0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0xc6f2&quot;,
+  &quot;gasUsed&quot;: &quot;0xc6f2&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x5fbdb2315678afecb367f032d93f642f64180aa3&quot;,
+      &quot;blockHash&quot;: &quot;0x19fe04401db305b34ae174e0ebf44148f16bdc51d2f0155148dd052fd7dc144b&quot;,
+      &quot;blockNumber&quot;: &quot;0x3f&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000028&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000009fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x30ea9447c3c516b3af533ab0c44288146ed3253d23b6d78083bae585c9aa12a2&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x19fe04401db305b34ae174e0ebf44148f16bdc51d2f0155148dd052fd7dc144b&quot;,
+      &quot;blockNumber&quot;: &quot;0x3f&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000003&quot;,
+      &quot;logIndex&quot;: &quot;0x1&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xe6388006ab382821fcff3beea1b14269013fbb398ce2f0a6e9da5ecb4f3c6a1f&quot;,
+        &quot;0x000000000000000000000000000000000000000000000000000000000000000b&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x30ea9447c3c516b3af533ab0c44288146ed3253d23b6d78083bae585c9aa12a2&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000004000000000000000000000000000000000000000000000000000000000000400000000000000400000000040200000000000100000000000000000000000000008000000000040000000000000000000000000400000000040000000000000000000000000000800000000000000000010000000000000000000000000000000000000000000000000000000000000000200000000000000000000200000000000000000000000000000000000000000000000000000000042000000000000000000004000002000000000000000000000000000000000000000000000000000000000000000001000000000440000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x4c6e9&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details></section><section id="case-5"><div class="eyebrow">已通过 · 5 / 7</div><h2>整车四件套同笔交割</h2><p>B 一笔购买交易取得 #001 / #002 / #003 / #004，支付 500 CR，A 收到 490 CR，手续费账户收到 10 CR。B 保留装配关系并用该配置跑出 1:26.962。</p><p class="small">赛事编号 <code>0xf5a97223b35c57905fd7bedf43f2480f5ff5067ce4f56ae2c32f12a4fb813561</code></p><details><summary><b>区块 66</b>　已确认　买入交割 <code>0x6e9cd84734aaac18340bda92199537b8f70adebd37b31a2ee91034c8282a144d</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x6e9cd84734aaac18340bda92199537b8f70adebd37b31a2ee91034c8282a144d&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x42&quot;,
+  &quot;blockHash&quot;: &quot;0x88a84b2378b2208283eb7ed6ffdd6afeb62a848f8d6cf87003f5e453661e1ef5&quot;,
+  &quot;from&quot;: &quot;0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x30730&quot;,
+  &quot;gasUsed&quot;: &quot;0x30730&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x5fbdb2315678afecb367f032d93f642f64180aa3&quot;,
+      &quot;blockHash&quot;: &quot;0x88a84b2378b2208283eb7ed6ffdd6afeb62a848f8d6cf87003f5e453661e1ef5&quot;,
+      &quot;blockNumber&quot;: &quot;0x42&quot;,
+      &quot;data&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000001ea&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x6e9cd84734aaac18340bda92199537b8f70adebd37b31a2ee91034c8282a144d&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x5fbdb2315678afecb367f032d93f642f64180aa3&quot;,
+      &quot;blockHash&quot;: &quot;0x88a84b2378b2208283eb7ed6ffdd6afeb62a848f8d6cf87003f5e453661e1ef5&quot;,
+      &quot;blockNumber&quot;: &quot;0x42&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000000a&quot;,
+      &quot;logIndex&quot;: &quot;0x1&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000009965507d1a55bcc2695c58ba16fb37d819b0a4dc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x6e9cd84734aaac18340bda92199537b8f70adebd37b31a2ee91034c8282a144d&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x88a84b2378b2208283eb7ed6ffdd6afeb62a848f8d6cf87003f5e453661e1ef5&quot;,
+      &quot;blockNumber&quot;: &quot;0x42&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: &quot;0x2&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000001&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x6e9cd84734aaac18340bda92199537b8f70adebd37b31a2ee91034c8282a144d&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x88a84b2378b2208283eb7ed6ffdd6afeb62a848f8d6cf87003f5e453661e1ef5&quot;,
+      &quot;blockNumber&quot;: &quot;0x42&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: &quot;0x3&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000002&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x6e9cd84734aaac18340bda92199537b8f70adebd37b31a2ee91034c8282a144d&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x88a84b2378b2208283eb7ed6ffdd6afeb62a848f8d6cf87003f5e453661e1ef5&quot;,
+      &quot;blockNumber&quot;: &quot;0x42&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: &quot;0x4&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000003&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x6e9cd84734aaac18340bda92199537b8f70adebd37b31a2ee91034c8282a144d&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x88a84b2378b2208283eb7ed6ffdd6afeb62a848f8d6cf87003f5e453661e1ef5&quot;,
+      &quot;blockNumber&quot;: &quot;0x42&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: &quot;0x5&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000004&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x6e9cd84734aaac18340bda92199537b8f70adebd37b31a2ee91034c8282a144d&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x88a84b2378b2208283eb7ed6ffdd6afeb62a848f8d6cf87003f5e453661e1ef5&quot;,
+      &quot;blockNumber&quot;: &quot;0x42&quot;,
+      &quot;data&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000001f4000000000000000000000000000000000000000000000000000000000000000a0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000004&quot;,
+      &quot;logIndex&quot;: &quot;0x6&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xebef43c6612290aece1a7db69405a778f85969a060c8acfd952dee38c8889416&quot;,
+        &quot;0x000000000000000000000000000000000000000000000000000000000000000c&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x6e9cd84734aaac18340bda92199537b8f70adebd37b31a2ee91034c8282a144d&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x04000004000000000002000000000000000102000000000000000000000000000000000000000200000000000000000000000000020040200000000000140000000000000000000000000008000000000000000000048000000000000000000008000840000000000000000000000000000800000000000000000010000000000000000000000000000000000000000000000000000000000000000200000000000000000000200000000100000000000000000000800000002000000000400000000042800000000000000000000000000000008000000000000000000040200000000000000000000000000000010081000000008000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x336ca&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 67</b>　已确认　锁定参赛配置 <code>0x8693a0841e68919e360141e99dd746552ac97284728ce02c60d74099e548baf3</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x8693a0841e68919e360141e99dd746552ac97284728ce02c60d74099e548baf3&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x43&quot;,
+  &quot;blockHash&quot;: &quot;0x6b9d43b8dcac9854ed3917f2545b067bf44ad4f667c5b25de0a9b656e0cfbde9&quot;,
+  &quot;from&quot;: &quot;0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x3e902&quot;,
+  &quot;gasUsed&quot;: &quot;0x3e902&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x6b9d43b8dcac9854ed3917f2545b067bf44ad4f667c5b25de0a9b656e0cfbde9&quot;,
+      &quot;blockNumber&quot;: &quot;0x43&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000462a5093d7973f10902bcfad530bbcccb2bc2b315ac8c91afc6a0d481b0d7a0b200000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000001&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xd0f659750e536f9c237f8e23d006ed97ef7aaccd30d0072b5125034207f876b9&quot;,
+        &quot;0xf5a97223b35c57905fd7bedf43f2480f5ff5067ce4f56ae2c32f12a4fb813561&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x8693a0841e68919e360141e99dd746552ac97284728ce02c60d74099e548baf3&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200000000000100000000000000000000000400010000000000000000000000000000000000000000000000000000000000000000000000000000800000000000000000000000008000000000000000000000100000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000000000000000000410000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x2d14e&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 68</b>　已确认　裁判确认成绩 <code>0xb3836332b39dcf098b27a9259c8a49fd785eebb3485dd8e2665c489d0a2368a8</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xb3836332b39dcf098b27a9259c8a49fd785eebb3485dd8e2665c489d0a2368a8&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x44&quot;,
+  &quot;blockHash&quot;: &quot;0x0bfa04968f357418b2961978697794ab714eb66825426f76b5e889299bc8c9df&quot;,
+  &quot;from&quot;: &quot;0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x19bd5&quot;,
+  &quot;gasUsed&quot;: &quot;0x19bd5&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x0bfa04968f357418b2961978697794ab714eb66825426f76b5e889299bc8c9df&quot;,
+      &quot;blockNumber&quot;: &quot;0x44&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000153b2a71adda0ecd34a6233b31738fe5f7639c5a66cd9e50b1060d1a99d93a66cdb9c952cf0dab6cc17437ef3fa300a010894aca62161abfc0e682f4216a8f2f8effa&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xa06b3125603fcdb632a3c1ba65fd268234cd2aca0c721de45a5cfeb57fdec21e&quot;,
+        &quot;0xf5a97223b35c57905fd7bedf43f2480f5ff5067ce4f56ae2c32f12a4fb813561&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0xb3836332b39dcf098b27a9259c8a49fd785eebb3485dd8e2665c489d0a2368a8&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200000000000100000000000000000000000400000000000000000000000000000000000000000000000000000000000000020000000000000000800000000000000000000000008000000000000000000000100000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000200000000000000000000000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x278af&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 69</b>　已确认　奖励结算 <code>0xe098a20d80eed82a839406ae2b9da785ecec754b384888651680c72d3ef606aa</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xe098a20d80eed82a839406ae2b9da785ecec754b384888651680c72d3ef606aa&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x45&quot;,
+  &quot;blockHash&quot;: &quot;0x5df9f84308a0d21fe2039197bff6d0ce1e4a46f480c7ff456fe61a56f1b9c490&quot;,
+  &quot;from&quot;: &quot;0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x27a5e&quot;,
+  &quot;gasUsed&quot;: &quot;0x27a5e&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x5df9f84308a0d21fe2039197bff6d0ce1e4a46f480c7ff456fe61a56f1b9c490&quot;,
+      &quot;blockNumber&quot;: &quot;0x45&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000000&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000018&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0xe098a20d80eed82a839406ae2b9da785ecec754b384888651680c72d3ef606aa&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x5df9f84308a0d21fe2039197bff6d0ce1e4a46f480c7ff456fe61a56f1b9c490&quot;,
+      &quot;blockNumber&quot;: &quot;0x45&quot;,
+      &quot;data&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000018&quot;,
+      &quot;logIndex&quot;: &quot;0x1&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0x38ddfb1545d35d045d271c8eb109c2c9dec349862695ef12478d27d620a21165&quot;,
+        &quot;0xf5a97223b35c57905fd7bedf43f2480f5ff5067ce4f56ae2c32f12a4fb813561&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0xe098a20d80eed82a839406ae2b9da785ecec754b384888651680c72d3ef606aa&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200000000000100000000000000000000000400008000000000040000000000000000000000000000000000000020000000000000002000800000800000000000000000010000008000000000000000000000100000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000100002000000000000000000000000000000000000400020000000000020000000000000000000000000020000000000000000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x22a28&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><p><a href="screens/buyer-order.png">已成交四件套清单截图</a></p></section><section id="case-6"><div class="eyebrow">已通过 · 6 / 7</div><h2>两个买家竞争同一件藏品</h2><p>B、C 同时提交购买 #019 的独立签名交易。钱包 B 成交。B 和 C 的商品款扣款分别为 111 与 0 CR。回退交易的测试 ETH Gas 记录可在回执中查看。</p><details><summary><b>区块 71</b>　已确认　买入交割 <code>0x84e0b21e86a085d4864c4d045cfbb54013a3d99683256c22cf5175ab85c68e2c</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x84e0b21e86a085d4864c4d045cfbb54013a3d99683256c22cf5175ab85c68e2c&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x47&quot;,
+  &quot;blockHash&quot;: &quot;0x82dd3da683a1dceefb94028379b5bcac680cd3280eaaac4faad24a018c37e6aa&quot;,
+  &quot;from&quot;: &quot;0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x28366&quot;,
+  &quot;gasUsed&quot;: &quot;0x28366&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x5fbdb2315678afecb367f032d93f642f64180aa3&quot;,
+      &quot;blockHash&quot;: &quot;0x82dd3da683a1dceefb94028379b5bcac680cd3280eaaac4faad24a018c37e6aa&quot;,
+      &quot;blockNumber&quot;: &quot;0x47&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000006d&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x84e0b21e86a085d4864c4d045cfbb54013a3d99683256c22cf5175ab85c68e2c&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x5fbdb2315678afecb367f032d93f642f64180aa3&quot;,
+      &quot;blockHash&quot;: &quot;0x82dd3da683a1dceefb94028379b5bcac680cd3280eaaac4faad24a018c37e6aa&quot;,
+      &quot;blockNumber&quot;: &quot;0x47&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000002&quot;,
+      &quot;logIndex&quot;: &quot;0x1&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000009965507d1a55bcc2695c58ba16fb37d819b0a4dc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x84e0b21e86a085d4864c4d045cfbb54013a3d99683256c22cf5175ab85c68e2c&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x82dd3da683a1dceefb94028379b5bcac680cd3280eaaac4faad24a018c37e6aa&quot;,
+      &quot;blockNumber&quot;: &quot;0x47&quot;,
+      &quot;data&quot;: &quot;0x&quot;,
+      &quot;logIndex&quot;: &quot;0x2&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+        &quot;0x0000000000000000000000000000000000000000000000000000000000000013&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x84e0b21e86a085d4864c4d045cfbb54013a3d99683256c22cf5175ab85c68e2c&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    },
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x82dd3da683a1dceefb94028379b5bcac680cd3280eaaac4faad24a018c37e6aa&quot;,
+      &quot;blockNumber&quot;: &quot;0x47&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000006f00000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000013000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+      &quot;logIndex&quot;: &quot;0x3&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xebef43c6612290aece1a7db69405a778f85969a060c8acfd952dee38c8889416&quot;,
+        &quot;0x000000000000000000000000000000000000000000000000000000000000000d&quot;,
+        &quot;0x00000000000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x84e0b21e86a085d4864c4d045cfbb54013a3d99683256c22cf5175ab85c68e2c&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x20000004000000000042000000800000000100000000000000000000000000000000000040000000000000000000000000000000000040200000000000100000000000000000000000000008000000000002000000008000000000000000000000000840000000000000000000000000000800000000000000000010000000000000000000000000000000000000000000000000000000000000000200000000000000000000200000000000000000000000000000000000000000000000000000000042800000000000000000000000000000000000000000000000000000020000000000000000000000000000010081000000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x1a9b3&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 72</b>　已回退　买入交割 <code>0xb9ad4d3013906df4c0e6a31388f2f01df45cd3d6ada4ef990db952d66b4a94ee</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xb9ad4d3013906df4c0e6a31388f2f01df45cd3d6ada4ef990db952d66b4a94ee&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x48&quot;,
+  &quot;blockHash&quot;: &quot;0x6fb4304a05b47808748e3bef98abd97a07e0a611dd80003f94055a0bb42fcdb3&quot;,
+  &quot;from&quot;: &quot;0x90f79bf6eb2c4f870365e785982e1f101e93b906&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x7d83&quot;,
+  &quot;gasUsed&quot;: &quot;0x7d83&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;status&quot;: &quot;0x0&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x1a9b3&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details></section><section id="case-7"><div class="eyebrow">已通过 · 7 / 7</div><h2>整车挂牌锁与撤单</h2><p>整车挂牌锁住全部四件资产。拆卸和单卖轮胎 #003 均回退，原装配及订单锁完整。撤单解锁后，拆胎和指定编号挂牌成功。</p><details><summary><b>区块 73</b>　已确认　挂牌 / 撮合 <code>0xc07dee812789e17c80d5ac95dff0d5f43541b04d6b31b80122150493d9e5820d</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xc07dee812789e17c80d5ac95dff0d5f43541b04d6b31b80122150493d9e5820d&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x49&quot;,
+  &quot;blockHash&quot;: &quot;0x9321ca3b0dfd930fad253198ff207443bbe74b0c6f5d06f78136031c95e01260&quot;,
+  &quot;from&quot;: &quot;0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x4b46f&quot;,
+  &quot;gasUsed&quot;: &quot;0x4b46f&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x9321ca3b0dfd930fad253198ff207443bbe74b0c6f5d06f78136031c95e01260&quot;,
+      &quot;blockNumber&quot;: &quot;0x49&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000000300000000000000000000000000000000000000000000000000000000000001f40000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000030000000000000000000000000000000000000000000000000000000000000004&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xbaa1a07f78c9822854620fdb7be8b351b109a2ba2d6ced66458868cfdf454b6b&quot;,
+        &quot;0x000000000000000000000000000000000000000000000000000000000000000e&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0xc07dee812789e17c80d5ac95dff0d5f43541b04d6b31b80122150493d9e5820d&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000040200000000000100000000000000001000800000000000000000000000000000000000000000000000000000000000000000000000000000000000800000000004000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000200000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x1468b&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 74</b>　已回退　装配变更 <code>0xd4f90033828e99c7be1eff8fe9315e878c2fa4fcda4388ee788fd8955c2a8346</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xd4f90033828e99c7be1eff8fe9315e878c2fa4fcda4388ee788fd8955c2a8346&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x4a&quot;,
+  &quot;blockHash&quot;: &quot;0xd616562e06f0a00238deb7088978711f74b2dbf4258968b8a99feb849a61aa84&quot;,
+  &quot;from&quot;: &quot;0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x70ec&quot;,
+  &quot;gasUsed&quot;: &quot;0x70ec&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;status&quot;: &quot;0x0&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0x11e91&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 75</b>　已回退　挂牌 / 撮合 <code>0xb563533cb53266d80e5d4f051784681af231071c9d99acd7308901ee422e90ac</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xb563533cb53266d80e5d4f051784681af231071c9d99acd7308901ee422e90ac&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x4b&quot;,
+  &quot;blockHash&quot;: &quot;0x2859413d627202104ae345724ab113e936871c35c3689f3c8377da37771e9a9b&quot;,
+  &quot;from&quot;: &quot;0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x861b&quot;,
+  &quot;gasUsed&quot;: &quot;0x861b&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+  &quot;status&quot;: &quot;0x0&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0xfad1&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 76</b>　已确认　撤单 <code>0x243284121226735a1f0176ee5259374d1ae1b8c61eb68361099b226a9e11df05</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0x243284121226735a1f0176ee5259374d1ae1b8c61eb68361099b226a9e11df05&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x4c&quot;,
+  &quot;blockHash&quot;: &quot;0x2de91775f6d7ae86f06b2f2c5f589685564fae45f8a145e9d4e845a8b84d2861&quot;,
+  &quot;from&quot;: &quot;0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0xceb6&quot;,
+  &quot;gasUsed&quot;: &quot;0xceb6&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0x2de91775f6d7ae86f06b2f2c5f589685564fae45f8a145e9d4e845a8b84d2861&quot;,
+      &quot;blockNumber&quot;: &quot;0x4c&quot;,
+      &quot;data&quot;: &quot;0x0000000000000000000000000000000000000000000000000000000000000003&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xe6388006ab382821fcff3beea1b14269013fbb398ce2f0a6e9da5ecb4f3c6a1f&quot;,
+        &quot;0x000000000000000000000000000000000000000000000000000000000000000e&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0x243284121226735a1f0176ee5259374d1ae1b8c61eb68361099b226a9e11df05&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000040200000000000000000000000000000000800000000000000000040000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000000000001000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0xdb89&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details><details><summary><b>区块 78</b>　已确认　挂牌 / 撮合 <code>0xab03d60ab4c1af3fcd045a11564241e34ce8259936f37e0c3031516c086620c7</code></summary><pre>{
+  &quot;transactionHash&quot;: &quot;0xab03d60ab4c1af3fcd045a11564241e34ce8259936f37e0c3031516c086620c7&quot;,
+  &quot;transactionIndex&quot;: &quot;0x0&quot;,
+  &quot;blockNumber&quot;: &quot;0x4e&quot;,
+  &quot;blockHash&quot;: &quot;0xb0dc9e062dc2a74341baba02eb9dc5bb9e412129ab03dbeacc15f272574816ce&quot;,
+  &quot;from&quot;: &quot;0x3c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;,
+  &quot;to&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+  &quot;cumulativeGasUsed&quot;: &quot;0x2e236&quot;,
+  &quot;gasUsed&quot;: &quot;0x2e236&quot;,
+  &quot;contractAddress&quot;: null,
+  &quot;logs&quot;: [
+    {
+      &quot;address&quot;: &quot;0x9fe46736679d2d9a65f0992f2272de9f3c7fa6e0&quot;,
+      &quot;blockHash&quot;: &quot;0xb0dc9e062dc2a74341baba02eb9dc5bb9e412129ab03dbeacc15f272574816ce&quot;,
+      &quot;blockNumber&quot;: &quot;0x4e&quot;,
+      &quot;data&quot;: &quot;0x000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000440000000000000000000000000000000000000000000000000000000000000003000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000&quot;,
+      &quot;logIndex&quot;: &quot;0x0&quot;,
+      &quot;removed&quot;: false,
+      &quot;topics&quot;: [
+        &quot;0xbaa1a07f78c9822854620fdb7be8b351b109a2ba2d6ced66458868cfdf454b6b&quot;,
+        &quot;0x000000000000000000000000000000000000000000000000000000000000000f&quot;,
+        &quot;0x0000000000000000000000003c44cdddb6a900fa2b585dd299e03d12fa4293bc&quot;
+      ],
+      &quot;transactionHash&quot;: &quot;0xab03d60ab4c1af3fcd045a11564241e34ce8259936f37e0c3031516c086620c7&quot;,
+      &quot;transactionIndex&quot;: &quot;0x0&quot;
+    }
+  ],
+  &quot;logsBloom&quot;: &quot;0x00000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000040200000000000100000000000000001000000000000000000000000000000000000000000000002000000000000000000000000000000000000000800000000004000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000400000000000000000&quot;,
+  &quot;status&quot;: &quot;0x1&quot;,
+  &quot;effectiveGasPrice&quot;: &quot;0xa83a&quot;,
+  &quot;type&quot;: &quot;0x2&quot;
+}</pre></details></section><section><h2>复核现场</h2><p>运行 <code>node inspect-run.mjs</code> 可从留存的节点数据库副本恢复验收现场。Windows 便携包可使用 <code>runtime\node.exe inspect-run.mjs</code>。钱包页支持点开完整交易回执。</p><p class="small">资产合约 <code>0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0</code></p></section></main></html>

@@ -1,0 +1,82 @@
+{
+  "gpu": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "width": 1280,
+  "height": 720,
+  "framesPerScene": 240,
+  "constructionMs": 233.9,
+  "firstDrawMs": 2498.5,
+  "trace": [
+    {
+      "section": "起步车群",
+      "intervalMs": {
+        "median": 6.1,
+        "p95": 6.2,
+        "p99": 6.2,
+        "max": 12.1
+      },
+      "slow33ms": 0,
+      "workMs": {
+        "median": 1.4,
+        "p95": 2,
+        "p99": 2.8,
+        "max": 12.3
+      },
+      "gpuMs": {
+        "median": 1.58,
+        "p95": 3.2,
+        "p99": 3.72,
+        "max": 4.02
+      },
+      "medianDraws": 107,
+      "medianTriangles": 148163
+    },
+    {
+      "section": "湿弯车群",
+      "intervalMs": {
+        "median": 6.1,
+        "p95": 6.2,
+        "p99": 6.2,
+        "max": 6.2
+      },
+      "slow33ms": 0,
+      "workMs": {
+        "median": 1.2,
+        "p95": 1.7,
+        "p99": 1.8,
+        "max": 2.6
+      },
+      "gpuMs": {
+        "median": 1.58,
+        "p95": 3.45,
+        "p99": 3.8,
+        "max": 3.86
+      },
+      "medianDraws": 107,
+      "medianTriangles": 147815
+    },
+    {
+      "section": "沿岸独跑",
+      "intervalMs": {
+        "median": 6.1,
+        "p95": 6.2,
+        "p99": 6.2,
+        "max": 6.3
+      },
+      "slow33ms": 0,
+      "workMs": {
+        "median": 0.9,
+        "p95": 1.4,
+        "p99": 1.5,
+        "max": 1.6
+      },
+      "gpuMs": {
+        "median": 1.94,
+        "p95": 2.96,
+        "p99": 3.22,
+        "max": 3.53
+      },
+      "medianDraws": 56,
+      "medianTriangles": 70089
+    }
+  ]
+}

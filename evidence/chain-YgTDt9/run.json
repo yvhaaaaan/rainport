@@ -1,0 +1,10 @@
+{
+  "started": "2026-11-22T08:54:53.370Z",
+  "passed": 7,
+  "total": 7,
+  "stage": "运行七项验收",
+  "nodeData": "node-data",
+  "receipts": 78,
+  "finished": "2026-11-22T09:00:13.645Z",
+  "status": "通过"
+}

@@ -1,0 +1,41 @@
+{
+  "setup": "借用车，沿岸直道 108 km/h，无邻车。20 ms 点按逐毫秒遍历 50 个起始相位；回正及反打从满舵测量。",
+  "previous": {
+    "version": 3,
+    "inputStepMs": 50,
+    "steeringTaps": {
+      "tested": 50,
+      "visible": 20,
+      "official": 20,
+      "maxDiscrepancyM": 0
+    },
+    "brakeTaps": {
+      "tested": 50,
+      "visible": 20,
+      "official": 20,
+      "maxDiscrepancyM": 0
+    },
+    "reverseFromRightLockMs": 371,
+    "steeringReleaseMs": 250,
+    "brake80PercentMs": 101
+  },
+  "current": {
+    "version": 4,
+    "inputStepMs": 10,
+    "steeringTaps": {
+      "tested": 50,
+      "visible": 50,
+      "official": 50,
+      "maxDiscrepancyM": 0
+    },
+    "brakeTaps": {
+      "tested": 50,
+      "visible": 50,
+      "official": 50,
+      "maxDiscrepancyM": 0
+    },
+    "reverseFromRightLockMs": 101,
+    "steeringReleaseMs": 140,
+    "brake80PercentMs": 62
+  }
+}

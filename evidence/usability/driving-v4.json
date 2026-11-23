@@ -1,0 +1,251 @@
+{
+  "mode": "百赫兹双轴车辆动力学与历史兼容性验证",
+  "seed": "0x0000ff82",
+  "outerStep": 0.05,
+  "dynamicsStep": 0.01,
+  "sectorSeconds": [
+    {
+      "label": "借用车",
+      "spec": [
+        1,
+        3,
+        5
+      ],
+      "style": "循迹",
+      "wet": 46.088,
+      "straight": 40.656,
+      "total": 86.744,
+      "position": 1,
+      "terminalKmh": 174.5
+    },
+    {
+      "label": "更换 R2 雨胎",
+      "spec": [
+        1,
+        4,
+        5
+      ],
+      "style": "循迹",
+      "wet": 44.239,
+      "straight": 40.494,
+      "total": 84.733,
+      "position": 1,
+      "terminalKmh": 174.5
+    },
+    {
+      "label": "更换 E3 高速引擎",
+      "spec": [
+        2,
+        3,
+        5
+      ],
+      "style": "循迹",
+      "wet": 45.088,
+      "straight": 36.664,
+      "total": 81.752,
+      "position": 1,
+      "terminalKmh": 196.29
+    },
+    {
+      "label": "更换 W3 高下压力尾翼",
+      "spec": [
+        1,
+        3,
+        6
+      ],
+      "style": "循迹",
+      "wet": 45.562,
+      "straight": 41.349,
+      "total": 86.911,
+      "position": 1,
+      "terminalKmh": 171.11
+    },
+    {
+      "label": "借用车",
+      "spec": [
+        1,
+        3,
+        5
+      ],
+      "style": "只踩油门",
+      "wet": 53.8,
+      "straight": 42.58,
+      "total": 96.38,
+      "position": 6,
+      "terminalKmh": 171.26
+    },
+    {
+      "label": "借用车",
+      "spec": [
+        1,
+        3,
+        5
+      ],
+      "style": "提前制动",
+      "wet": 52.389,
+      "straight": 41.417,
+      "total": 93.806,
+      "position": 4,
+      "terminalKmh": 174.5
+    }
+  ],
+  "rivals": [
+    {
+      "name": "冬青",
+      "time": 91.074
+    },
+    {
+      "name": "汐音",
+      "time": 91.904
+    },
+    {
+      "name": "云岬",
+      "time": 93.721
+    },
+    {
+      "name": "沙鸥",
+      "time": 94.637
+    },
+    {
+      "name": "余烬",
+      "time": 95.638
+    },
+    {
+      "name": "许澜",
+      "time": 96.581
+    },
+    {
+      "name": "浅滩",
+      "time": 97.658
+    }
+  ],
+  "controls": {
+    "railRecoveries": [
+      {
+        "angleDegrees": 6,
+        "approachKmh": 111.60000000000001,
+        "minimumKmh": 106.55,
+        "releaseSeconds": 1.05
+      },
+      {
+        "angleDegrees": 20,
+        "approachKmh": 111.60000000000001,
+        "minimumKmh": 86.76,
+        "releaseSeconds": 1
+      },
+      {
+        "angleDegrees": 40,
+        "approachKmh": 111.60000000000001,
+        "minimumKmh": 47.05,
+        "releaseSeconds": 0.95
+      }
+    ],
+    "initialSteer": 0.18000000000000002,
+    "heldYaw": 0.048138670141365254,
+    "coastingKmhAfterOneSecond": 125.63,
+    "brakingKmhAfterOneSecond": 93.52,
+    "sideBarrierImpulse": 0.779,
+    "rearContactKmhLost": 37.99,
+    "legacyLap": 86.688,
+    "legacyV2Lap": 86.638,
+    "stoppingMetres": {
+      "wetRoadTire": 51.58,
+      "wetRainTire": 42.79,
+      "dryRoadTire": 40.71
+    },
+    "cornerGrip": {
+      "free": {
+        "yawRate": 0.323,
+        "sideForceG": 0.583,
+        "slipAngle": 0.083
+      },
+      "fullBrake": {
+        "yawRate": 0.305,
+        "sideForceG": 0.431,
+        "slipAngle": 0.091
+      }
+    }
+  },
+  "dropCounts": [
+    {
+      "position": 1,
+      "counts": [
+        0,
+        2000,
+        5000,
+        2850,
+        150
+      ]
+    },
+    {
+      "position": 2,
+      "counts": [
+        1000,
+        4500,
+        3400,
+        1050,
+        50
+      ]
+    },
+    {
+      "position": 3,
+      "counts": [
+        1000,
+        4500,
+        3400,
+        1050,
+        50
+      ]
+    },
+    {
+      "position": 4,
+      "counts": [
+        3000,
+        5500,
+        1200,
+        290,
+        10
+      ]
+    },
+    {
+      "position": 5,
+      "counts": [
+        3000,
+        5500,
+        1200,
+        290,
+        10
+      ]
+    },
+    {
+      "position": 6,
+      "counts": [
+        5500,
+        4000,
+        400,
+        98,
+        2
+      ]
+    },
+    {
+      "position": 7,
+      "counts": [
+        5500,
+        4000,
+        400,
+        98,
+        2
+      ]
+    },
+    {
+      "position": 8,
+      "counts": [
+        5500,
+        4000,
+        400,
+        98,
+        2
+      ]
+    }
+  ]
+}

@@ -1,0 +1,172 @@
+[
+  {
+    "case": 1,
+    "text": "按排名掉落，重开结算与重复抽取保持同一编号",
+    "values": {
+      "race": "0x6a4efeeac6e3715721d7aa3433d24137c1543d8d884368b1a82a713cf53bde6b",
+      "rank": 1,
+      "prize": 22,
+      "total": 84.988,
+      "receipt": {
+        "hash": "0xa5c60c08c20386686c133f2b9fa925723862c060b933ed93d7d85729e93f136e",
+        "block": 48,
+        "status": 1
+      },
+      "count": 22
+    }
+  },
+  {
+    "case": 2,
+    "text": "装车后二跑，来源赛事与首次使用赛事分别可查",
+    "values": {
+      "prize": 22,
+      "origin": "0x6a4efeeac6e3715721d7aa3433d24137c1543d8d884368b1a82a713cf53bde6b",
+      "firstUse": "0x190fa33efca2bc59b918f8387f9f0a6d9d591b8d100fd849a16633be16a77bc2",
+      "rank": 1,
+      "sectors": [
+        44.476,
+        40.512
+      ],
+      "fit": {
+        "hash": "0x41fdb01d4bfba8e0c146aca657967f0de55325ad3c483e4b371ee240e1277ee5",
+        "block": 49,
+        "status": 1
+      },
+      "traceSamples": 341
+    }
+  },
+  {
+    "case": 3,
+    "text": "拆下指定雨胎，过户后保留原车手参赛履历",
+    "values": {
+      "serial": 7,
+      "listing": {
+        "hash": "0xb9d0f461efdc031237a02ea9155bfbcf0f3615401f5b9a5e764f6e468733db9a",
+        "block": 55,
+        "status": 1
+      },
+      "buy": {
+        "hash": "0xf51fe6adc1f16f269ad9682e17ae26f7ba79b5ba150a267e0cc4480936380b64",
+        "block": 56,
+        "status": 1
+      },
+      "mountedOn": 5,
+      "originalLap": "0x6a4efeeac6e3715721d7aa3433d24137c1543d8d884368b1a82a713cf53bde6b"
+    }
+  },
+  {
+    "case": 4,
+    "text": "求购托管、主动同款撮合、指定编号隔离、撤单退款",
+    "values": {
+      "escrowDelta": 52,
+      "bid": {
+        "hash": "0xd2fe05a8e7c28bf945c37ec004be87857c49f80e596aed0c8c64ccffc4b4cff1",
+        "block": 58,
+        "status": 1
+      },
+      "filled": {
+        "hash": "0x16044f024487b80308efc761f5332f876efbf1de6c34e1fa87beebb2c6f99cc7",
+        "block": 61,
+        "status": 1
+      },
+      "price": 52,
+      "excludedOrder": 9,
+      "returned": 40,
+      "refund": {
+        "hash": "0xcebaaeddb530a5d4862624e8edef6b52a8420c0d3afac51b7e37b58417930f00",
+        "block": 63,
+        "status": 1
+      }
+    }
+  },
+  {
+    "case": 5,
+    "text": "500 CR 整车原子交割，买家使用原配置完赛",
+    "values": {
+      "ids": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "buyCar": {
+        "hash": "0x7cf8d5e02085efd0ea40fa4d2f824dacc2f627909ab89317472dfea0ba2ff138",
+        "block": 66,
+        "status": 1
+      },
+      "seller": 490,
+      "buyer": -500,
+      "fee": 10,
+      "race": "0x7d80d697e040dcac67ad4ba85f94cf5e684d9216c24b7b04727bc642f3979036",
+      "total": 87.299
+    }
+  },
+  {
+    "case": 6,
+    "text": "两个独立买方竞争同一编号，仅成交者取得部件并支付货款",
+    "values": {
+      "serial": 19,
+      "attempts": [
+        {
+          "ok": true,
+          "hash": "0x84e0b21e86a085d4864c4d045cfbb54013a3d99683256c22cf5175ab85c68e2c",
+          "block": 71,
+          "status": 1
+        },
+        {
+          "ok": false,
+          "hash": "0xb9ad4d3013906df4c0e6a31388f2f01df45cd3d6ada4ef990db952d66b4a94ee",
+          "block": 72,
+          "status": 0,
+          "reason": "OrderClosed"
+        }
+      ],
+      "spends": [
+        111,
+        0
+      ],
+      "winner": "B",
+      "owner": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
+    }
+  },
+  {
+    "case": 7,
+    "text": "整车挂牌期间拒绝拆胎和单卖，撤单后拆胎并按编号挂牌",
+    "values": {
+      "tire": 3,
+      "listed": {
+        "hash": "0x26c33dc46496493511b3d665c862dfcdde95af08598fd067e7faba4127438e59",
+        "block": 73,
+        "status": 1
+      },
+      "detachRejection": {
+        "reason": "CarListed",
+        "receipt": {
+          "hash": "0xd4f90033828e99c7be1eff8fe9315e878c2fa4fcda4388ee788fd8955c2a8346",
+          "block": 74,
+          "status": 0,
+          "reason": "CarListed"
+        }
+      },
+      "rejection": {
+        "reason": "AssetListed",
+        "receipt": {
+          "hash": "0x047861f9e99859fd0a4ea08381490920a307ca6f7bfe5d5eec1f6a804fcbaf36",
+          "block": 75,
+          "status": 0,
+          "reason": "AssetListed"
+        }
+      },
+      "cancelled": {
+        "hash": "0x243284121226735a1f0176ee5259374d1ae1b8c61eb68361099b226a9e11df05",
+        "block": 76,
+        "status": 1
+      },
+      "relist": {
+        "hash": "0xd95a68027859f1e0667c1d3051ca549e0262b4e7a6a0c8319c7c9642f0251194",
+        "block": 78,
+        "status": 1
+      }
+    }
+  }
+]

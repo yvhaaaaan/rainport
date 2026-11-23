@@ -1,0 +1,22 @@
+{
+  "url": "http://127.0.0.1:19285",
+  "errors": [],
+  "log": [
+    {
+      "screen": "grid.png",
+      "text": "雨港 / 冲刺赛\nP8\n/ 8\nS1　港区湿弯\n声音开\n退出比赛\n3\n单圈用时\n0:00.000\n按住 W / ↑ 或油门起步\n0\nkm/h\n1\n挡位"
+    },
+    {
+      "screen": "wet-bend.png",
+      "text": "雨港 / 冲刺赛\nP3\n/ 8\nS1　港区湿弯\n声音开\n退出比赛\n单圈用时\n0:14.126\n剩余 3.37 km\n163\nkm/h\n6\n挡位"
+    },
+    {
+      "screen": "coast.png",
+      "text": "雨港 / 冲刺赛\nP1\n/ 8\nS2　沿岸直道\n声音开\n退出比赛\n单圈用时\n0:57.091\n剩余 1.46 km\n174\nkm/h\n6\n挡位"
+    },
+    {
+      "screen": "finish.png",
+      "text": "弯道档案\nCURVE ARCHIVE\n比赛\n车库\n展馆\n市场\n钱包\n本地链 · 钱包 A\nRAINPORT / FINISH\n雨港完赛\n最终名次\nP1 / 8\n总用时\n1:27.165\n赛事\n雨港\nS1　港区湿弯\n0:46.466\nS2　沿岸直道\n0:40.699\n精良 · E3 高速引擎 #023\n本场掉落已登记\n查看展签\n八车完赛榜与赛事凭证\n装车再跑\n跟随本圈幽灵\n返回发车区"
+    }
+  ]
+}

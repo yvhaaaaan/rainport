@@ -1,0 +1,149 @@
+{
+  "mode": "练习适配器，确定性时钟，无链上回执",
+  "checks": [
+    {
+      "case": 1,
+      "text": "按排名掉落，重开结算与重复抽取保持同一编号",
+      "values": {
+        "race": "练习-1a2025379d3",
+        "rank": 1,
+        "prize": 23,
+        "total": 85.753,
+        "receipt": {
+          "practice": true,
+          "action": "再次结算"
+        },
+        "count": 23
+      }
+    },
+    {
+      "case": 2,
+      "text": "装车后二跑，来源赛事与首次使用赛事分别可查",
+      "values": {
+        "prize": 23,
+        "origin": "练习-1a2025379d3",
+        "firstUse": "练习-1a20254c8fb",
+        "rank": 1,
+        "sectors": [
+          40.999,
+          36.158
+        ],
+        "fit": {
+          "practice": true,
+          "action": "fit"
+        },
+        "traceSamples": 310
+      }
+    },
+    {
+      "case": 3,
+      "text": "拆下指定雨胎，过户后保留原车手参赛履历",
+      "values": {
+        "serial": 7,
+        "listing": {
+          "practice": true,
+          "action": "list"
+        },
+        "buy": {
+          "practice": true,
+          "action": "buy"
+        },
+        "mountedOn": 5,
+        "originalLap": "练习-1a2025379d3"
+      }
+    },
+    {
+      "case": 4,
+      "text": "求购托管、主动同款撮合、指定编号隔离、撤单退款",
+      "values": {
+        "escrowDelta": 52,
+        "bid": {
+          "practice": true,
+          "action": "bid"
+        },
+        "filled": {
+          "practice": true,
+          "action": "list"
+        },
+        "price": 52,
+        "excludedOrder": 10,
+        "returned": 40,
+        "refund": {
+          "practice": true,
+          "action": "close"
+        }
+      }
+    },
+    {
+      "case": 5,
+      "text": "500 CR 整车原子交割，买家使用原配置完赛",
+      "values": {
+        "ids": [
+          1,
+          23,
+          3,
+          4
+        ],
+        "buyCar": {
+          "practice": true,
+          "action": "buy"
+        },
+        "seller": 490,
+        "buyer": -500,
+        "fee": 10,
+        "race": "练习-1a20255f68b",
+        "total": 78.136
+      }
+    },
+    {
+      "case": 6,
+      "text": "两个独立买方竞争同一编号，仅成交者取得部件并支付货款",
+      "values": {
+        "serial": 19,
+        "attempts": [
+          {
+            "ok": true,
+            "practice": true
+          },
+          {
+            "ok": false,
+            "reason": "订单已关闭"
+          }
+        ],
+        "spends": [
+          111,
+          0
+        ],
+        "winner": "B",
+        "owner": "练习车手 B"
+      }
+    },
+    {
+      "case": 7,
+      "text": "整车挂牌期间拒绝拆胎和单卖，撤单后拆胎并按编号挂牌",
+      "values": {
+        "tire": 3,
+        "listed": {
+          "practice": true,
+          "action": "list"
+        },
+        "detachRejection": {
+          "reason": "底盘已锁定或不属于当前车手",
+          "receipt": null
+        },
+        "rejection": {
+          "reason": "资产已挂牌、已装配或不属于当前车手",
+          "receipt": null
+        },
+        "cancelled": {
+          "practice": true,
+          "action": "close"
+        },
+        "relist": {
+          "practice": true,
+          "action": "list"
+        }
+      }
+    }
+  ]
+}

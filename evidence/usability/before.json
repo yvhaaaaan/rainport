@@ -1,0 +1,302 @@
+{
+  "variant": "before",
+  "clientSHA256": "73f572717fe21604b5dc526d41d5c325681ab5a6ef8606ed12f06a0e32d271b5",
+  "instrumentedSHA256": "f49c13c5512ae0e49a96df829a508fe79326947aae92546a6e9631d576e97fed",
+  "cssSHA256": "8df3db1fc8219284920af10722741cc0b3569fc5ffc5093d38c2a47d6c7caee1",
+  "fixture": "demo-seed",
+  "protocol": "Real Chrome CDP key/touch input. A read-only render probe samples steer/brake/yaw, speed in m/s and track-relative x at the Three.js player draw. Times measured on performance.now in the page. The isolated node records the lap.",
+  "shortSteerTaps": {
+    "count": 9,
+    "detected": 4,
+    "medianResponseMs": 20.9,
+    "pulses": [
+      {
+        "key": "d",
+        "heldMs": 27,
+        "firstRenderedResponseMs": null,
+        "peakChange": 0,
+        "wire": [
+          [
+            4,
+            2.05,
+            0,
+            0,
+            1
+          ],
+          [
+            5,
+            2.05,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "key": "a",
+        "heldMs": 24,
+        "firstRenderedResponseMs": 22.1,
+        "peakChange": 0.13,
+        "wire": [
+          [
+            6,
+            2.3,
+            0,
+            0,
+            -1
+          ],
+          [
+            7,
+            2.35,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "key": "d",
+        "heldMs": 24.3,
+        "firstRenderedResponseMs": null,
+        "peakChange": 0,
+        "wire": [
+          [
+            8,
+            2.6,
+            0,
+            0,
+            1
+          ],
+          [
+            9,
+            2.6,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "key": "a",
+        "heldMs": 27.1,
+        "firstRenderedResponseMs": null,
+        "peakChange": 0,
+        "wire": [
+          [
+            10,
+            2.9,
+            0,
+            0,
+            -1
+          ],
+          [
+            11,
+            2.9,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "key": "d",
+        "heldMs": 27.5,
+        "firstRenderedResponseMs": 13.8,
+        "peakChange": 0.13,
+        "wire": [
+          [
+            12,
+            3.15,
+            0,
+            0,
+            1
+          ],
+          [
+            13,
+            3.2,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "key": "a",
+        "heldMs": 25.5,
+        "firstRenderedResponseMs": 8.4,
+        "peakChange": 0.14,
+        "wire": [
+          [
+            14,
+            3.45,
+            0,
+            0,
+            -1
+          ],
+          [
+            15,
+            3.5,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "key": "d",
+        "heldMs": 24.7,
+        "firstRenderedResponseMs": null,
+        "peakChange": 0,
+        "wire": [
+          [
+            16,
+            3.8,
+            0,
+            0,
+            1
+          ],
+          [
+            17,
+            3.8,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "key": "a",
+        "heldMs": 25,
+        "firstRenderedResponseMs": 20.9,
+        "peakChange": 0.13,
+        "wire": [
+          [
+            18,
+            4.1,
+            0,
+            0,
+            -1
+          ],
+          [
+            19,
+            4.15,
+            0,
+            0,
+            0
+          ]
+        ]
+      },
+      {
+        "key": "d",
+        "heldMs": 35.3,
+        "firstRenderedResponseMs": null,
+        "peakChange": 0,
+        "wire": [
+          [
+            20,
+            4.45,
+            0,
+            0,
+            1
+          ],
+          [
+            21,
+            4.45,
+            0,
+            0,
+            0
+          ]
+        ]
+      }
+    ]
+  },
+  "reverse": {
+    "firstRightMs": 63.7,
+    "oppositeHeldMs": 155.5,
+    "requestedDuringOverlap": 0,
+    "firstLeftSteerAfterPressMs": 216.7,
+    "neutralAfterReleaseMs": 202.5
+  },
+  "braking": {
+    "firstBrakeMs": 44.1,
+    "releaseMs": 113.3,
+    "initialKmh": 37.79,
+    "endKmh": 37.78,
+    "requestAtEnd": [
+      1,
+      1,
+      0
+    ]
+  },
+  "touch": {
+    "viewport": [
+      844,
+      390
+    ],
+    "points": {
+      "a": {
+        "x": 61.3125,
+        "y": 338.703125
+      },
+      "d": {
+        "x": 141.3125,
+        "y": 338.703125
+      },
+      "s": {
+        "x": 702.6875,
+        "y": 338.703125
+      },
+      "w": {
+        "x": 782.6875,
+        "y": 338.703125
+      }
+    },
+    "submittedControlSequence": {
+      "gas": [
+        1,
+        0,
+        0
+      ],
+      "gasLeft": [
+        1,
+        0,
+        -1
+      ],
+      "slideAcrossSteering": [
+        1,
+        0,
+        -1
+      ],
+      "slideAcrossPedals": [
+        1,
+        0,
+        -1
+      ],
+      "afterCancel": [
+        0,
+        0,
+        0
+      ],
+      "keyboardStillHeld": [
+        0,
+        0,
+        0
+      ]
+    }
+  },
+  "focus": {
+    "trigger": "window blur event (CDP headless)",
+    "keysAfterReturn": [
+      0,
+      0,
+      0
+    ]
+  },
+  "race": {
+    "id": "0x3efa40aaac22511983d55b3d2dd5a65ea4d8762f139be7271b213a9aa24d4c77",
+    "physicsVersion": 3,
+    "serverElapsed": 8.3,
+    "renderer": "webgl2"
+  },
+  "browserErrors": []
+}

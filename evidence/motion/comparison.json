@@ -1,0 +1,127 @@
+{
+  "protocol": "Chrome 1280×720，独立本地链。借用车从起步后3秒起，持续油门并依次右转、左转、短刹车。延迟档的双向附加 RTT 循环取150、225、175、250、200毫秒。",
+  "intervals": "采样约12秒，并单列持续运动的前6秒。每个通过 WebGL clear 并实际绘制的帧从道路着色器 viewer 读取纵向位置。帧间隔包含浏览器与系统调度。",
+  "before": "019923f15c579f8edcb6e34f5a129f4b6b053178e77af17613e9cb78024ea9fc",
+  "after": "d09d6420a2cb6e5d114f11192b082b039514c41b8d53b35297f61c6179ec7902",
+  "gpu": "ANGLE (AMD, AMD Radeon 780M Graphics (0x00001900) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "conditions": [
+    {
+      "condition": "normal-loopback",
+      "movingFirst6s": {
+        "before": {
+          "frames": 990,
+          "p95FrameMs": 6.6,
+          "maxFrameMs": 13.3,
+          "framesAbove50ms": 0,
+          "medianRttMs": 2.8,
+          "stopPct": 0,
+          "stopsAbove50ms": 0,
+          "longestStopMs": 0,
+          "reversals": 4,
+          "largestForwardStepM": 0.527,
+          "implausibleForwardSteps": 0
+        },
+        "after": {
+          "frames": 990,
+          "p95FrameMs": 6.5,
+          "maxFrameMs": 7.9,
+          "framesAbove50ms": 0,
+          "medianRttMs": 3,
+          "stopPct": 0,
+          "stopsAbove50ms": 0,
+          "longestStopMs": 0,
+          "reversals": 0,
+          "largestForwardStepM": 0.223,
+          "implausibleForwardSteps": 0
+        }
+      },
+      "entireRun": {
+        "before": {
+          "frames": 1989,
+          "p95FrameMs": 6.6,
+          "maxFrameMs": 84.7,
+          "framesAbove50ms": 1,
+          "medianRttMs": 2.8,
+          "stopPct": 0.15,
+          "stopsAbove50ms": 0,
+          "longestStopMs": 12.2,
+          "reversals": 9,
+          "largestForwardStepM": 1.527,
+          "implausibleForwardSteps": 1
+        },
+        "after": {
+          "frames": 1992,
+          "p95FrameMs": 6.5,
+          "maxFrameMs": 69.4,
+          "framesAbove50ms": 1,
+          "medianRttMs": 2.9,
+          "stopPct": 0,
+          "stopsAbove50ms": 0,
+          "longestStopMs": 0,
+          "reversals": 0,
+          "largestForwardStepM": 2.316,
+          "implausibleForwardSteps": 0
+        }
+      }
+    },
+    {
+      "condition": "added-rtt-jitter-150-250ms",
+      "movingFirst6s": {
+        "before": {
+          "frames": 990,
+          "p95FrameMs": 6.6,
+          "maxFrameMs": 8.7,
+          "framesAbove50ms": 0,
+          "medianRttMs": 206.8,
+          "stopPct": 51.28,
+          "stopsAbove50ms": 20,
+          "longestStopMs": 206.1,
+          "reversals": 0,
+          "largestForwardStepM": 8.444,
+          "implausibleForwardSteps": 20
+        },
+        "after": {
+          "frames": 989,
+          "p95FrameMs": 6.6,
+          "maxFrameMs": 12.2,
+          "framesAbove50ms": 0,
+          "medianRttMs": 205.6,
+          "stopPct": 0,
+          "stopsAbove50ms": 0,
+          "longestStopMs": 0,
+          "reversals": 0,
+          "largestForwardStepM": 0.295,
+          "implausibleForwardSteps": 0
+        }
+      },
+      "entireRun": {
+        "before": {
+          "frames": 1989,
+          "p95FrameMs": 6.6,
+          "maxFrameMs": 68.5,
+          "framesAbove50ms": 1,
+          "medianRttMs": 206.5,
+          "stopPct": 51.442,
+          "stopsAbove50ms": 41,
+          "longestStopMs": 206.8,
+          "reversals": 0,
+          "largestForwardStepM": 8.445,
+          "implausibleForwardSteps": 40
+        },
+        "after": {
+          "frames": 1990,
+          "p95FrameMs": 6.6,
+          "maxFrameMs": 77.3,
+          "framesAbove50ms": 1,
+          "medianRttMs": 205.9,
+          "stopPct": 0,
+          "stopsAbove50ms": 0,
+          "longestStopMs": 0,
+          "reversals": 0,
+          "largestForwardStepM": 2.614,
+          "implausibleForwardSteps": 0
+        }
+      }
+    }
+  ]
+}

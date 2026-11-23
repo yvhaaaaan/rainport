@@ -1,0 +1,11 @@
+{
+  "capture": "live Chrome DevTools JPEG frames and simultaneous Web Audio, original capture timestamps",
+  "frames": 139,
+  "width": 960,
+  "height": 540,
+  "durationMs": 8222,
+  "frameMedianMs": 61,
+  "frameMaxMs": 96,
+  "frameP95Ms": 66,
+  "audioOpus": true
+}

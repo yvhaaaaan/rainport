@@ -1,0 +1,171 @@
+{
+  "check": "真实曲率左右方向、前瞻与当前轮胎/尾翼制动建议",
+  "calls": [
+    {
+      "d": 168,
+      "curvature": 0.0032580387307469864,
+      "note": {
+        "turn": "right",
+        "name": "右弯",
+        "detail": "减至 150 km/h",
+        "brake": true
+      }
+    },
+    {
+      "d": 756,
+      "curvature": -0.003856468528792758,
+      "note": {
+        "turn": "left",
+        "name": "左弯",
+        "detail": "减至 135 km/h",
+        "brake": true
+      }
+    },
+    {
+      "d": 1330,
+      "curvature": 0.0025098422159481317,
+      "note": {
+        "turn": "right",
+        "name": "右弯",
+        "detail": "保持走线",
+        "brake": false
+      }
+    },
+    {
+      "d": 1678,
+      "curvature": -0.003742479718448069,
+      "note": {
+        "turn": "left",
+        "name": "左弯",
+        "detail": "减至 140 km/h",
+        "brake": true
+      }
+    }
+  ],
+  "tireCases": [
+    {
+      "spec": [
+        1,
+        3,
+        5
+      ],
+      "note": {
+        "turn": "left",
+        "name": "左弯",
+        "detail": "减至 135 km/h",
+        "brake": true
+      }
+    },
+    {
+      "spec": [
+        1,
+        4,
+        5
+      ],
+      "note": {
+        "turn": "left",
+        "name": "左弯",
+        "detail": "减至 150 km/h",
+        "brake": true
+      }
+    },
+    {
+      "spec": [
+        1,
+        3,
+        6
+      ],
+      "note": {
+        "turn": "left",
+        "name": "左弯",
+        "detail": "减至 150 km/h",
+        "brake": true
+      }
+    },
+    {
+      "spec": [
+        1,
+        4,
+        6
+      ],
+      "note": {
+        "turn": "left",
+        "name": "左弯",
+        "detail": "距弯心 30 m",
+        "brake": false
+      }
+    }
+  ],
+  "drySection": 1820,
+  "noSteer": [
+    {
+      "version": 3,
+      "first": {
+        "t": 0.05,
+        "d": 0.0010597140842427029,
+        "guide": "90 m后右弯"
+      },
+      "shoulder": {
+        "t": 9.45,
+        "d": 213.32734325079645
+      },
+      "wall": {
+        "t": 9.6,
+        "d": 218.82452153777518
+      }
+    },
+    {
+      "version": 4,
+      "first": {
+        "t": 0.05,
+        "d": 0.0010597140842427029,
+        "guide": "90 m后右弯"
+      },
+      "shoulder": {
+        "t": 9.1,
+        "d": 202.217279511036
+      },
+      "wall": {
+        "t": 9.25,
+        "d": 207.62973293341025
+      }
+    }
+  ],
+  "iterations": 150000,
+  "guideMicrosecondsPerEvaluation": 0.16,
+  "barrierRecovery": {
+    "start": {
+      "t": 12.8,
+      "d": 327.05374476362647,
+      "x": -1.0219874058697724,
+      "rumble": 1,
+      "note": {
+        "turn": "right",
+        "name": "向右回到路面",
+        "detail": "松油轻打方向",
+        "brake": false,
+        "recovering": true
+      }
+    },
+    "opposite": {
+      "turn": "left",
+      "name": "向左回到路面",
+      "detail": "松油轻打方向",
+      "brake": false,
+      "recovering": true
+    },
+    "recovery": {
+      "t": 14.05,
+      "d": 368.7975419484698,
+      "x": -0.8232994050735671,
+      "rumble": 0,
+      "note": {
+        "turn": "right",
+        "name": "右弯",
+        "detail": "出弯回正",
+        "brake": false
+      }
+    },
+    "seconds": 1.25
+  }
+}

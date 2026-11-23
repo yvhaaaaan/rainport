@@ -1,0 +1,310 @@
+[
+  {
+    "seed": 0,
+    "cadence": [
+      100
+    ],
+    "rank": 1,
+    "time": 84.824,
+    "minWetKmh": 132.8
+  },
+  {
+    "seed": 0,
+    "cadence": [
+      135
+    ],
+    "rank": 1,
+    "time": 85.031,
+    "minWetKmh": 133.3
+  },
+  {
+    "seed": 0,
+    "cadence": [
+      100,
+      118,
+      107,
+      135,
+      111
+    ],
+    "rank": 1,
+    "time": 84.883,
+    "minWetKmh": 132.7
+  },
+  {
+    "seed": 0,
+    "cadence": [
+      122,
+      158,
+      95,
+      135,
+      100
+    ],
+    "rank": 1,
+    "time": 84.858,
+    "minWetKmh": 132.5
+  },
+  {
+    "seed": 1,
+    "cadence": [
+      100
+    ],
+    "rank": 1,
+    "time": 84.824,
+    "minWetKmh": 132.8
+  },
+  {
+    "seed": 1,
+    "cadence": [
+      135
+    ],
+    "rank": 1,
+    "time": 85.031,
+    "minWetKmh": 133.3
+  },
+  {
+    "seed": 1,
+    "cadence": [
+      100,
+      118,
+      107,
+      135,
+      111
+    ],
+    "rank": 1,
+    "time": 84.883,
+    "minWetKmh": 132.7
+  },
+  {
+    "seed": 1,
+    "cadence": [
+      122,
+      158,
+      95,
+      135,
+      100
+    ],
+    "rank": 1,
+    "time": 84.858,
+    "minWetKmh": 132.5
+  },
+  {
+    "seed": 2,
+    "cadence": [
+      100
+    ],
+    "rank": 1,
+    "time": 84.824,
+    "minWetKmh": 132.8
+  },
+  {
+    "seed": 2,
+    "cadence": [
+      135
+    ],
+    "rank": 1,
+    "time": 85.031,
+    "minWetKmh": 133.3
+  },
+  {
+    "seed": 2,
+    "cadence": [
+      100,
+      118,
+      107,
+      135,
+      111
+    ],
+    "rank": 1,
+    "time": 84.883,
+    "minWetKmh": 132.7
+  },
+  {
+    "seed": 2,
+    "cadence": [
+      122,
+      158,
+      95,
+      135,
+      100
+    ],
+    "rank": 1,
+    "time": 84.858,
+    "minWetKmh": 132.5
+  },
+  {
+    "seed": 3,
+    "cadence": [
+      100
+    ],
+    "rank": 1,
+    "time": 84.824,
+    "minWetKmh": 132.8
+  },
+  {
+    "seed": 3,
+    "cadence": [
+      135
+    ],
+    "rank": 1,
+    "time": 85.031,
+    "minWetKmh": 133.3
+  },
+  {
+    "seed": 3,
+    "cadence": [
+      100,
+      118,
+      107,
+      135,
+      111
+    ],
+    "rank": 1,
+    "time": 84.883,
+    "minWetKmh": 132.7
+  },
+  {
+    "seed": 3,
+    "cadence": [
+      122,
+      158,
+      95,
+      135,
+      100
+    ],
+    "rank": 1,
+    "time": 84.858,
+    "minWetKmh": 132.5
+  },
+  {
+    "seed": 4,
+    "cadence": [
+      100
+    ],
+    "rank": 1,
+    "time": 84.824,
+    "minWetKmh": 132.8
+  },
+  {
+    "seed": 4,
+    "cadence": [
+      135
+    ],
+    "rank": 1,
+    "time": 85.031,
+    "minWetKmh": 133.3
+  },
+  {
+    "seed": 4,
+    "cadence": [
+      100,
+      118,
+      107,
+      135,
+      111
+    ],
+    "rank": 1,
+    "time": 84.883,
+    "minWetKmh": 132.7
+  },
+  {
+    "seed": 4,
+    "cadence": [
+      122,
+      158,
+      95,
+      135,
+      100
+    ],
+    "rank": 1,
+    "time": 84.858,
+    "minWetKmh": 132.5
+  },
+  {
+    "seed": 5,
+    "cadence": [
+      100
+    ],
+    "rank": 1,
+    "time": 84.824,
+    "minWetKmh": 132.8
+  },
+  {
+    "seed": 5,
+    "cadence": [
+      135
+    ],
+    "rank": 1,
+    "time": 85.031,
+    "minWetKmh": 133.3
+  },
+  {
+    "seed": 5,
+    "cadence": [
+      100,
+      118,
+      107,
+      135,
+      111
+    ],
+    "rank": 1,
+    "time": 84.883,
+    "minWetKmh": 132.7
+  },
+  {
+    "seed": 5,
+    "cadence": [
+      122,
+      158,
+      95,
+      135,
+      100
+    ],
+    "rank": 1,
+    "time": 84.858,
+    "minWetKmh": 132.5
+  },
+  {
+    "seed": 6,
+    "cadence": [
+      100
+    ],
+    "rank": 1,
+    "time": 84.824,
+    "minWetKmh": 132.8
+  },
+  {
+    "seed": 6,
+    "cadence": [
+      135
+    ],
+    "rank": 1,
+    "time": 85.031,
+    "minWetKmh": 133.3
+  },
+  {
+    "seed": 6,
+    "cadence": [
+      100,
+      118,
+      107,
+      135,
+      111
+    ],
+    "rank": 1,
+    "time": 84.883,
+    "minWetKmh": 132.7
+  },
+  {
+    "seed": 6,
+    "cadence": [
+      122,
+      158,
+      95,
+      135,
+      100
+    ],
+    "rank": 1,
+    "time": 84.858,
+    "minWetKmh": 132.5
+  }
+]
