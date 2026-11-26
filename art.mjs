@@ -1,5 +1,7 @@
 import {L,CUT,curve,botD,botX} from './physics.mjs';
 import {createTrackScene} from './track-scene.mjs';
+import {carAppearance} from './car-appearance.mjs';
+import {compatibleRearCar} from './car-preview.mjs';
 function fallbackPaint(canvas,r,ghost,attract=false){
  const ctx=canvas.getContext('2d'),w=900,h=450;
  if(canvas.width!==w){canvas.width=w;canvas.height=h}
@@ -38,29 +40,46 @@ function fallbackPaint(canvas,r,ghost,attract=false){
   if(n%2===0){const rx=b.x+(hash(n+Math.floor(d/60))-.5)*b.wide*1.9;line([[rx,b.y],[rx+Math.max(1,b.wide*.1),b.y]],'rgba(158,184,181,.16)',Math.max(.5,b.s*1.7))}
  }
  for(let n=12;n>0;n--){const z=n*33-(d%33),q=project(z);for(const side of [-1,1]){const xx=q.x+side*q.wide*1.19,yy=q.y,ht=q.s*200;line([[xx,yy],[xx,yy-ht],[xx-side*ht*.18,yy-ht]],'#20323a',Math.max(1,4*q.s));const lamp=xx-side*ht*.18;ctx.fillStyle='#ffdda1';ctx.fillRect(lamp-ht*.048,yy-ht-1,ht*.095,Math.max(1,3*q.s));line([[xx-side*ht*.06,yy+1],[xx-side*ht*.05,yy+ht*.2]],'rgba(247,166,83,.26)',Math.max(1,3*q.s))}}
- function car(cx,cy,size,col,alpha=1,player=false){
+ const liveryColor=appearance=>'#'+appearance.color.toString(16).padStart(6,'0');
+ function car(cx,cy,size,col,alpha=1,player=false,appearance){
   ctx.save();ctx.translate(cx,cy);ctx.scale(size,size);ctx.globalAlpha=alpha;
   const shape=(pts,c)=>poly(pts,c);ctx.fillStyle='#06111799';ctx.beginPath();ctx.ellipse(0,4,99,12,0,0,Math.PI*2);ctx.fill();
-  for(const side of [-1,1]){ctx.fillStyle='#11191c';ctx.fillRect(side<0?-91:68,-20,23,27)}
+  if(appearance&&r&&!attract){
+   const rear=compatibleRearCar(appearance);
+   const left=-134,top=-112,width=268,height=134;
+   ctx.drawImage(rear.canvas,left,top,width,height);
+   if(player&&r.keys[1]){
+    ctx.shadowColor='#ff563d';ctx.shadowBlur=12;
+    for(const points of rear.lights)line(points.map(([x,y])=>[left+x*width,top+y*height]),'#ff694e',2.3);
+   }
+   ctx.restore();
+   return;
+  }
+  if(appearance?.spec[1]!==0)for(const side of [-1,1]){
+   const rain=appearance?.spec[1]===4;
+   ctx.fillStyle='#11191c';ctx.fillRect(side<0?-91:rain?64:68,-20,rain?27:23,27);
+  }
   shape([[-93,-25],[-83,-41],[-53,-49],[-33,-69],[28,-70],[54,-51],[77,-46],[93,-29],[89,-9],[72,0],[-76,0],[-91,-9]],col);
   shape([[-50,-49],[-30,-65],[26,-66],[47,-50],[24,-45],[-28,-46]],'#162a34');
   shape([[-37,-51],[-26,-62],[22,-63],[36,-54],[3,-56]],'#536976');
   shape([[-87,-32],[-51,-40],[55,-39],[86,-32],[71,-24],[-72,-24]],'#39474b');
-  if(player&&r?.spec[2]===6){
-   for(const side of [-1,1])line([[side*52,-39],[side*54,-51]],'#151d23',5);
-   shape([[-93,-54],[89,-54],[94,-50],[-90,-48]],'#1a252c');
+  if(appearance?.spec[2]){
+   const high=appearance.spec[2]===6,height=high?-54:-43,width=high?93:78;
+   for(const side of [-1,1])line([[side*52,-37],[side*54,height+3]],'#151d23',5);
+   shape([[-width,height],[width-4,height],[width+1,height+4],[-width+3,height+6]],'#1a252c');
   }
   shape([[-92,-23],[-64,-24],[-56,-12],[57,-12],[64,-24],[91,-22],[86,-9],[62,-3],[-69,-3],[-88,-10]],'#182328');
   for(const side of [-1,1]){line([[side*83,-31],[side*62,-34],[side*28,-33]],'#b73b24',6);line([[side*81,-32],[side*63,-34],[side*31,-33]],'#ff9a5f',2)}
-  if(player&&r?.keys[1]){ctx.shadowColor='#ff563d';ctx.shadowBlur=12;for(const side of [-1,1])line([[side*82,-31],[side*62,-34],[side*30,-33]],'#ff694e',5);ctx.shadowBlur=0}
-  shape([[-18,-20],[18,-20],[20,-11],[-19,-11]],'#c3bca4');ctx.fillStyle='#26333a';ctx.font='bold 6px monospace';ctx.fillText('R A I N',-12,-14);
+  shape([[-18,-20],[18,-20],[20,-11],[-19,-11]],'#c3bca4');
+  ctx.fillStyle='#26333a';ctx.font='bold 6px monospace';ctx.textAlign='center';ctx.fillText(appearance?.plate||'RAIN',0,-14);
   line([[0,-8],[0,-1]],'#778181',2);ctx.restore()
  }
  if(r&&!attract){const rivals=r.opponents??r.bots.map((b,i)=>{const time=Math.max(0,t-(r.rivalDelay?.[i]||0));return {d:botD(time,b),x:botX(time,b,i)}});
-  const cars=rivals.map((car,i)=>({...car,c:['#e3ab66','#9baeb4','#a85645','#768572','#b5b5a5','#9c839b','#82aaa9'][i]}));if(ghost)cars.push({...ghost,c:'#78e6db',g:1});
-  cars.filter(v=>v.d>d-2&&v.d-d<420).sort((a,b)=>b.d-a.d).forEach(v=>{const q=project(Math.max(0,v.d-d+8));car(q.x+q.wide*v.x*.8,q.y-8,q.s*.93,v.c,v.g?.47:1)});
+  const cars=rivals.map((car,i)=>({...car,c:['#e3ab66','#9baeb4','#a85645','#768572','#b5b5a5','#9c839b','#82aaa9'][i]}));if(ghost)cars.push({...ghost,c:ghost.appearance?liveryColor(ghost.appearance):'#78e6db',g:1});
+  cars.filter(v=>v.d>d-2&&v.d-d<420).sort((a,b)=>b.d-a.d).forEach(v=>{const q=project(Math.max(0,v.d-d+8));car(q.x+q.wide*v.x*.8,q.y-8,q.s*.93,v.c,v.g?.47:1,false,v.appearance)});
  }
- car(attract?655:450+x*36,attract?396:415,attract?1.8:1.15,r?.config?.[0]?'#358e89':'#db7948',1,true);
+ const appearance=carAppearance(r?.config,r?.spec);
+ car(attract?655:450+x*36,attract?396:415,attract?1.8:1.15,liveryColor(appearance),1,true,appearance);
  for(let i=0;i<42;i++){const yy=(hash(i+90)*h+t*(70+i%6*17))%h,xx=(hash(i+2)*w+t*42)%w;line([[xx,yy],[xx-3,yy+8]],'rgba(202,228,231,.16)',1)}
 }
 let sceneCanvas=null,activeScene=null,removalWatcher=null;

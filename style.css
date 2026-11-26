@@ -59,6 +59,7 @@ h1,h2,h3,p{margin:0}h2{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.35}h3
 .hero canvas,.hero-image,.hero:after{position:absolute;inset:0;width:100%;height:100%}.hero canvas{z-index:-3;object-fit:cover}.hero-image{background:url("./rainport-cover.webp") center 58% / cover no-repeat;z-index:-2}.hero:after{z-index:-1;content:"";background:linear-gradient(90deg,#0a1015ec 0%,#0a101596 29%,transparent 67%),linear-gradient(0deg,#091016a6,transparent 32%)}
 .over{padding:clamp(20px,3vw,48px);width:max-content;max-width:80%}.track-label{display:flex;gap:.65rem;align-items:center;color:#ffb886;font-size:.83rem}.track-label:before{content:"";width:22px;height:3px;background:var(--orange)}
 .hero h1{font-size:clamp(55px,6.5vw,96px);letter-spacing:.04em;line-height:1.22;font-weight:850;text-shadow:0 2px 14px #10151445}.hero h1 span{display:inline-block;font-size:.23em;letter-spacing:.06em;margin:0 0 .5em .5em;color:#f0eee3;vertical-align:middle;writing-mode:vertical-rl}.hero p{margin:.25rem 0 1rem;color:#e0e7e2}
+.hero .lobby-race-car{font-weight:700;margin-bottom:.45rem;color:#ffe0c8}
 .hero-metrics{display:flex;gap:clamp(15px,2.5vw,36px);margin-bottom:1.35rem}.hero-metrics small,.hero-metrics b,.stats b,.config-records b{display:block}.hero-metrics small{color:#c1c6be}.hero-metrics b{font:700 clamp(20px,2.25vw,34px)/1.35 var(--mono)}.hero-metrics em{font:500 .86rem/1.2 system-ui;font-style:normal}
 .hero .actions button{padding:.66em 1.45em}.hero .ghost{background:#151d20bd;border-color:#7e8681}
 .lobby-grid{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:16px}.sheet,.box,.row,.exhibit{border:1px solid var(--line);border-radius:7px;background:var(--panel)}.sheet,.box{padding:clamp(14px,1.8vw,27px)}.sheet-title,.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px}.sheet h2{font-size:1.22rem}.sheet label{font-size:.875rem;margin-right:.7rem}.sheet select{min-width:55%}.loadout{font-size:.9rem;margin-block:8px 12px}.keyguide,.sector-list{display:flex;flex-wrap:wrap;gap:12px;font-size:.88rem;color:#c6cfcb}.keyguide span{display:flex;align-items:center;gap:3px}.keyguide kbd{border:1px solid #596569;border-bottom-width:2px;border-radius:3px;padding:1px 5px;min-width:20px;text-align:center;color:var(--paper);font:600 .72rem var(--mono)}.profile{width:100%;height:74px;display:block}.sector-list{margin-top:6px;justify-content:space-between}.sector-list b{color:var(--orange);font-family:var(--mono)}.sector-list span:last-child b{color:#a1c1bb}
@@ -69,6 +70,13 @@ h1,h2,h3,p{margin:0}h2{font-size:clamp(1.45rem,2.5vw,2.1rem);line-height:1.35}h3
 .modal{position:fixed;z-index:20;inset:0;background:#04090bc9;display:grid;place-items:center;padding:14px}.dialog{overflow:auto;width:min(630px,100%);max-height:calc(100dvh - 32px);background:#1b2427;padding:clamp(15px,2vw,26px);border:1px solid #646e6e;border-radius:9px;box-shadow:0 24px 100px #05090aaa;overflow-wrap:anywhere}.dialog .toolbar{align-items:center}.dialog>p,.box>p{margin:10px 0}.dialog .row{background:#202b2f}.scroll table{min-width:350px}a{color:var(--orange)}
 @media(min-width:1000px){#marketbody:has(.box:nth-child(2) .artbox){display:grid;grid-template-columns:repeat(3,1fr);gap:16px}}
 .market-tabs{margin-bottom:14px}
+.car-studio:has(.car-preview){background:linear-gradient(#aebfc6,#dce2e2 61%,#b8c6c8)}
+.car-studio .car-preview{position:absolute;inset:0;display:block;width:100%;height:100%}
+.car-studio .pin[data-anchored]{transform:translate(-50%,-100%)}
+.car-studio .pin[data-anchored]:after{
+  left:50%;height:var(--leader-length);transform:rotate(var(--leader-angle));transform-origin:top
+}
+.car-studio .pin[data-leader-above]:after{top:0}
 .seller-stock{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:14px;align-items:start}
 .seller-stock .box{margin:0}
 .seller-stock h3{margin-bottom:12px}

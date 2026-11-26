@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import {L,CUT,curve,botD,botX} from './physics.mjs';
 import {createRaceCar} from './car-model.mjs';
+import {carAppearance} from './car-appearance.mjs';
 
 const HALF=6.8, LAMP=32, SLAB=192;
 const clamp=THREE.MathUtils.clamp;
@@ -406,10 +407,14 @@ export function createTrackScene(canvas,first){
   const budget=gpuBudget(renderer);
   const grain=roadNoise(),road=makeRoad(scene,-100,L+140,grain);
   const yard=makeScenery(scene),weather=rain(scene);
-  const player=createRaceCar(THREE,{color:first.config?.[0]?0x1da499:0xed733d,player:true});
+  const player=createRaceCar(THREE,{appearance:carAppearance(first.config,first.spec),player:true});
   const rivals=opponentColors.map(color=>createRaceCar(THREE,{color}));
-  const ghostCar=createRaceCar(THREE,{color:0x6be7df,ghost:true});
-  for(const car of [player,...rivals,ghostCar])scene.add(car.object);
+  let ghostAppearance=first.ghostAppearance,ghostCar=null;
+  for(const car of [player,...rivals])scene.add(car.object);
+  if(ghostAppearance){
+    ghostCar=createRaceCar(THREE,{appearance:ghostAppearance,ghost:true});
+    scene.add(ghostCar.object);
+  }
   let previous=-10,lastRace=null,previousWall=0,lastAspect=0,lastWidth=0,lastHeight=0,roll=0;
   const aim=new THREE.Vector3(),desired=new THREE.Vector3(),desiredAim=new THREE.Vector3(),coursePose={};
   function place(car,d,x,yaw,motion){
@@ -428,6 +433,7 @@ export function createTrackScene(canvas,first){
     if(rw!==lastWidth||rh!==lastHeight){renderer.setSize(rw,rh,false);lastWidth=rw;lastHeight=rh;canvas.dataset.renderScale=String(Math.round(scale*100));}
     const steer=r.steer??r.keys?.[2]??0,gripLoss=r.slip||0,rumble=r.rumble||0;
     const yaw=r.yaw??steer*.03, gas=r.keys?.[0]||0,brake=r.keys?.[1]||0;
+    if(r.id!==lastRace)player.setAppearance(carAppearance(r.config,r.spec));
     place(player,r.d,r.x,yaw,{speed:r.v,steer,brake,throttle:gas,spec:r.spec,dt,time:r.t,slip:gripLoss});
     rivals.forEach((car,i)=>{
       if(r.opponents){
@@ -446,8 +452,21 @@ export function createTrackScene(canvas,first){
       const heading=clamp(Math.atan2(side,Math.max(7,velocity)),-.26,.26);
       place(car,d,x,heading,{speed:velocity,steer:heading*2.8,brake:Number(decel<-.9),dt,time});
     });
-    ghostCar.object.visible=!!ghost&&Math.abs(ghost.d-r.d)<240;
-    if(ghostCar.object.visible)place(ghostCar,ghost.d,ghost.x,ghost.yaw||0,{speed:ghost.v||0,steer:ghost.steer||0,dt,time:r.t});
+    if(ghost&&!ghostCar){
+      ghostAppearance=ghost.appearance||carAppearance();
+      ghostCar=createRaceCar(THREE,{appearance:ghostAppearance,ghost:true});
+      scene.add(ghostCar.object);
+    }
+    if(ghostCar){
+      ghostCar.object.visible=!!ghost&&Math.abs(ghost.d-r.d)<240;
+      if(ghostCar.object.visible){
+        if(ghost.appearance&&ghost.appearance!==ghostAppearance){
+          ghostAppearance=ghost.appearance;
+          ghostCar.setAppearance(ghostAppearance);
+        }
+        place(ghostCar,ghost.d,ghost.x,ghost.yaw||0,{speed:ghost.v||0,steer:ghost.steer||0,dt,time:r.t});
+      }
+    }
     const speed=clamp(r.v/52,0,1),lead=8+speed*6,back=6.65+speed*.75;
     const carAt=player.object.position,course=station(r.d,coursePose);
     const followAngle=course.a+yaw*.53,sideLag=(r.lateralV||0)*.20;

@@ -1,0 +1,61 @@
+{
+  "browser": "Chrome",
+  "ledger": "隔离 Ganache",
+  "clientSHA256": "2b80875b708ab516ebcf05d4ecbe16b4f919d765d8d4b82c488f804c0cf1ea3a",
+  "checks": [
+    {
+      "name": "发车区可切换到借用车，所选自有车跨页面与刷新保留",
+      "borrowed": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "name": "取消保留原比赛，确认退赛后切为自有 GT #001",
+      "from": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "to": [
+        1,
+        2,
+        7,
+        4
+      ]
+    },
+    {
+      "name": "车库切换第二台自有车，发车配置和仪表身份一致",
+      "config": [
+        10,
+        11,
+        21,
+        13
+      ]
+    },
+    {
+      "name": "挂牌和未装齐的车在发车区可见，借用车仍可用",
+      "options": [
+        {
+          "value": "0",
+          "disabled": false,
+          "text": "港务借用车"
+        },
+        {
+          "value": "1",
+          "disabled": true,
+          "text": "潮汐 GT #001 · 整车已挂牌，撤单后可参赛"
+        },
+        {
+          "value": "10",
+          "disabled": true,
+          "text": "潮汐 GT #010 · 缺少轮胎"
+        }
+      ]
+    }
+  ],
+  "errors": []
+}

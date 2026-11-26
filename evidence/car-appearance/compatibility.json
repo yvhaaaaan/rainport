@@ -1,0 +1,19 @@
+{
+  "browser": "Chrome",
+  "ledger": "隔离的 Ganache 演示链",
+  "screens": [
+    "compat-garage.png",
+    "compat-race.png"
+  ],
+  "checks": [],
+  "declaredClientSHA256": "2b80875b708ab516ebcf05d4ecbe16b4f919d765d8d4b82c488f804c0cf1ea3a",
+  "testClientSHA256": "9ef76691241398ca1d396662c079d5a8143211fa3294b159a45d64e6f9cab51a",
+  "webglDisabled": true,
+  "garage": "canvas2d",
+  "race": "canvas2d",
+  "chassis": 1,
+  "tealPixelsInRaceCrop": 16392,
+  "brakeInputTested": true,
+  "passed": true,
+  "errors": []
+}

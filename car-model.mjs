@@ -43,6 +43,7 @@ function gt27Geometry(T,name){
     surface[k+2]=mat===0?0:mat===10?170:mat===11?255:85;
   }
   const mesh=new T.BufferGeometry();
+  mesh.name=name;
   mesh.setAttribute('position',new T.BufferAttribute(pos,3));
   mesh.setAttribute('normal',new T.BufferAttribute(normal,3,true));
   mesh.setAttribute('color',new T.BufferAttribute(rgb,3,true));
@@ -146,11 +147,7 @@ function gt27Texture(T,type){
   if(textures.has(type))return textures.get(type);
   const canvas=document.createElement('canvas');canvas.width=128;canvas.height=128;
   const c=canvas.getContext('2d');
-  if(type==='plate'){
-    c.fillStyle='#ccd2c9';c.fillRect(1,24,126,80);
-    c.strokeStyle='#3c4240';c.lineWidth=5;c.strokeRect(5,28,118,72);
-    c.font='bold 40px sans-serif';c.textAlign='center';c.fillStyle='#182024';c.fillText('GT 27',64,79);
-  }else if(type==='tail-pair'){
+  if(type==='tail-pair'){
     const single=gt27Texture(T,'reflection').image;
     c.drawImage(single,0,0,51,128);c.drawImage(single,77,0,51,128);
   }else if(type==='shadow'){
@@ -182,18 +179,41 @@ function gt27Texture(T,type){
   textures.set(type,texture);return texture;
 }
 
-function createRaceCar(T,{color=0xe8763e,ghost=false,player=false}={}){
+function createPlate(T,ghost){
+  const canvas=document.createElement('canvas');canvas.width=192;canvas.height=80;
+  const c=canvas.getContext('2d');
+  const texture=new T.CanvasTexture(canvas);texture.colorSpace=T.SRGBColorSpace;
+  const material=new T.MeshBasicMaterial({map:texture,transparent:true,opacity:ghost ? .46 : 1,depthWrite:false,toneMapped:false});
+  const geometry=new T.PlaneGeometry(.44,.19);
+  const mesh=new T.Mesh(geometry,material);
+  mesh.name='GT27 rear number';mesh.position.set(0,.419,-2.355);mesh.rotation.y=Math.PI;
+  let text;
+  function setNumber(next){
+    if(next===text)return;
+    text=next;
+    c.clearRect(0,0,192,80);
+    c.fillStyle='#dbe5dc';c.fillRect(2,3,188,74);
+    c.strokeStyle='#3a4b48';c.lineWidth=4;c.strokeRect(6,7,180,66);
+    c.font='bold 47px sans-serif';c.textAlign='center';c.textBaseline='middle';
+    c.fillStyle='#17282a';c.fillText(text,96,42,167);
+    texture.needsUpdate=true;
+  }
+  return {mesh,setNumber,dispose(){texture.dispose();material.dispose();geometry.dispose()}};
+}
+
+function createRaceCar(T,{color=0xe8763e,ghost=false,player=false,studio=false,appearance}={}){
   const object=new T.Group(), body=new T.Group();
-  object.name=ghost?'GT27 ghost':player?'GT27 driver':'GT27 rival';
+  object.name=ghost?'GT27 ghost':studio?'GT27 studio':player?'GT27 driver':'GT27 rival';
   object.add(body);
   const pivot=new T.Group();pivot.rotation.y=Math.PI;body.add(pivot);
-  const brakeLevel={value:0}, paint={value:new T.Color(color)};
+  const brakeLevel={value:0}, paint={value:new T.Color(appearance?.color??color)};
   const finish=gt27Material(T,paint,brakeLevel,ghost);
+  const ghostTint=ghost?new T.Color(0x79eddf):null;
   const ownedMaterials=[finish], ownedGeometry=[];
   const mesh=(name,parent)=>{const m=new T.Mesh(gt27Geometry(T,name),finish);parent.add(m);return m;};
   const wheels=[];
-  let wingMesh, engineMesh;
-  if(player && !ghost){
+  let wingMesh, engineMesh, plate;
+  if(player||studio||ghost){
     mesh('Chassis',pivot);
     for(const side of [-1,1])for(const longitudinal of [1.36,-1.4]){
       const mount=new T.Group();mount.position.set(side*.898,.353,longitudinal);
@@ -204,10 +224,7 @@ function createRaceCar(T,{color=0xe8763e,ghost=false,player=false}={}){
     }
     wingMesh=mesh('SprintWing',pivot);wingMesh.position.set(0,.68,-1.94);
     engineMesh=mesh('HarborV8',pivot);engineMesh.position.set(0,.28,-1.30);
-    const plateMat=new T.MeshBasicMaterial({map:gt27Texture(T,'plate'),transparent:true,depthWrite:false});
-    const plateGeo=new T.PlaneGeometry(.37,.20);
-    const plate=new T.Mesh(plateGeo,plateMat);plate.position.set(0,.435,-2.341);plate.rotation.y=Math.PI;
-    pivot.add(plate);ownedMaterials.push(plateMat);ownedGeometry.push(plateGeo);
+    plate=createPlate(T,ghost);pivot.add(plate.mesh);
   }else mesh('rival',pivot);
   if(!ghost){
     const detail=new T.Mesh(gt27RearFascia(T),finish);
@@ -217,7 +234,7 @@ function createRaceCar(T,{color=0xe8763e,ghost=false,player=false}={}){
 
   const patches=[];
   const glows=[], fans=[];
-  if(!ghost){
+  if(!ghost&&!studio){
     const plane=new T.PlaneGeometry(1,1);ownedGeometry.push(plane);
     const groundPatch=(type,col,w,h,x,z,alpha,add)=>{
       const mat=new T.MeshBasicMaterial({map:gt27Texture(T,type),color:col,transparent:true,opacity:alpha,
@@ -240,7 +257,37 @@ function createRaceCar(T,{color=0xe8763e,ghost=false,player=false}={}){
       const fan=new T.Sprite(mat);fan.position.set(side*.90,.20,2.4);object.add(fan);ownedMaterials.push(mat);fans.push(fan);
     }
   }
-  let steering=0, pitch=0, wheelAngle=0, oldTire=-1,oldWing=-1,oldEngine=-1;
+  let steering=0, pitch=0, wheelAngle=0, oldTire=-1,oldWing=-1,oldEngine=-1,fixedSpec;
+  function updateParts(engineId,tire,wingId){
+    if(!wheels.length)return;
+    if(oldEngine!==engineId||oldTire!==tire||oldWing!==wingId)object.userData.visualSpec=[engineId,tire,wingId];
+    if(tire!==oldTire){
+      for(const {wheel} of wheels){
+        wheel.visible=!!tire;
+        if(tire)wheel.geometry=gt27Geometry(T,tire===4?'RainWheel':'RoadWheel');
+      }
+      oldTire=tire;
+    }
+    if(oldWing!==wingId){
+      wingMesh.visible=!!wingId;
+      if(wingId)wingMesh.geometry=gt27Geometry(T,wingId===6?'AeroWing':'SprintWing');
+      oldWing=wingId;
+    }
+    if(oldEngine!==engineId){
+      engineMesh.visible=!!engineId;
+      if(engineId)engineMesh.geometry=gt27Geometry(T,engineId===2?'SprintV8':'HarborV8');
+      oldEngine=engineId;
+    }
+  }
+  function setAppearance(next){
+    paint.value.set(next?.color??color);
+    if(ghostTint)finish.color.copy(paint.value).lerp(ghostTint,.58);
+    fixedSpec=next?.spec;
+    object.userData.chassisId=next?.chassisId??0;
+    plate?.setNumber(next?.plate??'GT 27');
+    updateParts(fixedSpec?.[0]??1,fixedSpec?.[1]??3,fixedSpec?.[2]??5);
+  }
+  setAppearance(appearance);
   function update({speed=0,steer=0,brake=0,throttle=0,slip=0,wing=5,spec,dt=.016,time=0}={}){
     const v=Math.max(0,speed), s=Math.min(1,v/40), span=Math.max(0,Math.min(.1,dt));
     const damp=1-Math.exp(-span*11);
@@ -251,12 +298,9 @@ function createRaceCar(T,{color=0xe8763e,ghost=false,player=false}={}){
     brakeLevel.value=Number(brake)||0;
     if(wheels.length){
       wheelAngle=(wheelAngle+v*span/.353)%(Math.PI*2);
-      const tire=spec?.[1]===4?4:3;
-      if(tire!==oldTire){for(const {wheel} of wheels)wheel.geometry=gt27Geometry(T,tire===4?'RainWheel':'RoadWheel');oldTire=tire;}
+      const models=spec??fixedSpec;
+      updateParts(models?.[0]??1,models?.[1]??3,models?.[2]??wing);
       for(const {mount,front} of wheels){mount.rotation.order='YXZ';mount.rotation.y=front?-steering*.27:0;mount.rotation.x=wheelAngle;}
-      const wingId=spec?.[2]??wing,engineId=spec?.[0]??1;
-      if(oldWing!==wingId){wingMesh.geometry=gt27Geometry(T,wingId===6?'AeroWing':'SprintWing');oldWing=wingId;}
-      if(oldEngine!==engineId){engineMesh.geometry=gt27Geometry(T,engineId===2?'SprintV8':'HarborV8');oldEngine=engineId;}
     }
     for(const p of patches){p.material.opacity=.28+brakeLevel.value*.48;p.scale.y=1.6+s*.9+brakeLevel.value*.55;}
     for(const g of glows){g.material.opacity=.52+brakeLevel.value*.41;g.scale.y=.12+brakeLevel.value*.09;}
@@ -268,6 +312,10 @@ function createRaceCar(T,{color=0xe8763e,ghost=false,player=false}={}){
       fan.material.opacity=spray*(.115+Math.min(1,Math.abs(slip))*.085+ripple*.016);
     }
   }
-  return {object,update,dispose(){for(const m of ownedMaterials)m.dispose();for(const g of ownedGeometry)g.dispose();}};
+  return {object,update,setAppearance,dispose(){
+    plate?.dispose();
+    for(const m of ownedMaterials)m.dispose();
+    for(const g of ownedGeometry)g.dispose();
+  }};
 }
 export {createRaceCar};

@@ -1,0 +1,124 @@
+{
+  "browser": "Chrome",
+  "ledger": "隔离的 Ganache 演示链",
+  "screens": [
+    "garage-stock.png",
+    "race-stock.png",
+    "garage-refit.png",
+    "race-refit.png",
+    "historical-replay.png",
+    "loan-and-ghost.png"
+  ],
+  "checks": [
+    {
+      "name": "同一底盘车库与赛道匹配",
+      "chassis": 1,
+      "stock": {
+        "id": 1,
+        "paint": "258d82",
+        "meshes": [
+          "Chassis",
+          "HarborV8",
+          "RoadWheel",
+          "RoadWheel",
+          "RoadWheel",
+          "RoadWheel",
+          "SprintWing"
+        ]
+      }
+    },
+    {
+      "name": "刷新后仍继续原底盘和车漆的比赛",
+      "chassis": 1
+    },
+    {
+      "name": "改装雨胎和高翼在车库和发车同步",
+      "chassis": 1,
+      "fitted": [
+        2,
+        7,
+        19
+      ],
+      "speedKmh": 36,
+      "render": {
+        "id": 1,
+        "paint": "258d82",
+        "meshes": [
+          "AeroWing",
+          "Chassis",
+          "HarborV8",
+          "RainWheel",
+          "RainWheel",
+          "RainWheel",
+          "RainWheel"
+        ]
+      }
+    },
+    {
+      "name": "整车交易清单与展馆显示同一辆车",
+      "chassis": 10
+    },
+    {
+      "name": "历史回放使用比赛时的雨胎",
+      "chassis": 10,
+      "current": {
+        "id": 10,
+        "paint": "7461a0",
+        "meshes": [
+          "AeroWing",
+          "Chassis",
+          "RoadWheel",
+          "RoadWheel",
+          "RoadWheel",
+          "RoadWheel",
+          "SprintV8"
+        ]
+      },
+      "record": {
+        "id": 10,
+        "paint": "7461a0",
+        "meshes": [
+          "AeroWing",
+          "Chassis",
+          "RainWheel",
+          "RainWheel",
+          "RainWheel",
+          "RainWheel",
+          "SprintV8"
+        ]
+      }
+    },
+    {
+      "name": "借用车外观有区分，幽灵保留历史雨胎",
+      "borrowed": {
+        "id": 0,
+        "paint": "ed733d",
+        "meshes": [
+          "Chassis",
+          "HarborV8",
+          "RoadWheel",
+          "RoadWheel",
+          "RoadWheel",
+          "RoadWheel",
+          "SprintWing"
+        ]
+      },
+      "ghost": {
+        "id": 10,
+        "meshes": [
+          "AeroWing",
+          "Chassis",
+          "RainWheel",
+          "RainWheel",
+          "RainWheel",
+          "RainWheel",
+          "SprintV8"
+        ]
+      }
+    }
+  ],
+  "declaredClientSHA256": "2b80875b708ab516ebcf05d4ecbe16b4f919d765d8d4b82c488f804c0cf1ea3a",
+  "testClientSHA256": "9ef76691241398ca1d396662c079d5a8143211fa3294b159a45d64e6f9cab51a",
+  "passed": true,
+  "errors": []
+}

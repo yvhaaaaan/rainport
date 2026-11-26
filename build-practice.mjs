@@ -27,10 +27,8 @@ let html=read('index.html').replace('<title>弯道档案 · 雨港</title>','<ti
  .replace('连接本地节点…','离线练习').replace('正在连接雨港本地节点…','正在打开发车区…')
  .replace(/<link rel="stylesheet" href="\/style.css"\s*\/?\s*>/,()=>'<style>'+read('style.css')+'</style>')
  .replace(/<script type="module" src="\/client.mjs"><\/script>/,()=>'<script>'+practice.replace(/<\/script/gi,'<\\/script')+'</script>');
-for(const file of ['gt27-studio.jpg','gt27-workshop.jpg','rainport-cover.webp']){
- const type=file.endsWith('.jpg')?'jpeg':'webp';
- const uri='data:image/'+type+';base64,'+fs.readFileSync(path.join(directory,file)).toString('base64');
- html=html.replaceAll('./'+file,uri).replaceAll(file,uri);
-}
+const cover='rainport-cover.webp';
+const coverUri='data:image/webp;base64,'+fs.readFileSync(path.join(directory,cover)).toString('base64');
+html=html.replaceAll('./'+cover,coverUri).replaceAll(cover,coverUri);
 save('practice.html',html);
 console.log('已构建网页游戏和单文件离线版');

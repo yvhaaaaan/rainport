@@ -3,6 +3,8 @@ import {bindDriveControls} from './race-controls.mjs';
 import {partDynamics} from './physics.mjs';
 import {L,CUT,DT,models,rarity,odds,pools,slot,curve,clamp,newRun,botD,tick,sample,input,standings,rank,botPilot,ghostAt,splitTimes,drop} from './physics.mjs';
 import {paint, prepareTrack, releaseTrack} from './art.mjs';
+import {carAppearance} from './car-appearance.mjs';
+import {renderCarPreviews} from './car-preview.mjs';
 import {makeRaceAudio} from './race-audio.mjs';
 import {mountRewardReel} from './reward-reel.mjs';
 import {rewardArt} from './reward-art.mjs';
@@ -34,26 +36,54 @@ const names=['底盘','引擎','轮胎','尾翼'],status=['','在挂','已成交
 const effect=['雨港双座底盘','标准引擎，极速 174 km/h','高速引擎，极速增加 22 km/h','标准湿弯抓地','湿路摩擦系数约 0.86','低阻标准尾翼','增加高速下压力，也增加直道阻力'];
 const ownedCars=()=>mine().filter(a=>a.model===0),availableCars=()=>ownedCars().filter(c=>!c.lock&&c.parts.every(Boolean)&&c.busy<=Date.now()/1000);
 const badge=a=>a?models[a.model]+' '+id(a.id):'空槽';
+const raceCarName=cfg=>cfg?.[0]?'潮汐 GT '+id(cfg[0]):'港务借用车';
+const carModels=parts=>parts.map(part=>A(part)?.model||0);
+function raceBlock(car){
+ if(!car)return '';
+ if(car.lock)return '整车已挂牌，撤单后可参赛';
+ const missing=car.parts.flatMap((part,i)=>part?[]:[names[i+1]]);
+ if(missing.length)return '缺少'+missing.join('、');
+ if(car.busy>Date.now()/1000)return '车辆正在参赛';
+ return '';
+}
+let carChoiceKey='';
+function rememberRaceCar(car){
+ selectedCar=car;
+ try{sessionStorage.setItem(carChoiceKey,String(car))}catch{}
+}
+function adoptState(next){
+ state=next;
+ const world=local?(state.ledger==='fabric'?'fabric/'+state.contracts.chainId:state.contracts.Archive):'practice';
+ const key='rp-race-car:'+world+':'+wallet;
+ if(carChoiceKey!==key){
+  carChoiceKey=key;
+  selectedCar=0;
+  try{selectedCar=Number(sessionStorage.getItem(key))||0}catch{}
+ }
+ const cars=ownedCars();
+ if(selectedCar&&!cars.some(c=>c.id===selectedCar))rememberRaceCar(0);
+ if(!cars.some(c=>c.id===garageCar))garageCar=cars[0]?.id||0;
+}
 const stamp=s=>new Date(s*1000).toLocaleString('zh-CN',{hour12:false});
 function dismiss(){const canvas=find('#playback');if(canvas)releaseTrack(canvas);find('.modal')?.remove()}
 function modal(title,html){dismiss();const wrap=document.createElement('div');wrap.className='modal';wrap.innerHTML='<section class="dialog" role="dialog" aria-modal="true" aria-label="'+escape(title)+'"><div class="toolbar"><h3>'+escape(title)+'</h3>'+btn('关闭',dismiss)+'</div>'+html+'</section>';root.append(wrap);wrap.querySelector('button')?.focus()}
 function stat(label,v){return '<div><small>'+label+'</small><b>'+v+'</b></div>'}
 function row(s,actions=''){return '<div class="row"><div>'+s+'</div><div class="flex">'+actions+'</div></div>'}
-function options(cs,sel,borrow=false){return (borrow?'<option value="0">港务借用车</option>':'')+cs.map(c=>'<option '+(c.id===sel?'selected':'')+' value="'+c.id+'">潮汐 GT '+id(c.id)+'</option>').join('')}
-async function reload(){state=await api('state');if(!availableCars().some(c=>c.id===selectedCar))selectedCar=0;if(!ownedCars().some(c=>c.id===garageCar))garageCar=ownedCars()[0]?.id||0}
+function options(cs,sel){return cs.map(c=>'<option '+(c.id===sel?'selected':'')+' value="'+c.id+'">潮汐 GT '+id(c.id)+'</option>').join('')}
+async function reload(){const next=await api('state');if(next.wallet===wallet)adoptState(next)}
 // Keep a displayed inventory current when another demo wallet trades in a second tab.
 let syncing=false;
 async function syncView(){
  if(syncing||!local||!state||current||busy||find('.modal')||document.hidden||
-    !['市场','车库','钱包','展馆'].includes(page))return;
+    !['比赛','市场','车库','钱包','展馆'].includes(page)||(page==='比赛'&&!find('#carSelect')))return;
  const seenPage=page,seenWallet=wallet,oldBlock=state.block,oldRecords=state.records.length;
+ const active=state.active;
  syncing=true;
  try{
   const next=await api('state');
   if(page!==seenPage||wallet!==seenWallet||next.wallet!==wallet||current||busy||find('.modal'))return;
-  if(next.block>oldBlock||next.records.length!==oldRecords){
-   state=next;
-   if(!ownedCars().some(c=>c.id===garageCar))garageCar=ownedCars()[0]?.id||0;
+  if(next.block>oldBlock||next.records.length!==oldRecords||next.active?.id!==active?.id||next.active?.done!==active?.done){
+   adoptState(next);
    render();
   }
  }catch(e){notice('同步库存失败 · '+e.message)}finally{syncing=false}
@@ -62,13 +92,13 @@ window.addEventListener('focus',syncView);
 setInterval(syncView,12000);
 function oddsDialog(){modal('雨港 · 掉率与奖池','<p class="muted">掉率 v1 · 奖池 v1 · 本地模拟随机源。有效完赛抽取一次，奖池内各型号等概率。</p><div class="scroll"><table><tr><th>排名</th>'+['未掉落',...rarity].map(x=>'<th>'+x+'</th>').join('')+'</tr>'+odds.map((r,i)=>'<tr><td>'+['1','2–3','4–5','6–8'][i]+'</td>'+r.map(n=>'<td>'+n/100+'%</td>').join('')+'</tr>').join('')+'</table></div>'+pools.map((p,i)=>row(rarity[i]+' · '+p.map(m=>models[m]).join(' / '))).join('')+'<p class="sub">同型号不同发行版使用相同驾驶参数。</p>')}
 function header(){find('nav').innerHTML=['比赛','车库','展馆','市场','钱包'].map(n=>btn(n,()=>switchPage(n))).join('');Array.from(find('nav').children).forEach((el,i)=>{el.classList.toggle('sel',['比赛','车库','展馆','市场','钱包'][i]===page);el.disabled=!!current});find('.account').textContent=ledgerName()+(usesFabric()?' · 身份 ':' · 钱包 ')+wallet}
-async function switchPage(p){if(current)return;await reload();closeReward();dismiss();resetWorkshop();page=p;render()}
+async function switchPage(p){if(current||busy||switchingCar)return;await reload();if(current||busy||switchingCar)return;closeReward();dismiss();resetWorkshop();page=p;render()}
 function writeRoute(hash=''){
  if(location.hash===hash)return;
  const address=new URL(location.href);address.hash=hash;
  try{history.replaceState(null,'',address)}catch{}
 }
-function render(){closeReward();dismiss();handlers.clear();header();if(page==='比赛')lobby();if(page==='车库')garage();if(page==='展馆')museum();if(page==='市场')market();if(page==='钱包')walletView();writeRoute(page==='车库'?workshopRoute():'')}
+function render(){closeReward();dismiss();handlers.clear();header();if(page==='比赛')lobby();if(page==='车库')garage();if(page==='展馆')museum();if(page==='市场')market();if(page==='钱包')walletView();paintPreviews();writeRoute(page==='车库'?workshopRoute():'')}
 function drawProfile(canvas) {
  const context=canvas.getContext('2d');
  canvas.width=710;canvas.height=120;
@@ -86,16 +116,24 @@ function drawProfile(canvas) {
 function lobby(){
  const previous=state.records.filter(r=>r.driver===wallet);
  const last=previous.at(-1);
+ const active=state.active,carId=active?.config[0]??selectedCar;
+ const carName=raceCarName([carId]),blocked=!active&&raceBlock(A(carId));
+ const raceAction=usesFabric()?'进入双人联机':active?'继续比赛':blocked?'选择可用车辆':'进入雨港';
+ const carOptions='<option value="0">港务借用车</option>'+ownedCars().map(car=>{
+  const reason=car.id===active?.config[0]?'':raceBlock(car);
+  return '<option value="'+car.id+'" '+(reason?'disabled':'')+'>'+raceCarName([car.id])+(reason?' · '+reason:'')+'</option>';
+ }).join('');
  const controls='<div class="keyguide"><span><kbd>W</kbd><kbd>↑</kbd> 加速</span><span><kbd>S</kbd><kbd>↓</kbd> 刹车</span><span><kbd>A</kbd><kbd>D</kbd> 转向</span></div>';
  body.innerHTML=`<section class="hero">
   <canvas aria-hidden="true"></canvas><div class="hero-image" aria-hidden="true"></div>
   <div class="over"><div class="label track-label">RAINPORT CIRCUIT</div><h1>雨港<span>夜间竞速</span></h1>
   <p>穿过港区湿弯，冲上沿岸长直道。</p>
   <div class="hero-metrics">${stat('赛道长度','3.78 <em>km</em>')}${stat('发车阵容','8 <em>辆</em>')}${stat('预计圈时','90 <em>秒</em>')}</div>
-  <div class="actions">${btn(usesFabric()?'进入双人联机':state.active?'继续比赛':'进入雨港',()=>startRace(),true)}${btn('本场奖池',oddsDialog)}</div></div></section>
+  <p class="lobby-race-car" id="lobby-race-car">${active?'本场':'参赛车辆'} · ${carName}</p>
+  <div class="actions">${btn(raceAction,blocked&&!usesFabric()?showCarPicker:()=>startRace(),true)}${btn('换车',showCarPicker)}${btn('本场奖池',oddsDialog)}</div></div></section>
   <div class="lobby-grid"><section class="sheet"><div class="sheet-title"><h2>发车准备</h2></div>
-  <label for="carSelect">参赛车辆</label><select id="carSelect">${options(availableCars(),selectedCar,true)}</select>
-  <p class="muted loadout" id="loadout"></p>${controls}<div class="actions">${btn('打开装配台',()=>openWorkshop({carId:selectedCar}),false,!!state.active)}</div></section>
+  <label for="carSelect">参赛车辆</label><select id="carSelect" ${active?'disabled':''}>${carOptions}</select>
+  <p class="muted loadout" id="loadout"></p>${controls}<div class="actions">${btn('打开装配台',()=>openWorkshop({carId}))}</div></section>
   <section class="sheet"><div class="sheet-title"><h2>赛道分段</h2><small>转向曲线</small></div>
   <canvas class="profile" aria-label="前段连续弯道，后段直道"></canvas><div class="sector-list"><span><b>S1</b> 港区湿弯 <small>1.82 km</small></span><span><b>S2</b> 沿岸直道 <small>1.96 km</small></span></div></section></div>
   ${ghostRec?row('挑战幽灵 · '+clock(ghostRec.total)+' · '+escape(ghostRec.driver),btn('清除幽灵',()=>{ghost=null;ghostRec=null;render()})):''}
@@ -103,17 +141,66 @@ function lobby(){
   ${previous.length>1?'<details><summary>历史结算</summary>'+previous.slice(0,-1).reverse().map(r=>row('雨港 · 第 '+r.rank+' 名',btn('查看结算 '+clock(r.total),()=>results(r)))).join('')+'</details>':''}`;
  paint(find('.hero canvas'),null,null,true);drawProfile(find('.profile'));
  const select=find('#carSelect');
- select.value=state.active?.config?.[0]||selectedCar;
- if(state.active){select.disabled=true;if(select.selectedIndex===-1){select.add(new Option('潮汐 GT '+id(state.active.config[0]), state.active.config[0]));select.value=state.active.config[0]}}
- function loadout(){
-  const car=A(+select.value);
-  find('#loadout').textContent=car?car.parts.map(t=>badge(A(t))).join(' / '):'港务借用车 · E1 港湾引擎 / T1 公路胎 / W1 短尾翼';
- }
- loadout();select.onchange=()=>{selectedCar=+select.value;loadout()};
+ select.value=carId;
+ if(active&&select.selectedIndex===-1){select.add(new Option(carName,carId));select.value=carId}
+ const config=active?.config.slice(1)||A(carId)?.parts;
+ find('#loadout').textContent=blocked||(config&&carId?config.map(t=>badge(A(t))).join(' / '):'E1 港湾引擎 / T1 公路胎 / W1 短尾翼');
+ select.onchange=()=>{
+  rememberRaceCar(Number(select.value));
+  render();
+  find('#carSelect').focus({preventScroll:true});
+ };
+}
+function showCarPicker(){
+ if(current||busy||switchingCar)return;
+ const active=state.active;
+ const choice=(car,carId=car?.id||0)=>{
+  const label=raceCarName([carId]),racing=!!active&&carId===active.config[0];
+  const reason=racing?'本场使用':raceBlock(car);
+  const order=car?.lock&&state.orders.find(o=>o.id===car.lock);
+  const action=racing?btn('继续比赛',()=>startRace(),true):
+   order?btn('查看订单 '+order.id,()=>details(order)):
+   btn('选择 '+label,()=>pickRaceCar(carId),carId===selectedCar,!!reason);
+  return row('<b>'+label+'</b><br><small>'+escape(reason||(carId?'三个槽位已装齐':'随时可用'))+'</small>',action);
+ };
+ modal('选择参赛车辆',(active?'<p>本场使用 '+raceCarName(active.config)+'。换车需先确认退赛。</p>':'')+
+  choice(null)+ownedCars().map(car=>choice(car)).join(''));
+}
+function pickRaceCar(car){
+ const commit=()=>{rememberRaceCar(car);page='比赛';render();notice('已选择 '+raceCarName([car]));};
+ return state.active?confirmRaceSwitch(state.active,car,commit):commit();
+}
+let switchingCar=false;
+function confirmRaceSwitch(active,car,after){
+ const owner=wallet;
+ modal('退赛后换车','<p>将退出使用 '+raceCarName(active.config)+' 的本场比赛，并切换为 '+raceCarName([car])+'。退赛会放弃本场完赛奖励。</p>'+
+  btn('确认退赛并换车',async()=>{
+   if(switchingCar||wallet!==owner)return;
+   switchingCar=true;
+   try{
+    await reload();
+    if(wallet!==owner||(state.active&&state.active.id!==active.id))throw Error('当前赛事已变化，请重新选车');
+    const next=A(car);
+    if(car&&next?.owner!==state.address)throw Error('这辆车已不在当前车库');
+    const reason=raceBlock(next);
+    if(reason&&car!==state.active?.config[0])throw Error(reason);
+    if(state.active?.done){
+     const record=await api('finish',{id:active.id});
+     await reload();rememberRaceCar(car);showReward(record);
+     return;
+    }
+    if(state.active)await api('abandon',{id:active.id});
+    await reload();
+    if(wallet!==owner||state.active)throw Error('赛事状态已变化，请重新选车');
+    await after();
+   }finally{switchingCar=false;}
+  },true));
 }
 async function startRace(){
  if(usesFabric()){window.location.assign('/');return;}
  if(busy||current)return;
+ const blocked=!state.active&&raceBlock(A(selectedCar));
+ if(blocked)throw Error(blocked);
  busy=true;raceSound.arm();keys=[0,0,0];
  try{
   dismiss();notice('');root.classList.add('is-racing');
@@ -125,24 +212,38 @@ async function startRace(){
    const muted=raceSound.toggle();find('.race-actions button').textContent=muted?'声音关':'声音开';
   });
   body.innerHTML=cockpitMarkup(sound+btn('退出比赛',leave));
+  paintPreviews();
   const canvas=find('.race-world'), instruments=readInstruments(find('.raceview'),clock);
   find('#startlights').textContent='准备发车';
   driveControls=bindDriveControls(find('.raceview'),input=>{
    keys=input;onDriveInput?.();
   },()=>Boolean(find('.modal')));
   await new Promise(requestAnimationFrame);
-  const car=A(selectedCar),cfg=car?[car.id,...car.parts]:[0,0,0,0];
-  const spec=car?car.parts.map(id=>A(id).model):[1,3,5];
+  const active=state.active,car=A(selectedCar);
+  const cfg=active?.config||(car?[car.id,...car.parts]:[0,0,0,0]);
+  const spec=active?.spec||(car?carModels(car.parts):[1,3,5]);
+  const ghostAppearance=ghostRec?carAppearance(ghostRec.config,ghostRec.spec):null;
   const grid=newRun(0,'0000',wallet,cfg,spec);
+  grid.ghostAppearance=ghostAppearance;
+  find('#race-car').textContent=raceCarName(cfg);
   await prepareTrack(canvas,grid);
-  const opening=await api('start',{car:selectedCar,controlStream:true});current=opening;header();
+  const opening=await api('start',{car:cfg[0],controlStream:true});
+  if(opening.config[0]!==cfg[0]){
+   stopRace();await reload();page='比赛';render();
+   notice('当前已在用 '+raceCarName(opening.config)+' 参赛，请继续比赛或点「换车」。');
+   return;
+  }
+  current=opening;header();
+  find('#race-car').textContent=raceCarName(opening.config);
   const prediction=makePrediction(opening);
   let ended=false,inFlight=0,queued=false,lastSend=-Infinity,networkIssue=false;
   const frame=()=>{
    if(!current||ended)return;
    const now=performance.now(),wait=prediction.wait(now);
    const r=prediction.display(now);
-   paint(canvas,r,ghostAt(ghost?.trace,r.t));
+   const ghostPose=ghostAt(ghost?.trace,r.t);
+   if(ghostPose)ghostPose.appearance=ghostAppearance;
+   paint(canvas,r,ghostPose);
    let difference=null;
    if(ghost?.trace){
     const track=ghost.trace;
@@ -389,15 +490,20 @@ function workshopComparison(equipped,candidate){
 async function raceWorkshopCar(car,race){
  const config=car?[...car.parts]:null;
  await reload();
- if(state.active)throw Error('当前钱包已有进行中的比赛，请从发车区继续。');
+ const target=car?.id||0,active=state.active;
+ if(active&&active.config[0]===target){
+  await startRace();
+  return;
+ }
  if(car){
   const latest=A(car.id);
   if(!latest||!availableCars().some(c=>c.id===car.id)||config.some((n,i)=>n!==latest.parts[i])){
    render();throw Error('参赛配置已变动，请重新核对底盘与三个槽位。');
   }
  }
+ if(active)return confirmRaceSwitch(active,target,()=>raceWorkshopCar(car,race));
  if(race)await loadGhost(race);
- selectedCar=car?.id||0;page='比赛';writeRoute('');
+ rememberRaceCar(target);page='比赛';writeRoute('');
  await startRace();
 }
 function changeWorkshopFit(car,slotIndex,part,again=false){
@@ -435,12 +541,12 @@ function garage(){
  }
  const statusMessage=workshopUpdate?'<p class="workshop-update" role="status">'+escape(workshopUpdate)+'</p>':'';
  const head='<div class="toolbar workshop-header"><h2>改装车库</h2><div class="flex"><label>自有底盘 <select id="garagecar"'+
-  (car?'':' disabled')+'>'+(car?options(ownedCars(),car.id):'<option>暂无自有车</option>')+'</select></label>'+btn('去市场出售',openSeller)+'</div></div>';
+  (car?'':' disabled')+'>'+(car?options(ownedCars(),car.id):'<option>暂无自有车</option>')+'</select></label>'+btn('换车',showCarPicker)+btn('去市场出售',openSeller)+'</div></div>';
  if(!car){
   body.innerHTML=head+statusMessage+'<section class="sheet workshop-empty"><h3>需要一台自有底盘</h3><p>比赛掉落的配件保存在钱包里。借用车使用固定配置，购买整车后可以为它换装。</p>'+
    (workshopPart?'<p>已持有 '+badge(A(workshopPart))+'。</p>':'')+
    '<div class="actions">'+btn('去市场看整车',()=>{tab=3;return switchPage('市场')},true)+
-   workshopButton('race',workshopRace?'用借用车追逐本圈幽灵':'使用借用车参赛',()=>raceWorkshopCar(null,workshopRace),false,!!state.active)+'</div></section>'+
+   workshopButton('race',state.active?.config[0]===0?'继续比赛':workshopRace?'用借用车追逐本圈幽灵':'使用借用车参赛',()=>raceWorkshopCar(null,workshopRace))+'</div></section>'+
    workshopInventory(loose);return;
  }
  if(workshopSlot===null){
@@ -455,7 +561,7 @@ function garage(){
  const currentInfo=locked||(!missing.length?'三个槽位已装齐':'待装 '+missing.join('、'));
  const lastDrop=workshopRace?.prize;
  const setSlot=n=>{workshopSlot=n;workshopPart=car.parts[n]||0;workshopRerun=false;workshopUpdate='';render();find('.workshop-slot[data-slot="'+n+'"]').focus({preventScroll:true})};
- const pins=car.parts.map((n,j)=>'<span class="pin pin-'+j+(j===i?' active':'')+'"><button type="button" data-pick-slot="'+j+'">'+names[j+1]+' '+(n?id(n):'空槽')+'</button></span>').join('');
+ const pins=car.parts.map((n,j)=>'<span class="pin pin-'+j+(j===i?' active':'')+'" data-part-anchor="'+j+'"><button type="button" data-pick-slot="'+j+'">'+names[j+1]+' '+(n?id(n):'空槽')+'</button></span>').join('');
  const slots=car.parts.map((n,j)=>'<button type="button" class="workshop-slot" data-slot="'+j+'" aria-pressed="'+(j===i)+'"><span>'+names[j+1]+'</span><b>'+badge(A(n))+'</b></button>').join('');
  const carActions=car.lock?btn('查看整车订单',()=>details(state.orders.find(o=>o.id===car.lock))):
   btn('整车挂牌',()=>listing(car.id,3),false,!!locked||!!missing.length);
@@ -463,12 +569,13 @@ function garage(){
  const equippedStatus=equipped?(equipped.id===lastDrop?'本场掉落 · ':'')+'已装在 '+id(car.id):'尚未安装';
  const partOptions='<option value="'+(equipped?.id||0)+'">'+(equipped?'保留 '+badge(equipped):'选择仓库部件')+'</option>'+
   stock.map(a=>'<option value="'+a.id+'"'+(a.id===candidate?.id?' selected':'')+'>'+badge(a)+' · '+rarity[a.edition]+(a.id===lastDrop?' · 本场掉落':'')+(a.lock?' · 已挂牌':'')+'</option>').join('');
- const canRace=!missing.length&&!locked&&!state.active;
+ const resuming=state.active?.config[0]===car.id;
+ const canRace=resuming||!missing.length&&!locked;
  const ghostRace=workshopRace;
  const fitAndRace=workshopRerun&&candidate&&ghostRace&&car.parts.every((n,j)=>n||j===i);
- const raceTitle=ghostRace?'用此配置追逐本圈幽灵':'用此配置参赛';
+ const raceTitle=resuming?'继续比赛':candidate?'用当前配置参赛':ghostRace?'用此配置追逐本圈幽灵':'用此配置参赛';
  body.innerHTML=head+statusMessage+'<div class="workshop-grid"><section class="workshop-car"><div class="toolbar"><div><h3>潮汐 GT '+id(car.id)+'</h3><small>'+escape(currentInfo)+'</small></div>'+carActions+'</div>'+
-  '<div class="car-studio"><img src="gt27-workshop.jpg" alt="潮汐 GT 拆解视图，引擎、轮胎与尾翼从车身分离展示">'+pins+'</div>'+
+  '<div class="car-studio">'+carPreview(car)+pins+'</div>'+
   '<div class="workshop-slots" aria-label="选择装配槽位">'+slots+'</div></section>'+
   '<section class="workshop-bench"><h3>'+slotName+'装配</h3><div class="workshop-mounted" data-equipped="'+(equipped?.id||0)+'"><div><small>'+equippedStatus+'</small><strong>'+badge(equipped)+'</strong></div>'+
   (equipped?btn('展签',()=>label(equipped.id)):'')+'</div>'+
@@ -478,17 +585,20 @@ function garage(){
   workshopComparison(equipped,candidate)+
   (candidate&&equipped?'<p class="sub">换下的 '+badge(equipped)+' 将回到部件仓库。</p>':'')+
   '<div class="actions workshop-tools">'+(candidate?workshopButton('fit','装入 '+id(candidate.id),()=>changeWorkshopFit(car,i,candidate),!fitAndRace,!available):'')+
-  (fitAndRace?workshopButton('fit-race','装配并追逐本圈幽灵',()=>changeWorkshopFit(car,i,candidate,true),true,!available||!!state.active):'')+
+  (fitAndRace?workshopButton('fit-race','装配并追逐本圈幽灵',()=>changeWorkshopFit(car,i,candidate,true),true,!available):'')+
   (equipped?workshopButton('remove','拆下 '+id(equipped.id),()=>changeWorkshopFit(car,i,null),false,!!locked):'')+'</div>'+
   (locked?'<p class="workshop-lock">'+escape(locked)+'。</p>':'')+
   '<div class="workshop-start">'+(ghostRace?'<small>本圈幽灵 · '+clock(ghostRace.total)+'</small>':'')+
-  workshopButton('race',raceTitle,()=>raceWorkshopCar(car,ghostRace),!candidate,!!candidate||!canRace)+
-  (!canRace?'<small>'+(locked||(!missing.length?'当前钱包已有比赛进行中':'还需安装'+missing.join('、')+'才能参赛'))+'</small>':'')+
+  workshopButton('race',raceTitle,()=>raceWorkshopCar(car,ghostRace),!candidate,!canRace)+
+  (!canRace?'<small>'+(locked||'还需安装'+missing.join('、')+'才能参赛')+'</small>':'')+
   '</div></section></div>'+workshopInventory(loose);
  find('#garagecar').onchange=e=>{
   garageCar=Number(e.target.value);
   if(!candidate)workshopPart=0;
-  workshopUpdate='';render();find('#garagecar').focus({preventScroll:true});
+  const next=A(garageCar),reason=raceBlock(next);
+  if(!reason){rememberRaceCar(garageCar);workshopUpdate='下场参赛车辆已选为 '+raceCarName([garageCar])+'。'}
+  else workshopUpdate=reason+'。';
+  render();find('#garagecar').focus({preventScroll:true});
  };
  find('#workshop-part').onchange=e=>{workshopPart=Number(e.target.value);workshopUpdate='';render();find('#workshop-part').focus({preventScroll:true})};
  for(const button of body.querySelectorAll('[data-slot],[data-pick-slot]')){
@@ -506,8 +616,18 @@ function compare(c,r){
   return '<tr'+(different?' class="changed"':'')+'><td>'+names[i]+'</td><td>'+(old?btn(badge(A(old)),()=>label(old)):'暂无纪录')+'</td><td>'+(n?btn(badge(A(n)),()=>label(n)):'空槽')+(different?' <small>已更换</small>':'')+'</td></tr>'
  }).join('')+'</table>';
 }
+function carPreview(car){
+ const label=raceCarName([car.id])+' · '+car.parts.map((part,i)=>names[i+1]+' '+badge(A(part))).join('，');
+ return '<canvas class="car-preview" data-car-preview="'+car.id+'" data-parts="'+car.parts.join(',')+'" role="img" aria-label="'+escape(label)+'"></canvas>';
+}
+function paintPreviews(){
+ renderCarPreviews(body,canvas=>{
+  const parts=canvas.dataset.parts.split(',').map(Number);
+  return carAppearance([Number(canvas.dataset.carPreview),...parts],carModels(parts));
+ });
+}
 function carDisplay(c){
- return '<div class="car-studio"><img src="gt27-studio.jpg" alt="潮汐 GT 车身与三个可点选的部件位置">'+c.parts.map((t,i)=>t?'<span class="pin pin-'+i+'">'+btn(names[i+1]+' '+id(t),()=>label(t))+'</span>':'').join('')+'</div>';
+ return '<div class="car-studio">'+carPreview(c)+c.parts.map((t,i)=>t?'<span class="pin pin-'+i+'" data-part-anchor="'+i+'">'+btn(names[i+1]+' '+id(t),()=>label(t))+'</span>':'').join('')+'</div>';
 }
 function museum(){
  const cars=state.assets.filter(c=>c.model===0).sort((a,b)=>Number(!!recordFor(b.id))-Number(!!recordFor(a.id)));
@@ -570,7 +690,7 @@ function sellerView(){
   '<section class="box"><h3>我的在挂订单</h3>'+(activeOrders||'<p class="muted">当前没有在挂订单。</p>')+'</section>';
 }
 function badgeModel(key){return models[Math.floor(key/4)]+' · '+rarity[key%4]+'版'}
-function market(){body.innerHTML='<div class="label">RAINPORT EXCHANGE</div><div class="toolbar"><h2>交易市场</h2><b class="price">'+cash(state.balance)+'</b></div><div class="flex market-tabs">'+['按型号买部件','按编号买藏品','买整车','我要出售'].map((n,i)=>btn(n,()=>{tab=i+1;market()},tab===i+1)).join('')+'</div><div id="marketbody"></div>';const box=find('#marketbody');
+function market(){body.innerHTML='<div class="label">RAINPORT EXCHANGE</div><div class="toolbar"><h2>交易市场</h2><b class="price">'+cash(state.balance)+'</b></div><div class="flex market-tabs">'+['按型号买部件','按编号买藏品','买整车','我要出售'].map((n,i)=>btn(n,()=>{tab=i+1;render()},tab===i+1)).join('')+'</div><div id="marketbody"></div>';const box=find('#marketbody');
  if(tab===SELL_TAB){box.innerHTML=sellerView();return}
  if(tab===1){const m=Math.floor(modelKey/4),e=modelKey%4;const open=state.orders.filter(o=>o.key===modelKey&&o.status===1),asks=open.filter(o=>o.kind===1).sort((a,b)=>a.price-b.price||a.id-b.id),bids=open.filter(o=>o.kind===4).sort((a,b)=>b.price-a.price||a.id-b.id),ask=asks.find(o=>o.maker!==state.address),bid=bids.find(o=>o.maker!==state.address);const sales=state.orders.filter(o=>o.key===modelKey&&[1,2].includes(o.kind)&&o.status===2&&o.when>=Date.now()/1000-604800).map(o=>o.paid).sort((a,b)=>a-b),median=sales.length?(sales[(sales.length-1)>>1]+sales[sales.length>>1])/2:null;
  const c=A(garageCar),equipped=c?A(c.parts[slot(m)-1]):null;
