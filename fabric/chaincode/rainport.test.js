@@ -1,102 +1,7 @@
 const assert = require('node:assert/strict');
 const {test} = require('node:test');
-const {AbiCoder, keccak256} = require('ethers');
-const {contracts: [Rainport]} = require('./index');
+const {TestPeer, fixture} = require('./test-peer.cjs');
 const {tier} = require('./races');
-
-// In-memory test peer. Simulations see the last committed values, and commit
-// only when their read versions still match. This is not a Fabric network.
-class TestPeer {
-  constructor() {
-    this.chaincode = new Rainport();
-    this.state = new Map();
-    this.height = 0;
-    this.counter = 0;
-    this.seconds = 1000;
-  }
-
-  async simulate(actor, fn, ...args) {
-    const tx = (++this.counter).toString(16).padStart(64, '0');
-    const reads = new Map(), writes = new Map();
-    let event;
-    const ctx = {
-      clientIdentity: {
-        getID: () => 'x509::' + actor,
-        getMSPID: () => 'Org1MSP',
-        assertAttributeValue: (key, value) => actor === 'Admin' && key === 'rainport.admin' && value === 'true'
-      },
-      stub: {
-        getTxID: () => tx,
-        getTxTimestamp: () => ({seconds: this.seconds}),
-        getCreator: () => ({idBytes: Buffer.from(nonAdminPem)}),
-        getState: async key => {
-          const current = this.state.get(key);
-          reads.set(key, current?.version);
-          return current?.value ?? Buffer.alloc(0);
-        },
-        putState: async (key, value) => writes.set(key, value),
-        setEvent: (name, bytes) => { event = [name, JSON.parse(bytes)]; },
-        getStateByRange: async (start, end) => {
-          const entries = [...this.state.entries()].filter(([k]) => k >= start && k < end);
-          return {
-            next: async () => entries.length
-              ? {value: {value: entries.shift()[1].value}, done: false}
-              : {done: true},
-            close: async () => {}
-          };
-        }
-      }
-    };
-    const result = await this.chaincode[fn](ctx, ...args);
-    return {result, event, tx, commit: () => {
-      for (const [key, version] of reads) {
-        assert.equal(this.state.get(key)?.version, version, 'MVCC_READ_CONFLICT');
-      }
-      if (writes.size) this.height++;
-      for (const [key, value] of writes) this.state.set(key, {value, version: this.height});
-    }};
-  }
-
-  async invoke(actor, fn, ...args) {
-    const proposal = await this.simulate(actor, fn, ...args);
-    proposal.commit();
-    return proposal.result;
-  }
-
-  action(actor, fn, ...args) {
-    return this.invoke(actor, 'Execute', fn, JSON.stringify(args));
-  }
-
-  snapshot() {
-    return this.invoke('A', 'Snapshot');
-  }
-}
-
-// A fixed public-only TLS certificate generated for this test, with OU=client.
-const nonAdminPem = `-----BEGIN CERTIFICATE-----
-MIIByTCCAW+gAwIBAgIUbUrAOD91o9hS0tJteq7C3tQjw90wCgYIKoZIzj0EAwIw
-OjEPMA0GA1UECgwGRmFicmljMQ8wDQYDVQQLDAZjbGllbnQxFjAUBgNVBAMMDXJh
-aW5wb3J0LXRlc3QwHhcNMjYxMTI2MDMyMjUxWhcNMzYxMTIzMDMyMjUxWjA6MQ8w
-DQYDVQQKDAZGYWJyaWMxDzANBgNVBAsMBmNsaWVudDEWMBQGA1UEAwwNcmFpbnBv
-cnQtdGVzdDBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABKkSyDn+AMBLhHM2K2Na
-joLpEgsj2N3uOtuOKb/dHA+6g6l6jEEhP1EM/eH6nae2Ak/40H6QIVvVTKuQO2xf
-+8ajUzBRMB0GA1UdDgQWBBSjQ8rguVWT1ol10j2OmF/2HmRs3DAfBgNVHSMEGDAW
-gBSjQ8rguVWT1ol10j2OmF/2HmRs3DAPBgNVHRMBAf8EBTADAQH/MAoGCCqGSM49
-BAMCA0gAMEUCIQDampi0lVhTCpvrqW5OxmpSur2bs7inItwkwgOXKdnpCwIgGlZO
-HOBg7HidnTKIJM6MgpOEi40J7MefQG0AaXAWSks=
------END CERTIFICATE-----`;
-
-async function fixture() {
-  const db = new TestPeer();
-  const roles = ['裁判', 'A', 'B', 'C', '港务车队', '手续费'];
-  const bindings = await Promise.all(roles.map(async role => ({
-    role, id: (await db.invoke(role, 'WhoAmI')).id
-  })));
-  const initialize = () => db.invoke('Admin', 'Initialize', JSON.stringify(bindings));
-  await initialize();
-  const {wallets} = await db.snapshot();
-  return {db, initialize, wallets};
-}
 
 test('authenticates roles and seeds inventory once', async () => {
   const blank = new TestPeer();
@@ -116,27 +21,53 @@ test('authenticates roles and seeds inventory once', async () => {
   await assert.rejects(db.action('B', 'fit', 1, 1, 0), /NotYourChassis/);
 });
 
-test('locks actual race config, validates clock and awards one stable part', async () => {
+test('retains completed historical races and removes unilateral referee awards', async () => {
   const {db, wallets} = await fixture();
   const id = '0x' + 'a'.repeat(64), checksum = '0x' + 'b'.repeat(64);
-  await assert.rejects(db.action('A', 'start', id, wallets.A, 1), /RefereeOnly/);
-  await db.action('裁判', 'start', id, wallets.A, 1);
+  await assert.rejects(db.action('裁判', 'start', id, wallets.A, 1), /SignedDuelRequired/);
+  await assert.rejects(db.action('裁判', 'confirm', id, wallets.A, 1, 90000, checksum, checksum), /SignedDuelRequired/);
+  await assert.rejects(db.action('A', 'draw', id, wallets.A), /SignedDuelRequired/);
+  const saved = {stage: 3, config: [1, 2, 7, 4], rank: 1, prize: 22, totalMs: 90000};
+  db.state.set('race:' + id + ':' + wallets.A, {version: 1, value: Buffer.from(JSON.stringify(saved))});
+  assert.deepEqual(await db.invoke('A', 'GetRace', id, wallets.A), saved);
+  assert.equal(await db.action('B', 'draw', id, wallets.A), 22);
+  assert.equal((await db.snapshot()).assets.length, 21);
+});
+
+test('retires legacy races in progress, preserves unsigned rewards as unminted, and observes the original lock owner', async () => {
+  const {db, wallets} = await fixture();
+  const id = '0x' + '7'.repeat(64), checksum = '0x' + '8'.repeat(64);
+  const raceKey = 'race:' + id + ':' + wallets.A;
+  const before = await db.invoke('A', 'GetAsset', '1');
+  const seed = (key, value) => db.state.set(key, {version: ++db.height, value: Buffer.from(JSON.stringify(value))});
+  const started = {stage: 1, startTime: db.seconds, config: [1, 2, 7, 4], prize: 0, tx: ['old-start']};
+  seed(raceKey, started);
+  seed('asset:1', {...before, busy: db.seconds + 300, activeRace: raceKey});
   await assert.rejects(db.action('A', 'fit', 1, 1, 0), /CarRacing/);
-  await assert.rejects(db.action('A', 'draw', id, wallets.A), /ConfirmFirst/);
-  await assert.rejects(db.action('裁判', 'confirm', id, wallets.A, 1, 90000, checksum, checksum), /InvalidClock/);
-  const race = await db.invoke('A', 'GetRace', id, wallets.A);
-  assert.deepEqual(race.config, [1, 2, 7, 4]);
-  assert.equal(race.configHash, keccak256(AbiCoder.defaultAbiCoder()
-    .encode(['uint256[4]', 'uint16', 'uint16'], [race.config, 1, 1])));
-  db.seconds += 93;
-  await db.action('裁判', 'confirm', id, wallets.A, 1, 90000, checksum, checksum);
-  const prize = await db.action('A', 'draw', id, wallets.A);
-  assert.equal(prize, 22);
-  assert.equal(await db.action('B', 'draw', id, wallets.A), prize);
-  const item = await db.invoke('A', 'GetAsset', String(prize));
-  assert.deepEqual([item.owner, item.origin, item.originRank], [wallets.A, id, 1]);
-  assert.equal((await db.invoke('A', 'GetRace', id, wallets.A)).tx.length, 3);
-  assert.equal((await db.snapshot()).assets.length, 22);
+  db.seconds += 300;
+  // Even if the original server went offline, the old lock expires by its chain timestamp.
+  await db.action('A', 'fit', 1, 1, 0);
+  await db.action('裁判', 'abandon', id, wallets.A);
+  const released = await db.invoke('A', 'GetAsset', '1');
+  assert.equal(released.busy, 0);
+  assert.equal(released.activeRace, undefined);
+
+  // A stage-2 race had already released its car. A later lock on that car is unrelated.
+  seed(raceKey, {...started, stage: 2, summary: checksum, replay: checksum, tx: ['old-start', 'old-confirm']});
+  const later = {...released, busy: db.seconds + 600, activeRace: 'another-race'};
+  seed('asset:1', later);
+  await assert.rejects(db.action('裁判', 'draw', id, wallets.A), /SignedDuelRequired/);
+  await db.action('裁判', 'abandon', id, wallets.A);
+  const closed = await db.invoke('A', 'GetRace', id, wallets.A);
+  assert.equal(closed.stage, 4);
+  assert.equal(closed.summary, checksum);
+  assert.equal(closed.replay, checksum);
+  assert.equal(closed.prize, 0);
+  assert.deepEqual(closed.tx.slice(0, 2), ['old-start', 'old-confirm']);
+  await db.action('裁判', 'abandon', id, wallets.A);
+  assert.deepEqual(await db.invoke('A', 'GetRace', id, wallets.A), closed);
+  assert.deepEqual(await db.invoke('A', 'GetAsset', '1'), later);
+  assert.equal((await db.snapshot()).assets.length, 21);
 });
 
 test('locks listings, settles four assets atomically, and prevents stale fits', async () => {

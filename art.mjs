@@ -56,7 +56,8 @@ function fallbackPaint(canvas,r,ghost,attract=false){
   shape([[-18,-20],[18,-20],[20,-11],[-19,-11]],'#c3bca4');ctx.fillStyle='#26333a';ctx.font='bold 6px monospace';ctx.fillText('R A I N',-12,-14);
   line([[0,-8],[0,-1]],'#778181',2);ctx.restore()
  }
- if(r&&!attract){let cars=r.bots.map((b,i)=>{const time=Math.max(0,t-(r.rivalDelay?.[i]||0));return {d:botD(time,b),x:botX(time,b,i),c:['#e3ab66','#9baeb4','#a85645','#768572','#b5b5a5','#9c839b','#82aaa9'][i]}});if(ghost)cars.push({...ghost,c:'#78e6db',g:1});
+ if(r&&!attract){const rivals=r.opponents??r.bots.map((b,i)=>{const time=Math.max(0,t-(r.rivalDelay?.[i]||0));return {d:botD(time,b),x:botX(time,b,i)}});
+  const cars=rivals.map((car,i)=>({...car,c:['#e3ab66','#9baeb4','#a85645','#768572','#b5b5a5','#9c839b','#82aaa9'][i]}));if(ghost)cars.push({...ghost,c:'#78e6db',g:1});
   cars.filter(v=>v.d>d-2&&v.d-d<420).sort((a,b)=>b.d-a.d).forEach(v=>{const q=project(Math.max(0,v.d-d+8));car(q.x+q.wide*v.x*.8,q.y-8,q.s*.93,v.c,v.g?.47:1)});
  }
  car(attract?655:450+x*36,attract?396:415,attract?1.8:1.15,r?.config?.[0]?'#358e89':'#db7948',1,true);

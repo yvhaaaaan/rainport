@@ -15,7 +15,7 @@ npm start
 
 ### 使用 Hyperledger Fabric
 
-Fabric 模式使用通道 `rainport` 和同名链码。车手身份来自 MSP 证书，车辆、部件、装配、赛果摘要、订单与 CR 余额由链码维护。整车交割和货款分配由同一个 Fabric 交易提交。赛后回放依旧作为本地文件保存，播放前与链上摘要核对。
+Fabric 版支持两名真人与六辆 AI 同场竞速。车辆、部件、订单、余额、赛事规则、原始驾驶输入和两名玩家的确认签名均可按赛事或部件编号追溯。
 
 本地启动脚本支持 Windows x64 与 Linux x64，可直接启动节点和链码服务。需要 Node.js 22.12+、Go、curl、tar 和可下载 GitHub 与 npm 依赖的网络。从项目目录安装依赖并启动 Fabric 2.5.16 节点。
 
@@ -35,11 +35,22 @@ node play.mjs
 
 在 Bash 中用 `RAINPORT_LEDGER=fabric node play.mjs` 启动网页。Fabric 的本地网络、证书和密钥保存在 `.fabric-local/`，比赛文件默认保存在 `data-fabric/`。以太坊版仍通过 `npm start` 启动，默认使用端口 8787。两种模式各自保留资产、订单和履历。
 
+从旧版本升级时，先停止旧的本地 Fabric 启动器和网页服务，再在原数据目录按上面的命令重启，链码服务将加载新版源码。已有开发通道使用自己的链码部署流程升级 Rainport 合约后，再启动新版网页。
+
 已有开发通道时，部署 [链码](fabric/chaincode/) 后，可通过 `FABRIC_CONFIG` 指定 Gateway JSON。配置需要 `endpoint`、`hostAlias`、`tlsCert`、`channel`、`chaincode` 及 `identities`。身份映射包含裁判、A、B、C、港务车队、手续费。每项填写 `mspId`、`certificate`、`privateKey`，文件路径以配置目录为基准。首次初始化使用 Org1MSP 管理员证书。
 
-当前 Fabric 网络是单组织的本地演示。浏览器选择演示身份，由本机服务使用对应证书签名。抽奖使用确定性模拟随机源。Fabric 钱包页显示真实通道、链码、交易 ID、区块号和验证状态。
+#### 两名玩家如何开赛
 
-七项链上验收会跑三场比赛并买卖演示资产，请在另一套新建的开发链上运行。PowerShell 中可用单独的目录与端口启动。
+1. 两名玩家各自打开 Fabric 首页，输入本机账号名并点「注册新车手」。每名车手获得装配完整的赛车和 1,000 CR。下次在同一浏览器输入该账号名即可登录。浏览器通过 Web Crypto 生成不可导出的 P-256 私钥，保存在该站点的 IndexedDB。清除网站数据或丢失浏览器配置会失去这个身份。
+2. 一人点「创建房间」，另一人输入六位房间码加入。也可以两人都点「快速匹配」。发车前链码核对双方的实际装配，锁定参赛名单、车辆配置、赛道种子、初始车道、10 毫秒模拟步长、物理版本及验证程序的 SHA-256。短时断线可用原身份返回；行驶中断线达 45 秒或四分钟内未能完赛会关闭房间。
+3. 完赛后各自签名提交输入摘要，两份齐全才将原始输入批量写入 Fabric。每条记录带序号和实际生效的模拟步。双方浏览器校验锁定的验证程序，自行从链上输入复算，页面展示名次、整数毫秒用时及与完赛计时的差异。两人签名确认同一赛果后，链码一次性结算并解锁车辆。拒签、分歧或开赛十分钟后仍未确认会关闭赛事并解锁；掉线者未主动拒签时按这个链上期限释放。
+4. 在「我的库存」按编号或同款挂牌，另一玩家在「部件市场」购买。展开部件履历可查看来源比赛、两份签名、成交记录和节点回执。
+
+本机可用两个浏览器或两个浏览器配置分别登录。跨设备时，在 HTTPS 反向代理后运行同一联机服务，保留请求的原始 Host，并把 `RAINPORT_PUBLIC_ORIGIN` 设为两人使用的公开 HTTPS 地址，例如 `https://race.example.org`。代理转发至本机 8789，Fabric 节点和私钥目录留在本机。设置公开入口后，服务只开放玩家联机 API。
+
+此网络使用一个 Fabric 组织。服务端使用 MSP 证书转发玩家签名的操作，链码独立校验玩家公钥、签名、通道对应的签名域和递增序号。双方共同认可的虚假记录仍可能被确认。掉落使用确定性模拟随机源。在本机访问 `/demo` 可查看旧版演示钱包的市场和历史回放。
+
+链上验收会注册两个玩家并交易资产，请使用另一套新建的开发链。PowerShell 中可用单独的目录与端口启动。
 
 ```powershell
 $env:RAINPORT_FABRIC_NETWORK="$PWD/.fabric-local/acceptance"
@@ -47,7 +58,7 @@ $env:RAINPORT_FABRIC_BASE_PORT='17150'
 node fabric/local-network.mjs
 ```
 
-保留这个节点窗口，在另一窗口指向验收网络，初始化后执行测试。脚本按真实赛时推进，完成后把断言、赛果和节点回执写入 `evidence/fabric-*/`。
+保留这个节点窗口，在另一窗口指向验收网络，初始化后执行测试。脚本使用固定驾驶策略生成输入并在真实节点提交交易，完成后把断言、赛果和节点回执写入 `evidence/fabric-duel-*/`。
 
 ```powershell
 $env:FABRIC_CONFIG="$PWD/.fabric-local/acceptance/gateway.json"
@@ -55,7 +66,7 @@ node fabric/init.mjs
 node fabric/acceptance.mjs --fresh-local-network
 ```
 
-Windows x64 本地 Fabric 2.5.16 实测七项全部通过。三场比赛分别用时 84.823、84.814 和 86.856 秒。整车成交一笔扣 500 CR，卖家实收 490 CR，手续费 10 CR。两个买家同时提交时，一笔通过，另一笔由节点标记为 `MVCC_READ_CONFLICT`，未扣商品款。[七项验收断言](evidence/fabric/checks.json) · [32 份节点回执](evidence/fabric/node-receipts.json) · [试玩版回执截图](evidence/fabric/demo-receipt.png)
+房间和跨浏览器复算测试可运行 `node duel-rooms-check.mjs`，命令后可追加 Chrome 和 Edge 可执行程序路径。登录与会话边界测试使用 `node duel-service-check.mjs`，链码测试使用 `npm --prefix fabric/chaincode test`。另可将 `RAINPORT_UI_URL` 指向独立验收网络的联机网页，再运行 `node fabric/duel-browser-check.mjs`，使用两个浏览器注册新玩家、实际驾驶、复核、签名交易。旧版单人赛的节点记录也保留供查阅。[历史验收断言](evidence/fabric/checks.json) · [历史节点回执](evidence/fabric/node-receipts.json)
 
 ### 实际驾驶
 

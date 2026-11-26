@@ -4,7 +4,7 @@ import {bindCourseGuide} from './course-guide.mjs';
 export function cockpitMarkup(actions) {
   return `<section class="raceview" aria-label="雨港比赛">
     <canvas class="race-world" aria-label="雨港赛道追尾视角"></canvas>
-    <div class="timing-board"><span class="hud-title">雨港 <i>/</i> 冲刺赛</span>
+    <div class="timing-board"><span class="hud-title">雨港 <i>/</i> <span id="race-car">冲刺赛</span></span>
       <div class="race-position"><strong id="position">P8</strong><small>/ 8</small></div>
       <span id="sector">S1　港区湿弯</span>
       <div class="turn-guide" hidden><i aria-hidden="true"></i><div><strong></strong><small></small></div></div>
@@ -59,7 +59,10 @@ export function readInstruments(view,clock) {
     delta.textContent=gap===null?(r.d<12?launchHint:'剩余 '+((L-r.d)/1000).toFixed(2)+' km'):'幽灵 '+(gap>0?'+':'')+gap.toFixed(2)+' s';
     delta.className=gap!==null&&gap<0?'ahead':'';
     player.style.left=clamp(r.d/L*100,0,100)+'%';
-    opponents.forEach((dot,i)=>{dot.style.left=clamp(botD(Math.max(0,r.t-(r.rivalDelay?.[i]||0)),r.bots[i])/L*100,0,100)+'%';});
+    opponents.forEach((dot,i)=>{
+      const distance=r.opponents?r.opponents[i].d:botD(Math.max(0,r.t-(r.rivalDelay?.[i]||0)),r.bots[i]);
+      dot.style.left=clamp(distance/L*100,0,100)+'%';
+    });
     return cue;
   }
   return update;

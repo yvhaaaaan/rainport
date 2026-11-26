@@ -21,6 +21,7 @@ const json=x=>JSON.parse(JSON.stringify(x,(k,v)=>typeof v==='bigint'?v.toString(
 const digest=obj=>ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify(obj)));
 const port=Number(process.env.PORT||(ledgerName==='fabric'?8789:8787));
 const errorsZh={
+ SignedDuelRequired:'Fabric 正式赛请从双人联机入口发车并由双方签名确认',
  AssetListed:'此编号已有有效卖单，请先撤单',PartMounted:'部件仍装在车上，请先拆下',
  CarRacing:'车辆正在比赛',CarAssembled:'底盘上仍装有部件',
  CarListed:'车辆已挂牌，请先撤单',CarUnavailable:'车辆归属、挂牌或参赛状态不允许此操作',
@@ -124,6 +125,10 @@ export async function launch({listen=true,showcase=true}={}){
  const saveRuns=()=>write('runs.json',runs);
  let lane=Promise.resolve();
  const atomic=fn=>{const result=lane.then(fn);lane=result.catch(()=>{});return result};
+ const duel=ledgerName==='fabric' ? await (await import('./duel-service.mjs')).createDuelService(ledger,dir,atomic) : null;
+ const publicOrigin=duel&&process.env.RAINPORT_PUBLIC_ORIGIN ? new URL(process.env.RAINPORT_PUBLIC_ORIGIN) : null;
+ if(publicOrigin&&publicOrigin.protocol!=='https:')throw Error('联机入口需要 HTTPS');
+ let duelClient;
  async function start(w,car,stream=false){
   const old=runs[w];if(old&&!records.some(v=>v.id===old.id)&&Date.now()-old.ms<240000){
    if(stream&&!old.controlStream){sample(old,Date.now());enableControls(old);saveRuns()}
@@ -193,7 +198,14 @@ export async function launch({listen=true,showcase=true}={}){
   if(route==='drive')return drive(w,b.id,b.keys,b.changes);
   if(route==='finish')return atomic(()=>finish(w,b.id));
   if(route==='replay')return replay(b.id);
-  if(route==='abandon')return atomic(async()=>{const r=runs[w];if(r&&r.id===b.id&&Number((await race(r.id,wallets[w])).stage)===1){await op('裁判','abandon',[r.id,wallets[w]]);delete runs[w];saveRuns()}return {}});
+  if(route==='abandon')return atomic(async()=>{
+   const r=runs[w];
+   if(r&&r.id===b.id){
+    const stage=Number((await race(r.id,wallets[w])).stage);
+    if(stage===1||(duel&&stage===2)){await op('裁判','abandon',[r.id,wallets[w]]);delete runs[w];saveRuns()}
+   }
+   return {};
+  });
   if(route==='receipt')return ledger.receipt(b.hash);
   if(route==='tx'){
     if(!new Set(['fit','list','bid','buy','close']).has(b.fn)||!Array.isArray(b.args)||b.args.some(x=>!Number.isSafeInteger(x)||x<0))throw Error('交易参数无效');
@@ -222,10 +234,29 @@ export async function launch({listen=true,showcase=true}={}){
  if(listen){
   httpd=http.createServer(async(req,res)=>{try{
    res.setHeader('X-Rainport-Ledger',ledgerName);
-   if(!['localhost','127.0.0.1','[::1]'].includes((req.headers.host||'').split(':')[0]))throw Error('仅供本机');
+   const host=req.headers.host||'';
+   const local=/^(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i.test(host);
+   if(!local&&host!==publicOrigin?.host)throw Error('未配置此联机地址');
    if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)throw Error('仅接受同源操作');
    if(req.method==='GET'){
+    if(duel&&['/','/duel','/duel/'].includes(req.url)){
+     res.setHeader('Content-Type','text/html; charset=utf-8');res.end(fs.readFileSync(path.join(root,'duel.html')));return;
+    }
+    if(duel&&req.url==='/duel/client.mjs'){
+     duelClient??=(await import('esbuild')).build({entryPoints:[path.join(root,'duel-ui.mjs')],bundle:true,format:'esm',
+      write:false,target:'es2022',minify:true}).then(result=>result.outputFiles[0].contents).catch(err=>{duelClient=null;throw err});
+     const bytes=await duelClient;res.setHeader('Content-Type','text/javascript; charset=utf-8');res.end(bytes);return;
+    }
+    const rules=duel&&/^\/duel\/verifiers\/([0-9a-f]{64})\.mjs$/.exec(req.url);
+    if(rules){
+     const source=duel.source(rules[1]);
+     if(!source){res.writeHead(404);res.end();return}
+     res.setHeader('Content-Type','text/javascript; charset=utf-8');
+     res.setHeader('Cache-Control','public, max-age=31536000, immutable');res.end(source);return;
+    }
     const files={'/':['index.html','text/html'],'/client.mjs':['client.mjs','text/javascript'],'/physics.mjs':['physics.mjs','text/javascript'],'/art.mjs':['art.mjs','text/javascript'],'/style.css':['style.css','text/css']};
+    if(duel&&local&&!publicOrigin)files['/demo']=['index.html','text/html'];
+    if(duel)files['/duel.css']=['duel.css','text/css'];
     files['/racer-profiles.mjs']=['racer-profiles.mjs','text/javascript'];
     files['/rainport-cover.webp']=['rainport-cover.webp','image/webp'];
     files['/gt27-studio.jpg']=['gt27-studio.jpg','image/jpeg'];
@@ -234,12 +265,16 @@ export async function launch({listen=true,showcase=true}={}){
     if(selected){res.setHeader('Content-Type',selected[1]+'; charset=utf-8');res.end(fs.readFileSync(path.join(root,selected[0])));return}
    }
    if(req.method!=='POST'||!req.url.startsWith('/api/')||!(req.headers['content-type']||'').startsWith('application/json')){res.writeHead(404);res.end();return}
+   const duelRequest=duel&&req.url.startsWith('/api/duel/');
+   if((!local||publicOrigin)&&!duelRequest)throw Error('此联机入口只接受玩家签名身份');
    let body='';for await(const buf of req){body+=buf;if(body.length>16384)throw Error('请求过长')}
-   const answer=await api(req.url.slice(5),JSON.parse(body));res.setHeader('Content-Type','application/json');res.end(JSON.stringify(answer));
+   const data=JSON.parse(body);
+   const answer=duelRequest?await duel.api(req.url.slice(10),data,(req.headers.authorization||'').replace(/^Bearer /,'')):await api(req.url.slice(5),data);
+   res.setHeader('Cache-Control','no-store');res.setHeader('Content-Type','application/json');res.end(JSON.stringify(answer));
   }catch(e){res.writeHead(fabricUnavailable(e)?503:400,{'Content-Type':'application/json'});res.end(JSON.stringify({error:clean(e)}))}});
   await new Promise(resolve=>httpd.listen(port,'127.0.0.1',resolve));console.log('雨港已开放 http://127.0.0.1:'+port);
  }
- if(listen){
+ if(listen&&!duel){
   steward=setInterval(()=>{for(const w of ['A','B','C']){
    const r=runs[w];if(!r||settling.has(w)||records.some(x=>x.id===r.id))continue;
    advanceRun(r,Date.now());if(!r.done&&r.t<239.95)continue;
@@ -251,7 +286,7 @@ export async function launch({listen=true,showcase=true}={}){
    }).catch(e=>console.error('赛务',clean(e))).finally(()=>settling.delete(w));
   }},350);
  }
- if(showcase&&!read('showcase.json',false)){
+ if(showcase&&!duel&&!read('showcase.json',false)){
   const w='港务车队';let working=false;
   timer=setInterval(async()=>{if(working)return;working=true;try{
    let rec=records.find(x=>x.driver===w);
@@ -261,6 +296,6 @@ export async function launch({listen=true,showcase=true}={}){
     write('showcase.json',true);clearInterval(timer)});
   }catch(e){console.error('展车实录',clean(e))}finally{working=false}},180);
  }
- return {...ledger,state,start,finish,drive,replay,runs,records,api,async stop(){clearInterval(timer);clearInterval(steward);if(httpd)await new Promise(done=>httpd.close(done));await ledger.stop()}};
+ return {...ledger,state,start,finish,drive,replay,runs,records,api,async stop(){duel?.stop();clearInterval(timer);clearInterval(steward);if(httpd)await new Promise(done=>httpd.close(done));await ledger.stop()}};
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))launch().catch(e=>{console.error(e);process.exitCode=1});

@@ -1,0 +1,14 @@
+#duel .entry{display:grid;grid-template-columns:minmax(260px,1.2fr) minmax(260px,1fr);border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--panel)}
+#duel .coast{min-height:340px;background:linear-gradient(0deg,#0c1719ed,transparent 76%),url('/rainport-cover.webp') center/cover;display:flex;flex-direction:column;justify-content:flex-end;padding:28px}
+#duel .coast h1{font-size:clamp(2.2rem,6vw,4.3rem);margin:0} #duel .coast p{margin:8px 0}
+#duel .entry form{align-self:center;padding:clamp(18px,4vw,44px)}
+#duel label{display:block;margin:12px 0 8px} #duel input,#duel select{max-width:100%;padding:8px}
+#duel .panel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px}
+#duel .sheet{margin:12px 0} #duel h1,#duel h2,#duel h3{margin-top:0}
+#duel .actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0}
+#duel .room-code{font:700 2rem var(--mono);letter-spacing:.16em;color:var(--orange)}
+#duel .hash{word-break:break-all;font: .88em var(--mono)} #duel pre{white-space:pre-wrap;overflow-wrap:anywhere}
+#duel details{margin-top:12px} #duel .sheet a{color:var(--orange)} #duel .row{flex-wrap:wrap}
+#duel .race-actions{display:flex;gap:8px;align-items:center;color:white} #duel input[type=number]{width:8em}
+#duel .note{color:var(--dim);line-height:1.6} #duel .good{color:#a3ddc2} #duel .bad{color:#ffaf86}
+@media(max-width:650px){#duel .entry{grid-template-columns:1fr}#duel .coast{min-height:190px}#duel .entry form{padding:20px}}

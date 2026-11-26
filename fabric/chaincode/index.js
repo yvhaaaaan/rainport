@@ -5,6 +5,8 @@ const {
 } = require('./ledger');
 const market = require('./market');
 const races = require('./races');
+const duels = require('./duels');
+const players = require('./players');
 
 const seeds = [
   ['A', 0, 0], ['A', 1, 0], ['A', 3, 0], ['A', 5, 0], ['B', 0, 0], ['B', 2, 0],
@@ -21,9 +23,7 @@ const operations = Object.assign(Object.create(null), {
   bid: {n: 3, run: market.bid},
   buy: {n: 2, run: market.buy},
   close: {n: 1, run: market.close},
-  start: {n: 3, official: true, run: races.start},
   abandon: {n: 2, official: true, run: races.abandon},
-  confirm: {n: 6, official: true, run: races.confirm},
   draw: {n: 2, run: (db, actor, args) => races.draw(db, args)}
 });
 
@@ -40,6 +40,22 @@ class Rainport extends Contract {
     return (await new Ledger(ctx.stub).load('meta'))?.wallets ?? {};
   }
 
+  async GetPlayerDomain(ctx) {
+    return {domain: await players.domain(new Ledger(ctx.stub))};
+  }
+
+  async GetPlayer(ctx, id) {
+    return players.get(new Ledger(ctx.stub), id);
+  }
+
+  async PlayerAction(ctx, envelopeJSON) {
+    const db = new Ledger(ctx.stub);
+    const {wallets} = await db.meta();
+    requireThat(identity(ctx).id === wallets[REFEREE], 'RefereeOnly');
+    const envelope = parse(envelopeJSON, 'InvalidArguments');
+    return players.execute(db, envelope, duels.playerActions);
+  }
+
   async Initialize(ctx, rolesJSON) {
     requireThat(isBootstrapAdmin(ctx), 'BootstrapAdminOnly');
     const db = new Ledger(ctx.stub);
@@ -53,7 +69,7 @@ class Rainport extends Contract {
         !Object.values(wallets).includes(binding.id), 'InvalidRoles');
       wallets[binding.role] = binding.id;
     }
-    db.save('meta', {wallets, tokenCount: 0, orderCount: 0});
+    db.save('meta', {wallets, tokenCount: 0, orderCount: 0, playerDomain: 'rainport:' + ctx.stub.getTxID()});
     for (const driver of DRIVERS) db.save(balanceKey(wallets[driver]), 10000);
     for (const [role, model, edition] of seeds) await db.issue(wallets[role], model, edition);
     for (const [role, car, parts] of garages) {
@@ -67,6 +83,7 @@ class Rainport extends Contract {
   }
 
   async Execute(ctx, fn, argsJSON) {
+    requireThat(fn !== 'start' && fn !== 'confirm', 'SignedDuelRequired');
     const operation = operations[fn];
     const args = parse(argsJSON, 'InvalidArguments');
     requireThat(operation && Array.isArray(args), 'InvalidArguments');
@@ -96,6 +113,22 @@ class Rainport extends Contract {
 
   async GetRace(ctx, id, canonicalID) {
     return races.getRace(new Ledger(ctx.stub), id, canonicalID);
+  }
+
+  async OpenDuel(ctx, manifestJSON) {
+    return duels.openDuel(ctx, manifestJSON);
+  }
+
+  async RevealDuel(ctx, id, logsJSON) {
+    return duels.revealDuel(ctx, id, logsJSON);
+  }
+
+  async ExpireDuel(ctx, id) {
+    return duels.expireDuel(ctx, id);
+  }
+
+  async GetDuel(ctx, id) {
+    return duels.getDuel(ctx, id);
   }
 
   async GetTransaction(ctx, id) {

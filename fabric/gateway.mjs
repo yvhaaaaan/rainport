@@ -209,7 +209,18 @@ export async function fabricLedger() {
         transfers: transfers.map(entry => ({...entry, block: lookup.get(entry.hash)})),
         history: history.map(entry => ({...entry, b: lookup.get(entry.h)})).sort((a, b) => b.b - a.b)};
     }
+    const relay = (name, ...args) => submit(contract, config, name, args, {
+      findReceipt: receipt, onCommit: committed => receipts.set(committed.hash, committed),
+    });
     return {wallets, op, meta, binding, receipt, snapshot, stop,
+      playerDomain: () => evaluate(contract, 'GetPlayerDomain'),
+      player: id => evaluate(contract, 'GetPlayer', id),
+      playerAction: envelope => relay('PlayerAction', JSON.stringify(envelope)),
+      marketState: () => evaluate(contract, 'Snapshot'),
+      openDuel: manifest => relay('OpenDuel', JSON.stringify(manifest)),
+      duel: id => evaluate(contract, 'GetDuel', id),
+      revealDuel: (id, logs) => relay('RevealDuel', id, JSON.stringify(logs)),
+      expireDuel: id => relay('ExpireDuel', id),
       asset: id => evaluate(contract, 'GetAsset', id),
       order: id => evaluate(contract, 'GetOrder', id),
       race: (id, actor) => evaluate(contract, 'GetRace', id, actor),

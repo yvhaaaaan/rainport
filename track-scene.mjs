@@ -430,6 +430,12 @@ export function createTrackScene(canvas,first){
     const yaw=r.yaw??steer*.03, gas=r.keys?.[0]||0,brake=r.keys?.[1]||0;
     place(player,r.d,r.x,yaw,{speed:r.v,steer,brake,throttle:gas,spec:r.spec,dt,time:r.t,slip:gripLoss});
     rivals.forEach((car,i)=>{
+      if(r.opponents){
+        const peer=r.opponents[i];
+        car.object.visible=!!peer&&peer.d>r.d-12&&peer.d<r.d+340;
+        if(car.object.visible)place(car,peer.d,peer.x,peer.yaw||0,{speed:peer.v,steer:peer.steer||0,brake:peer.keys?.[1]||0,dt,time:r.t});
+        return;
+      }
       const entry=r.bots[i];if(!entry){car.object.visible=false;return}
       const time=Math.max(0,r.t-(r.rivalDelay?.[i]||0)),d=botD(time,entry);
       car.object.visible=d>r.d-12&&d<r.d+340;

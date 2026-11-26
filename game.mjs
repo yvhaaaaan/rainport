@@ -92,7 +92,7 @@ function lobby(){
   <div class="over"><div class="label track-label">RAINPORT CIRCUIT</div><h1>雨港<span>夜间竞速</span></h1>
   <p>穿过港区湿弯，冲上沿岸长直道。</p>
   <div class="hero-metrics">${stat('赛道长度','3.78 <em>km</em>')}${stat('发车阵容','8 <em>辆</em>')}${stat('预计圈时','90 <em>秒</em>')}</div>
-  <div class="actions">${btn(state.active?'继续比赛':'进入雨港',()=>startRace(),true)}${btn('本场奖池',oddsDialog)}</div></div></section>
+  <div class="actions">${btn(usesFabric()?'进入双人联机':state.active?'继续比赛':'进入雨港',()=>startRace(),true)}${btn('本场奖池',oddsDialog)}</div></div></section>
   <div class="lobby-grid"><section class="sheet"><div class="sheet-title"><h2>发车准备</h2></div>
   <label for="carSelect">参赛车辆</label><select id="carSelect">${options(availableCars(),selectedCar,true)}</select>
   <p class="muted loadout" id="loadout"></p>${controls}<div class="actions">${btn('打开装配台',()=>openWorkshop({carId:selectedCar}),false,!!state.active)}</div></section>
@@ -112,6 +112,7 @@ function lobby(){
  loadout();select.onchange=()=>{selectedCar=+select.value;loadout()};
 }
 async function startRace(){
+ if(usesFabric()){window.location.assign('/');return;}
  if(busy||current)return;
  busy=true;raceSound.arm();keys=[0,0,0];
  try{
