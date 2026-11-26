@@ -1,0 +1,179 @@
+[
+  {
+    "case": 1,
+    "text": "按排名掉落，重开结算与重复抽取保持同一编号",
+    "values": {
+      "race": "0x801911dc09cb9f845ac75e3c7a908d6ae029a46968ad324c0c69804738b5f7d5",
+      "rank": 1,
+      "prize": 22,
+      "total": 84.823,
+      "receipt": {
+        "hash": "62f5f9a3bae56b27389c6127e6e7f61159f32ff9c221fc480005f9e031284bb0",
+        "block": 7,
+        "status": 1,
+        "validationCode": "VALID"
+      },
+      "count": 22
+    }
+  },
+  {
+    "case": 2,
+    "text": "装车后二跑，来源赛事与首次使用赛事分别可查",
+    "values": {
+      "prize": 22,
+      "origin": "0x801911dc09cb9f845ac75e3c7a908d6ae029a46968ad324c0c69804738b5f7d5",
+      "firstUse": "0x39eb6fed50499a4a4df36792e926e86ab214539a76ac4987de2e6c5c0b081b19",
+      "rank": 1,
+      "sectors": [
+        44.307,
+        40.507
+      ],
+      "fit": {
+        "hash": "6e8549be95ae99ba2ac5c40cdb9df02b37b5a8e119280bebbbbab337dd918aa9",
+        "block": 8,
+        "status": 1,
+        "validationCode": "VALID"
+      },
+      "traceSamples": 341
+    }
+  },
+  {
+    "case": 3,
+    "text": "拆下指定雨胎，过户后保留原车手参赛履历",
+    "values": {
+      "serial": 7,
+      "listing": {
+        "hash": "1df387496457141000788062b04e67208a2e757f587e20ba2ce7ce9e119c0e63",
+        "block": 14,
+        "status": 1,
+        "validationCode": "VALID"
+      },
+      "buy": {
+        "hash": "f89d133737f6d2834a0f87e4cc7830c7dcacc8c78406452c7260b77ad8dfcfc6",
+        "block": 15,
+        "status": 1,
+        "validationCode": "VALID"
+      },
+      "mountedOn": 5,
+      "originalLap": "0x801911dc09cb9f845ac75e3c7a908d6ae029a46968ad324c0c69804738b5f7d5"
+    }
+  },
+  {
+    "case": 4,
+    "text": "求购托管、主动同款撮合、指定编号隔离、撤单退款",
+    "values": {
+      "escrowDelta": 52,
+      "bid": {
+        "hash": "62421e8c67ddea0cddf7a03a6cbd76bebcf6d5059817600884682b4b24e66cec",
+        "block": 17,
+        "status": 1,
+        "validationCode": "VALID"
+      },
+      "filled": {
+        "hash": "d322e65447442a83a4a1bc239ea35b2ef188e36e238404d94084d75c7a1fd6af",
+        "block": 20,
+        "status": 1,
+        "validationCode": "VALID"
+      },
+      "price": 52,
+      "excludedOrder": 9,
+      "returned": 40,
+      "refund": {
+        "hash": "de17ade6dba8587ba3328983feb229cb26e036b794572b474d7e3417dfd8c786",
+        "block": 22,
+        "status": 1,
+        "validationCode": "VALID"
+      }
+    }
+  },
+  {
+    "case": 5,
+    "text": "500 CR 整车原子交割，买家使用原配置完赛",
+    "values": {
+      "ids": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "buyCar": {
+        "hash": "5823aafb0983f5ad0c650b05ff34adc589f5b0de063af19abf01f3693f371252",
+        "block": 25,
+        "status": 1,
+        "validationCode": "VALID"
+      },
+      "seller": 490,
+      "buyer": -500,
+      "fee": 10,
+      "race": "0xf1f66a53c8ee38a763dad05a8a26523c3ae0c45899ffbdcf3c2ca7b4f9ff0896",
+      "total": 86.856
+    }
+  },
+  {
+    "case": 6,
+    "text": "两个独立买方竞争同一编号，仅成交者取得部件并支付货款",
+    "values": {
+      "serial": 19,
+      "attempts": [
+        {
+          "buyer": "B",
+          "ok": false,
+          "reason": "Fabric 交易未通过验证：MVCC_READ_CONFLICT",
+          "receipt": {
+            "hash": "057be18ec4319ecf0ae87b073750e5cb5344e49eba333864868afb8091e818ad",
+            "block": 30,
+            "status": 0,
+            "validationCode": "MVCC_READ_CONFLICT"
+          }
+        },
+        {
+          "buyer": "C",
+          "ok": true,
+          "hash": "5d29499c88b5347e36c3b29d507ffe96db1c567a009c0d46addbeaab3a330784",
+          "block": 30,
+          "status": 1,
+          "validationCode": "VALID"
+        }
+      ],
+      "spends": [
+        0,
+        111
+      ],
+      "winner": "C",
+      "owner": "Org1MSP:88d0ecbe4df2832795167cc20122c8d831080560e8be7d266ccc4742ac43f5ee"
+    }
+  },
+  {
+    "case": 7,
+    "text": "整车挂牌期间拒绝拆胎和单卖，撤单后拆胎并按编号挂牌",
+    "values": {
+      "tire": 3,
+      "listed": {
+        "hash": "e10cbda3bb5ddaf4f7114122b66e1230dc564a5e73b885840663bf2c8aafe94e",
+        "block": 31,
+        "status": 1,
+        "validationCode": "VALID"
+      },
+      "detachRejection": {
+        "reason": "chaincode response 500, CarListed",
+        "receipt": null
+      },
+      "rejection": {
+        "reason": "chaincode response 500, AssetListed",
+        "receipt": null
+      },
+      "cancelled": {
+        "hash": "4db9fb3cb0cb387456f2b1512789b1a9df2445d437b92046bc1137f17d2bab96",
+        "block": 32,
+        "status": 1,
+        "validationCode": "VALID"
+      },
+      "relist": {
+        "hash": "1cc43bb06eeab301661930685955cb40a4a10bdf3b784453d75b9c28a5cc9f32",
+        "block": 34,
+        "status": 1,
+        "validationCode": "VALID"
+      }
+    }
+  }
+]

@@ -1,0 +1,10 @@
+{
+  "ledger": "fabric",
+  "started": "2026-11-26T03:24:00.501Z",
+  "passed": 7,
+  "total": 7,
+  "stage": "运行七项验收",
+  "finished": "2026-11-26T03:28:40.146Z",
+  "receipts": 32,
+  "status": "通过"
+}

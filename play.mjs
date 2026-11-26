@@ -4,9 +4,11 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {copySnapshot} from './snapshot.mjs';
 
-const port = Number(process.env.PORT || 8787);
+const fabric = process.env.RAINPORT_LEDGER === 'fabric';
+const port = Number(process.env.PORT || (fabric ? 8789 : 8787));
 const address = 'http://127.0.0.1:' + port;
 function prepareFirstVisit() {
+  if (fabric) return;
   const root = path.dirname(fileURLToPath(import.meta.url));
   const target = path.join(root,'data');
   const seed = path.join(root,'demo-seed');
@@ -22,10 +24,15 @@ function prepareFirstVisit() {
   catch (err) { if (!fs.existsSync(target)) throw err; fs.rmSync(staging,{recursive:true,force:true}); }
 }
 async function alreadyPlaying() {
+  let res;
   try {
-    const res = await fetch(address, {signal: AbortSignal.timeout(1800)});
-    return res.ok && (await res.text()).includes('id="rainport"');
+    res = await fetch(address, {signal: AbortSignal.timeout(1800)});
   } catch { return false; }
+  if (!res.ok || !(await res.text()).includes('id="rainport"')) return false;
+  if ((res.headers.get('x-rainport-ledger') || 'evm') !== (fabric ? 'fabric' : 'evm')) {
+    throw Error('端口已被雨港的另一种测试链占用，请更改 PORT');
+  }
+  return true;
 }
 function openGame() {
   if (process.platform !== 'win32' || process.env.RAINPORT_OPEN_BROWSER === '0') return;
@@ -37,7 +44,7 @@ function openGame() {
 if (await alreadyPlaying()) {
   openGame();
 } else {
-  console.log('正在启动雨港。首次启动会部署合约并准备演示库存。');
+  console.log(fabric ? '正在连接 Hyperledger Fabric。' : '正在启动雨港。首次启动会部署合约并准备演示库存。');
   prepareFirstVisit();
   const {launch} = await import('./server.mjs');
   const instance = await launch({showcase:process.env.RAINPORT_SHOWCASE !== '0'});

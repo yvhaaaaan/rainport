@@ -6,18 +6,20 @@ import crypto from 'node:crypto';
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import {ethers} from 'ethers';
-import ganache from 'ganache';
-import solc from 'solc';
 import {newRun,sample,input,rank,standings,splitTimes,botPilot,models} from './physics.mjs';
 
 const root=path.dirname(fileURLToPath(import.meta.url)), require=createRequire(import.meta.url);
-export const dir=path.resolve(process.env.RAINPORT_DATA||path.join(root,'data'));
+const ledgerName=process.env.RAINPORT_LEDGER||'evm';
+if(!['evm','fabric'].includes(ledgerName))throw Error('RAINPORT_LEDGER 应为 evm 或 fabric');
+const evmDir=path.resolve(process.env.RAINPORT_DATA||path.join(root,'data'));
+export const dir=ledgerName==='fabric'?path.resolve(process.env.RAINPORT_FABRIC_DATA||path.join(root,'data-fabric')):evmDir;
+if(ledgerName==='fabric'&&(dir===evmDir||fs.existsSync(path.join(dir,'contracts.json'))))throw Error('Fabric 需要独立的回放目录，当前目录属于以太坊测试链');
 fs.mkdirSync(dir,{recursive:true});
 const read=(name,fallback)=>fs.existsSync(path.join(dir,name))?JSON.parse(fs.readFileSync(path.join(dir,name),'utf8')):fallback;
 function write(name,value){const dest=path.join(dir,name);fs.writeFileSync(dest+'.tmp',JSON.stringify(value));fs.renameSync(dest+'.tmp',dest)}
 const json=x=>JSON.parse(JSON.stringify(x,(k,v)=>typeof v==='bigint'?v.toString():v));
 const digest=obj=>ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify(obj)));
-const zero=ethers.ZeroAddress;
+const port=Number(process.env.PORT||(ledgerName==='fabric'?8789:8787));
 const errorsZh={
  AssetListed:'此编号已有有效卖单，请先撤单',PartMounted:'部件仍装在车上，请先拆下',
  CarRacing:'车辆正在比赛',CarAssembled:'底盘上仍装有部件',
@@ -28,13 +30,17 @@ const errorsZh={
  NotOwner:'当前钱包不持有该编号',WrongBuyer:'当前钱包无法购买此订单',
  NotYourOrder:'只有挂单人可在到期前撤单',InvalidPrice:'价格应为 1 至 10 亿的整数',
  InvalidExpiry:'订单有效期应在未来 30 天内',InvalidClock:'赛事计时与节点时间不符',
- ERC20InsufficientBalance:'测试币余额不足',ERC20InsufficientAllowance:'市场测试币额度不足'
+ ERC20InsufficientBalance:'测试币余额不足',ERC20InsufficientAllowance:'市场测试币额度不足',
+ SlotChanged:'槽内配件已更换，请核对最新配置后重新装配'
 };
+function fabricUnavailable(e){return ledgerName==='fabric'&&[4,14].includes(e?.code)}
 function clean(e){
+ if(fabricUnavailable(e))return 'Fabric 节点暂不可用，请等节点恢复后重试';
  const reason=e?.reason||e?.info?.error?.data?.reason||e?.revert?.name||e?.shortMessage||e?.message||String(e);
  return errorsZh[reason]||reason;
 }
-export async function launch({listen=true,showcase=true}={}){
+async function evmLedger(listen){
+ const [{default:ganache},{default:solc}]=await Promise.all([import('ganache'),import('solc')]);
  const opts={wallet:{mnemonic:'test test test test test test test test test test test junk',totalAccounts:8,defaultBalance:1000},chain:{chainId:31337,hardfork:'shanghai'},database:{dbPath:path.join(dir,'chain')},logging:{quiet:true},miner:{instamine:'eager'}};
  const node=listen?ganache.server(opts):{provider:ganache.provider(opts)};if(listen)await node.listen(Number(process.env.RPC_PORT||8545),'127.0.0.1');
  const provider=new ethers.BrowserProvider(node.provider, undefined, {cacheTimeout:-1});provider.pollingInterval=60;
@@ -81,20 +87,56 @@ export async function launch({listen=true,showcase=true}={}){
    if(!journal.some(j=>j.fn==='bid'&&j.w==='C'&&j.ok))await op('C','bid',[16,46,expiry()]);
    write('seeded.json',true);
  }
+ async function asset(id){const [a,owner,busy]=await Promise.all([arc.asset(id),arc.ownerOf(id),arc.busyUntil(id)]);return {id,owner,model:Number(a.model),edition:Number(a.edition),mount:Number(a.mount),lock:Number(a.lockId),parts:a.parts.map(Number),origin:a.origin===ethers.ZeroHash?null:a.origin,first:a.first,originRank:Number(a.originRank),busy:Number(busy),key:Number(a.model)*4+Number(a.edition)}}
+ async function order(id){const o=await arc.order(id);return {id,kind:Number(o.kind),status:Number(o.status),maker:o.maker,buyer:o.buyer,key:Number(o.key),price:Number(o.price),paid:Number(o.paid),expires:Number(o.expiry),when:Number(o.soldAt),linked:Number(o.linked),ids:o.ids.map(Number).filter(Boolean)}}
+ async function snapshot(w){
+   const n=Number(await arc.tokenCount()),j=Number(await arc.orderCount());
+   let orders=await Promise.all(Array.from({length:j},(_,i)=>order(i+1)));
+   const assets=await Promise.all(Array.from({length:n},(_,i)=>asset(i+1)));
+   const block=Number(await node.provider.request({method:'eth_blockNumber',params:[]}));
+   const transfers=(await arc.queryFilter(arc.filters.Transfer())).map(ev=>({id:Number(ev.args[2]),from:ev.args[0],to:ev.args[1],hash:ev.transactionHash,block:ev.blockNumber}));
+   const linkLogs=await Promise.all([arc.queryFilter(arc.filters.Opened()),arc.queryFilter(arc.filters.Filled()),arc.queryFilter(arc.filters.Closed())]);
+   function attachReceipt(o,hash){if(o){o.hashes??=[];if(!o.hashes.includes(hash))o.hashes.push(hash)}}
+   for(const e of linkLogs.flat()){
+    const o=orders[Number(e.args[0])-1];
+    attachReceipt(o,e.transactionHash);
+    if(e.fragment.name==='Filled'&&o?.linked)attachReceipt(orders[o.linked-1],e.transactionHash);
+   }
+   return {balance:Number(await credits.balanceOf(wallets[w])),assets,orders,block,transfers,history:journal.slice().reverse()};
+ }
+ async function receipt(hash){if(!/^0x[0-9a-f]{64}$/i.test(hash))throw Error('哈希无效');const rc=await node.provider.request({method:'eth_getTransactionReceipt',params:[hash]});if(!rc)throw Error('回执尚未生成');return rc}
+ return {node,provider,arc,credits,op,asset,order,race:(id,w)=>arc.race(id,w),snapshot,receipt,wallets,signers,meta,journal,expiry,async stop(){if(listen)await node.close();else await node.provider.disconnect()}};
+}
+export async function launch({listen=true,showcase=true}={}){
+ const ledger=ledgerName==='fabric'
+  ?await (await import('./fabric/gateway.mjs')).fabricLedger()
+  :await evmLedger(listen);
+ if(ledger.binding){
+  const saved=read('ledger-binding.json',null);
+  if(saved!==null&&saved!==ledger.binding){
+   await ledger.stop();
+   throw Error('Fabric 通道与本地回放目录不匹配，请设置 RAINPORT_FABRIC_DATA 指向该网络的回放目录');
+  }
+  if(saved===null)write('ledger-binding.json',ledger.binding);
+ }
+ const {wallets,op,asset,order,race,meta,expiry,journal=[]}=ledger;
  const runs=read('runs.json',{}),records=read('records.json',[]);
  const saveRuns=()=>write('runs.json',runs);
  let lane=Promise.resolve();
  const atomic=fn=>{const result=lane.then(fn);lane=result.catch(()=>{});return result};
- async function asset(id){const [a,owner,busy]=await Promise.all([arc.asset(id),arc.ownerOf(id),arc.busyUntil(id)]);return {id,owner,model:Number(a.model),edition:Number(a.edition),mount:Number(a.mount),lock:Number(a.lockId),parts:a.parts.map(Number),origin:a.origin===ethers.ZeroHash?null:a.origin,first:a.first,originRank:Number(a.originRank),busy:Number(busy),key:Number(a.model)*4+Number(a.edition)}}
- async function order(id){const o=await arc.order(id);return {id,kind:Number(o.kind),status:Number(o.status),maker:o.maker,buyer:o.buyer,key:Number(o.key),price:Number(o.price),paid:Number(o.paid),expires:Number(o.expiry),when:Number(o.soldAt),linked:Number(o.linked),ids:o.ids.map(Number).filter(Boolean)}}
  async function start(w,car,stream=false){
   const old=runs[w];if(old&&!records.some(v=>v.id===old.id)&&Date.now()-old.ms<240000){
    if(stream&&!old.controlStream){sample(old,Date.now());enableControls(old);saveRuns()}
    return framed(old);
   }
-  if(old&&!records.some(v=>v.id===old.id)&&(await arc.race(old.id,wallets[w])).stage===1n)await op('裁判','abandon',[old.id,wallets[w]]);
+  if(old&&!records.some(v=>v.id===old.id)){
+   const previous=await race(old.id,wallets[w]),stage=Number(previous.stage);
+   if(stage===2||stage===3||stage===1&&old.done&&Date.now()/1000<Number(previous.startTime)+298){
+    await finish(w,old.id);
+   }else if(stage===1)await op('裁判','abandon',[old.id,wallets[w]]);
+  }
   const id=ethers.hexlify(crypto.randomBytes(32));await op('裁判','start',[id,wallets[w],car]);
-  const g=await arc.race(id,wallets[w]),cfg=g.config.map(Number);
+  const g=await race(id,wallets[w]),cfg=g.config.map(Number);
   const spec=car?await Promise.all(cfg.slice(1).map(async t=>(await asset(t)).model)):[1,3,5];
   const r=newRun(Date.now()+3000,id,w,cfg,spec);if(stream)enableControls(r);runs[w]=r;saveRuns();return framed(r);
  }
@@ -110,9 +152,9 @@ export async function launch({listen=true,showcase=true}={}){
  async function finish(w,id){
   const prior=records.find(a=>a.id===id&&a.driver===w);if(prior)return prior;
   const r=runs[w];if(!r||r.id!==id)throw Error('赛事编号无效');advanceRun(r,Date.now());if(!r.done)throw Error('尚未完赛');saveRuns();
-  let g=await arc.race(id,wallets[w]);
+  let g=await race(id,wallets[w]);
   let summary;
-  if(g.stage===1n){
+  if(Number(g.stage)===1){
    summary={id,driver:w,address:wallets[w],config:r.config,spec:r.spec,rank:rank(r),total:r.sectors[1],sectors:splitTimes(r),standings:standings(r),odds:1,pool:1};
    const replay={config:r.config,inputs:r.inputs,trace:r.trace,physicsVersion:r.physicsVersion||1};
    write(id+'.json',{summary,replay});
@@ -124,29 +166,24 @@ export async function launch({listen=true,showcase=true}={}){
    if(!saved||digest(saved.summary)!==g.summary||digest(saved.replay)!==g.replay)throw Error('已签署赛事的回放文件缺失或摘要不符');
    summary=saved.summary;
   }
-  if(g.stage!==3n)await op('裁判','draw',[id,wallets[w]]);
-  g=await arc.race(id,wallets[w]);
-  const record={...summary,prize:Number(g.prize),summaryHash:g.summary,replayHash:g.replay,configHash:g.configHash,tx:journal.filter(j=>j.args[0]===id).map(j=>j.h)};records.push(record);write('records.json',records);return record;
+  if(Number(g.stage)!==3)await op('裁判','draw',[id,wallets[w]]);
+  g=await race(id,wallets[w]);
+  const record={...summary,prize:Number(g.prize),summaryHash:g.summary,replayHash:g.replay,configHash:g.configHash,tx:g.tx??journal.filter(j=>j.args[0]===id).map(j=>j.h)};records.push(record);write('records.json',records);return record;
  }
- async function replay(id){if(!/^0x[0-9a-f]{64}$/.test(id))throw Error('赛事编号无效');const v=read(id+'.json',null);if(!v)throw Error('回放文件不存在');const g=await arc.race(id,v.summary.address);
+ async function replay(id){if(!/^0x[0-9a-f]{64}$/.test(id))throw Error('赛事编号无效');const v=read(id+'.json',null);if(!v)throw Error('回放文件不存在');const g=await race(id,v.summary.address);
   const cfg=ethers.keccak256(ethers.AbiCoder.defaultAbiCoder().encode(['uint256[4]','uint16','uint16'],[v.summary.config,v.summary.odds,v.summary.pool]));
   if(digest(v.summary)!==g.summary||digest(v.replay)!==g.replay||cfg!==g.configHash)throw Error('回放、配置或成绩摘要与链上不符');return v.replay;
  }
  async function state(w){
-   const n=Number(await arc.tokenCount()),j=Number(await arc.orderCount());
-   let orders=await Promise.all(Array.from({length:j},(_,i)=>order(i+1)));
-   for(const o of orders)if(o.status===1&&o.expires<=Date.now()/1000){await op('裁判','close',[o.id],undefined,{gasLimit:300000n});Object.assign(o,await order(o.id))}
-   const assets=await Promise.all(Array.from({length:n},(_,i)=>asset(i+1)));
-   const block=Number(await node.provider.request({method:'eth_blockNumber',params:[]}));
-   const transfers=(await arc.queryFilter(arc.filters.Transfer())).map(ev=>({id:Number(ev.args[2]),from:ev.args[0],to:ev.args[1],hash:ev.transactionHash,block:ev.blockNumber}));
-   const linkLogs=await Promise.all([arc.queryFilter(arc.filters.Opened()),arc.queryFilter(arc.filters.Filled()),arc.queryFilter(arc.filters.Closed())]);
-   function attachReceipt(o,hash){if(o){o.hashes??=[];if(!o.hashes.includes(hash))o.hashes.push(hash)}}
-   for(const e of linkLogs.flat()){
-    const o=orders[Number(e.args[0])-1];
-    attachReceipt(o,e.transactionHash);
-    if(e.fragment.name==='Filled'&&o?.linked)attachReceipt(orders[o.linked-1],e.transactionHash);
+   let data=await ledger.snapshot(w);
+   const expired=data.orders.filter(o=>o.status===1&&o.expires<=Date.now()/1000);
+   for(const o of expired){
+    try{await op('裁判','close',[o.id],undefined,{gasLimit:300000n})}
+    catch(e){if((await order(o.id)).status===1)throw e}
    }
-   return {wallet:w,address:wallets[w],wallets,balance:Number(await credits.balanceOf(wallets[w])),assets,orders,records,block,contracts:meta,transfers,history:journal.slice().reverse(),active:runs[w]&&!records.some(v=>v.id===runs[w].id)&&Date.now()-runs[w].ms<240000?framed(runs[w]):null};
+   if(expired.length)data=await ledger.snapshot(w);
+   const active=runs[w]&&!records.some(v=>v.id===runs[w].id)&&Date.now()-runs[w].ms<240000?framed(runs[w]):null;
+   return {...data,wallet:w,address:wallets[w],wallets,records,contracts:meta,active};
  }
  const jobs=new Map();
  async function api(route,b){
@@ -156,20 +193,26 @@ export async function launch({listen=true,showcase=true}={}){
   if(route==='drive')return drive(w,b.id,b.keys,b.changes);
   if(route==='finish')return atomic(()=>finish(w,b.id));
   if(route==='replay')return replay(b.id);
-  if(route==='abandon')return atomic(async()=>{const r=runs[w];if(r&&r.id===b.id&&(await arc.race(r.id,wallets[w])).stage===1n){await op('裁判','abandon',[r.id,wallets[w]]);delete runs[w];saveRuns()}return {}});
-  if(route==='receipt'){if(!/^0x[0-9a-f]{64}$/i.test(b.hash))throw Error('哈希无效');const rc=await node.provider.request({method:'eth_getTransactionReceipt',params:[b.hash]});if(!rc)throw Error('回执尚未生成');return rc}
+  if(route==='abandon')return atomic(async()=>{const r=runs[w];if(r&&r.id===b.id&&Number((await race(r.id,wallets[w])).stage)===1){await op('裁判','abandon',[r.id,wallets[w]]);delete runs[w];saveRuns()}return {}});
+  if(route==='receipt')return ledger.receipt(b.hash);
   if(route==='tx'){
     if(!new Set(['fit','list','bid','buy','close']).has(b.fn)||!Array.isArray(b.args)||b.args.some(x=>!Number.isSafeInteger(x)||x<0))throw Error('交易参数无效');
     const id=crypto.randomUUID(),job={status:'等待签名'};jobs.set(id,job);
     atomic(async()=>{
      try{
       if(b.fn==='fit'&&b.expectedSlot!==undefined){
-       const car=await arc.asset(b.args[0]);
+       const car=await asset(b.args[0]);
        if(Number(car.parts[b.args[1]])!==b.expectedSlot)throw Error('槽内配件已更换，请核对最新配置后重新装配');
       }
-      const rc=await op(w,b.fn,b.args,h=>{job.status='已提交';job.hash=h});
+      const args=ledgerName==='fabric'&&b.fn==='fit'&&b.expectedSlot!==undefined
+       ?[...b.args,b.expectedSlot]:b.args;
+      const rc=await op(w,b.fn,args,h=>{job.status='已提交';job.hash=h});
       job.status='已确认';job.block=rc.blockNumber;
-     }catch(e){job.status='失败';job.error=clean(e)}
+     }catch(e){
+      job.status=e.pendingTransactionId?'待核对':'失败';
+      job.error=clean(e);
+      if(e.receipt?.blockNumber)job.block=e.receipt.blockNumber;
+     }
     });return {id};
   }
   if(route==='job'){const j=jobs.get(b.id);if(!j)throw Error('交易任务不存在');return j}throw Error('未知请求');
@@ -178,6 +221,7 @@ export async function launch({listen=true,showcase=true}={}){
  const settling=new Set();
  if(listen){
   httpd=http.createServer(async(req,res)=>{try{
+   res.setHeader('X-Rainport-Ledger',ledgerName);
    if(!['localhost','127.0.0.1','[::1]'].includes((req.headers.host||'').split(':')[0]))throw Error('仅供本机');
    if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)throw Error('仅接受同源操作');
    if(req.method==='GET'){
@@ -192,8 +236,8 @@ export async function launch({listen=true,showcase=true}={}){
    if(req.method!=='POST'||!req.url.startsWith('/api/')||!(req.headers['content-type']||'').startsWith('application/json')){res.writeHead(404);res.end();return}
    let body='';for await(const buf of req){body+=buf;if(body.length>16384)throw Error('请求过长')}
    const answer=await api(req.url.slice(5),JSON.parse(body));res.setHeader('Content-Type','application/json');res.end(JSON.stringify(answer));
-  }catch(e){res.writeHead(400,{'Content-Type':'application/json'});res.end(JSON.stringify({error:clean(e)}))}});
-  await new Promise(resolve=>httpd.listen(Number(process.env.PORT||8787),'127.0.0.1',resolve));console.log('雨港已开放 http://127.0.0.1:'+(process.env.PORT||8787));
+  }catch(e){res.writeHead(fabricUnavailable(e)?503:400,{'Content-Type':'application/json'});res.end(JSON.stringify({error:clean(e)}))}});
+  await new Promise(resolve=>httpd.listen(port,'127.0.0.1',resolve));console.log('雨港已开放 http://127.0.0.1:'+port);
  }
  if(listen){
   steward=setInterval(()=>{for(const w of ['A','B','C']){
@@ -202,7 +246,7 @@ export async function launch({listen=true,showcase=true}={}){
    settling.add(w);atomic(async()=>{
     if(runs[w]?.id!==r.id)return;
     if(r.done){await finish(w,r.id);return}
-    if((await arc.race(r.id,wallets[w])).stage===1n)await op('裁判','abandon',[r.id,wallets[w]]);
+    if(Number((await race(r.id,wallets[w])).stage)===1)await op('裁判','abandon',[r.id,wallets[w]]);
     delete runs[w];saveRuns();
    }).catch(e=>console.error('赛务',clean(e))).finally(()=>settling.delete(w));
   }},350);
@@ -217,6 +261,6 @@ export async function launch({listen=true,showcase=true}={}){
     write('showcase.json',true);clearInterval(timer)});
   }catch(e){console.error('展车实录',clean(e))}finally{working=false}},180);
  }
- return {node,provider,arc,credits,op,asset,order,state,start,finish,drive,replay,runs,records,wallets,signers,meta,journal,expiry,api,async stop(){clearInterval(timer);clearInterval(steward);if(httpd)await new Promise(done=>httpd.close(done));if(listen)await node.close();else await node.provider.disconnect()}};
+ return {...ledger,state,start,finish,drive,replay,runs,records,api,async stop(){clearInterval(timer);clearInterval(steward);if(httpd)await new Promise(done=>httpd.close(done));await ledger.stop()}};
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))launch().catch(e=>{console.error(e);process.exitCode=1});

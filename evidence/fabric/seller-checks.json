@@ -1,0 +1,73 @@
+{
+  "channel": "rainport",
+  "node": "127.0.0.1:18151",
+  "mountedSale": {
+    "asset": 7,
+    "car": 1,
+    "price": 97,
+    "buyer": "B",
+    "seller": "A",
+    "order": 7,
+    "fitReceipt": {
+      "ledger": "fabric",
+      "hash": "19b6b94e3f423e17ce3c63f36b2a0f9921b826b0cb653ceb8c18e3c3df30be40",
+      "block": 4,
+      "blockNumber": 4,
+      "channel": "rainport",
+      "contract": "rainport",
+      "validationCode": "VALID",
+      "successful": true,
+      "status": 1
+    },
+    "listReceipt": {
+      "ledger": "fabric",
+      "hash": "410b1e8a7484265ddc3c874d7f7b0eb84881a8fbab08a6cac353c25d47f0a004",
+      "block": 5,
+      "blockNumber": 5,
+      "channel": "rainport",
+      "contract": "rainport",
+      "validationCode": "VALID",
+      "successful": true,
+      "status": 1
+    },
+    "buyReceipt": {
+      "ledger": "fabric",
+      "hash": "d3b3d5ef9e1eb1f540618bfa62c5e6f3d4947b71fabf81c9010a9268c8e12fd0",
+      "block": 6,
+      "blockNumber": 6,
+      "channel": "rainport",
+      "contract": "rainport",
+      "validationCode": "VALID",
+      "successful": true,
+      "status": 1
+    }
+  },
+  "carlessSeller": {
+    "asset": 20,
+    "order": 8,
+    "seller": "C",
+    "carlessReceipt": {
+      "ledger": "fabric",
+      "hash": "0b9e0510034cf6f2bf0533e4e9d1966a7c8f1d496fa22a181e68ea2d40bebc0d",
+      "block": 7,
+      "blockNumber": 7,
+      "channel": "rainport",
+      "contract": "rainport",
+      "validationCode": "VALID",
+      "successful": true,
+      "status": 1
+    },
+    "cancelReceipt": {
+      "ledger": "fabric",
+      "hash": "053375672005a349233f80a7fba33412a8d45301dbb8430020e0b3009f3e7108",
+      "block": 8,
+      "blockNumber": 8,
+      "channel": "rainport",
+      "contract": "rainport",
+      "validationCode": "VALID",
+      "successful": true,
+      "status": 1
+    }
+  },
+  "errors": []
+}

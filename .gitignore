@@ -1,8 +1,13 @@
 # Local installation, saves, and portable builds
 /node_modules/
 /data/
+/data-fabric/
 /runtime/
 /.starting-*/
+/fabric/.network/
+/.fabric-local/
+/fabric/gateway.local.json
+**/node_modules/
 *.zip
 *.next
 
@@ -16,5 +21,6 @@
 
 # Keep the acceptance snapshots referenced by the report and test scripts
 /evidence/chain-*/
+/evidence/fabric-*/
 !/evidence/chain-YgTDt9/
 !/evidence/chain-JGz2Q4/

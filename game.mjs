@@ -23,7 +23,10 @@ if(!['A','B','C'].includes(wallet))wallet='A';
 const local=LOCAL_MODE;
 async function api(route,data={}){const payload={...data,wallet};const response=await fetch('/api/'+route,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});const result=await response.json();if(!response.ok||result.error)throw Error(result.error||'本地服务未响应');return result}
 let state,page='比赛',tab=1,selectedCar=0,garageCar=0,modelKey=16,current=null,loop=0,anim=0,ghost=null,ghostRec=null,lastResult=null,busy=false;
+const SELL_TAB=4;
 let keys=[0,0,0],driveControls=null,onDriveInput=null;
+const usesFabric=()=>local&&state?.ledger==='fabric';
+const ledgerName=()=>local?(usesFabric()?'Fabric':'本地链'):'练习';
 const cash=x=>Number(x).toLocaleString('zh-CN')+' CR',id=n=>'#'+String(n).padStart(3,'0'), clock=n=>Number.isFinite(n)?Math.floor(n/60)+':'+(n%60).toFixed(3).padStart(6,'0'):'—';
 const A=n=>state.assets.find(a=>a.id===n),mine=()=>state.assets.filter(a=>a.owner===state.address);
 const who=a=>Object.keys(state.wallets).find(k=>state.wallets[k]===a)||a;
@@ -58,8 +61,8 @@ async function syncView(){
 window.addEventListener('focus',syncView);
 setInterval(syncView,12000);
 function oddsDialog(){modal('雨港 · 掉率与奖池','<p class="muted">掉率 v1 · 奖池 v1 · 本地模拟随机源。有效完赛抽取一次，奖池内各型号等概率。</p><div class="scroll"><table><tr><th>排名</th>'+['未掉落',...rarity].map(x=>'<th>'+x+'</th>').join('')+'</tr>'+odds.map((r,i)=>'<tr><td>'+['1','2–3','4–5','6–8'][i]+'</td>'+r.map(n=>'<td>'+n/100+'%</td>').join('')+'</tr>').join('')+'</table></div>'+pools.map((p,i)=>row(rarity[i]+' · '+p.map(m=>models[m]).join(' / '))).join('')+'<p class="sub">同型号不同发行版使用相同驾驶参数。</p>')}
-function header(){find('nav').innerHTML=['比赛','车库','展馆','市场','钱包'].map(n=>btn(n,()=>switchPage(n))).join('');Array.from(find('nav').children).forEach((el,i)=>{el.classList.toggle('sel',['比赛','车库','展馆','市场','钱包'][i]===page);el.disabled=!!current});find('.account').textContent=(local?'本地链':'练习')+' · 钱包 '+wallet}
-async function switchPage(p){if(current)return;closeReward();dismiss();resetWorkshop();page=p;await reload();render()}
+function header(){find('nav').innerHTML=['比赛','车库','展馆','市场','钱包'].map(n=>btn(n,()=>switchPage(n))).join('');Array.from(find('nav').children).forEach((el,i)=>{el.classList.toggle('sel',['比赛','车库','展馆','市场','钱包'][i]===page);el.disabled=!!current});find('.account').textContent=ledgerName()+(usesFabric()?' · 身份 ':' · 钱包 ')+wallet}
+async function switchPage(p){if(current)return;await reload();closeReward();dismiss();resetWorkshop();page=p;render()}
 function writeRoute(hash=''){
  if(location.hash===hash)return;
  const address=new URL(location.href);address.hash=hash;
@@ -190,7 +193,11 @@ function stopRace(){onDriveInput=null;driveControls?.destroy();driveControls=nul
 async function loadGhost(r){ghost=await api('replay',{id:r.id});ghostRec=r}
 let rewardView=null;
 const viewedRewards=new Set();
-function rewardKey(r){return ['rainport-revealed',local?state.contracts.Archive:'practice',r.address,r.id].join('/')}
+function rewardKey(r){
+ const registry=usesFabric()?['fabric',state.contracts.chainId,state.contracts.archive].join('/'):
+  local?state.contracts.Archive:'practice';
+ return ['rainport-revealed',registry,r.address,r.id].join('/');
+}
 function rewardSeen(r){
  const key=rewardKey(r);
  if(viewedRewards.has(key))return true;
@@ -262,9 +269,11 @@ function results(r,focus=false){
 async function tx(fn,args,title,after){
  const owner=wallet;
  const expectedSlot=fn==='fit'?A(args[0])?.parts[args[1]]:undefined;
- modal(local?'等待签名':'确认练习操作','<p>'+escape(title)+'</p><p class="sub">'+(local?'使用本机预授权演示钱包 '+wallet+' 签署本次交易。':'所有操作只影响练习存档。')+'</p>'+btn(local?'签署并提交':'确认',submit,true));
+ const signingNote=usesFabric()?'服务端使用 Fabric 演示身份 '+wallet+' 的证书与私钥签署本次交易。':
+  local?'使用本机预授权演示钱包 '+wallet+' 签署本次交易。':'所有操作只影响练习存档。';
+ modal(local?'等待签名':'确认练习操作','<p>'+escape(title)+'</p><p class="sub">'+signingNote+'</p>'+btn(local?'签署并提交':'确认',submit,true));
  async function submit(){
-  if(wallet!==owner)throw Error('钱包已切换，请重新核对订单');
+  if(wallet!==owner)throw Error((usesFabric()?'Fabric 身份':'钱包')+'已切换，请重新核对订单');
   modal('正在处理','<p>'+(local?'等待签名':'练习处理中')+'</p>');
   const message=find('.dialog p');
   let result;
@@ -278,7 +287,7 @@ async function tx(fn,args,title,after){
      shownSubmission=true;
      await new Promise(done=>setTimeout(done,350));
     }
-    if(['已确认','练习已完成','失败'].includes(result.status))break;
+    if(['已确认','练习已完成','失败','待核对'].includes(result.status))break;
     await new Promise(done=>setTimeout(done,150));
    }while(true);
    if(result.status==='失败')throw Error(result.error);
@@ -289,6 +298,12 @@ async function tx(fn,args,title,after){
    return;
   }
   if(wallet!==owner)return;
+  if(result.status==='待核对'){
+   modal('交易已提交 · 待核对','<p>'+escape(result.error)+'</p><code>'+escape(result.hash)+'</code>'+
+    '<div class="actions">'+btn('查询交易回执',()=>receipt(result.hash),true)+
+    btn('重新读取库存',async()=>{await reload();render()})+'</div>');
+   return;
+  }
   try{await reload();render()}catch(e){
    modal(result.status,'<p>库存读取失败 · '+escape(e.message)+'</p>'+btn('重新读取库存',async()=>{await reload();render()}));return;
   }
@@ -298,6 +313,23 @@ async function tx(fn,args,title,after){
 }
 function listing(t,kind){const a=A(t);const ids=kind===3?[t,...a.parts]:[t];modal('挂牌确认','<p>'+kinds[kind]+' · '+ids.map(n=>escape(badge(A(n)))).join(' / ')+'</p><label>总价（CR） <input type="number" id="askprice" min="1" step="1" value="'+(kind===3?500:68)+'"></label><p class="sub">有效期 7 天。成交手续费 2%，向下取整。</p>'+btn('预览订单',()=>{const p=Number(find('#askprice').value);if(!Number.isSafeInteger(p)||p<=0)throw Error('请输入正整数');return tx('list',[kind,t,p,expiry()],kinds[kind]+'　'+ids.map(id).join(' / ')+'　总价 '+cash(p)+'，手续费 '+cash(Math.floor(p*.02))+'，卖家实收 '+cash(p-Math.floor(p*.02)))},true))}
 const expiry=()=>Math.floor(Date.now()/1000)+7*86400;
+function openSeller(){tab=SELL_TAB;return switchPage('市场')}
+function sellPart(partId){
+ const part=A(partId);
+ if(!part?.model||part.owner!==state.address||part.lock||part.mount)throw Error('部件状态已变化，请刷新后查看出售选项');
+ modal('出售 '+badge(part),
+  row('<b>指定编号</b><br><small>买家按此编号购买原件，可查看它的参赛履历。</small>',
+   btn('按编号挂牌',()=>listing(part.id,2),true))+
+  row('<b>同款撮合</b><br><small>与同型号、同版本的求购单按价格撮合。</small>',
+   btn('按同款挂牌',()=>listing(part.id,1))));
+}
+function detachForSale(part,car){
+ const index=car.parts.indexOf(part.id),seller=wallet;
+ if(index<0)throw Error('装配已变化，请刷新后查看');
+ return tx('fit',[car.id,index,0],'从底盘 '+id(car.id)+' 拆下 '+badge(part)+'。拆下后可选择挂牌方式和价格。',()=>{
+  if(wallet===seller&&page==='市场'&&tab===SELL_TAB)sellPart(part.id);
+ });
+}
 let workshopSlot=null, workshopPart=0, workshopRace=null, workshopRerun=false, workshopUpdate='';
 function resetWorkshop(){
  workshopSlot=null;workshopPart=0;workshopRace=null;workshopRerun=false;workshopUpdate='';
@@ -401,8 +433,8 @@ function garage(){
   workshopPart=0;workshopRerun=false;
  }
  const statusMessage=workshopUpdate?'<p class="workshop-update" role="status">'+escape(workshopUpdate)+'</p>':'';
- const head='<div class="toolbar workshop-header"><h2>改装车库</h2><label>自有底盘 <select id="garagecar"'+
-  (car?'':' disabled')+'>'+(car?options(ownedCars(),car.id):'<option>暂无自有车</option>')+'</select></label></div>';
+ const head='<div class="toolbar workshop-header"><h2>改装车库</h2><div class="flex"><label>自有底盘 <select id="garagecar"'+
+  (car?'':' disabled')+'>'+(car?options(ownedCars(),car.id):'<option>暂无自有车</option>')+'</select></label>'+btn('去市场出售',openSeller)+'</div></div>';
  if(!car){
   body.innerHTML=head+statusMessage+'<section class="sheet workshop-empty"><h3>需要一台自有底盘</h3><p>比赛掉落的配件保存在钱包里。借用车使用固定配置，购买整车后可以为它换装。</p>'+
    (workshopPart?'<p>已持有 '+badge(A(workshopPart))+'。</p>':'')+
@@ -488,7 +520,7 @@ function museum(){
 }
 function artFor(m,e,t){return '<div class="artbox edition-'+e+'"><span class="part-id">'+rarity[e]+' · '+id(t)+'</span>'+(slot(m)===2?'<div class="wheel"></div>':'<div class="metal">'+['H01','E1','E3','T1','R2','W1','W3'][m]+'</div>')+'</div>'}
 function label(t){const a=A(t),source=state.records.find(r=>r.id===a.origin),uses=state.records.filter(r=>r.config.includes(t)),trades=state.orders.filter(o=>o.status===2&&o.kind!==4&&o.ids.includes(t)),o=state.orders.find(o=>o.id===a.lock);
- modal('藏品展签 · '+badge(a),artFor(a.model,a.edition,a.id)+'<p><b>'+rarity[a.edition]+'</b> · '+effect[a.model]+'</p>'+row('获得记录',a.origin?'第 '+a.originRank+' 名 · '+escape(who(a.first))+'<br><code>'+escape(a.origin)+'</code>':'创世发行 · '+escape(who(a.first)))+(source?btn('回看获得赛事',()=>viewReplay(source)):'')+'<h3>实际参赛</h3>'+(uses.map(r=>row(escape(r.driver)+' · '+id(r.config[0])+' · 第 '+r.rank+' 名<br><small>'+escape(r.id)+'</small>',btn('回放 '+clock(r.total),()=>viewReplay(r)))).join('')||'<p class="muted">尚无参赛记录</p>')+'<h3>车主与成交</h3>'+row('首任 '+escape(who(a.first))+'　现任 '+escape(who(a.owner)))+(trades.map(o=>row(stamp(o.when)+' · '+kinds[o.kind]+' · '+who(o.maker)+' → '+who(o.buyer),btn(cash(o.paid),()=>details(o)))).join('')||'<p class="muted">暂无成交</p>')+(state.transfers||[]).filter(v=>v.id===t&&v.from!=='0x0000000000000000000000000000000000000000'&&!trades.some(s=>s.hashes?.includes(v.hash))).map(v=>row('直接转移 · '+who(v.from)+' → '+who(v.to),btn('区块 '+v.block,()=>receipt(v.hash)))).join('')+'<div class="actions">'+(o?.kind===2?btn('购买原件 '+id(t),()=>details(o),true):'')+(a.model&&a.owner===state.address?btn('在车库查看配件',()=>openWorkshop({partId:a.id,carId:a.mount||garageCar})):a.model===0&&a.owner===state.address?btn('改装这辆车',()=>openWorkshop({carId:a.id})):'' )+(a.model?btn('查找同款',()=>{modelKey=a.key;tab=1;page='市场';render()}):'')+'</div>')}
+ modal('藏品展签 · '+badge(a),artFor(a.model,a.edition,a.id)+'<p><b>'+rarity[a.edition]+'</b> · '+effect[a.model]+'</p>'+row('获得记录',a.origin?'第 '+a.originRank+' 名 · '+escape(who(a.first))+'<br><code>'+escape(a.origin)+'</code>':'创世发行 · '+escape(who(a.first)))+(source?btn('回看获得赛事',()=>viewReplay(source)):'')+'<h3>实际参赛</h3>'+(uses.map(r=>row(escape(r.driver)+' · '+id(r.config[0])+' · 第 '+r.rank+' 名<br><small>'+escape(r.id)+'</small>',btn('回放 '+clock(r.total),()=>viewReplay(r)))).join('')||'<p class="muted">尚无参赛记录</p>')+'<h3>车主与成交</h3>'+row('首任 '+escape(who(a.first))+'　现任 '+escape(who(a.owner)))+(trades.map(o=>row(stamp(o.when)+' · '+kinds[o.kind]+' · '+escape(who(o.maker))+' → '+escape(who(o.buyer)),btn(cash(o.paid),()=>details(o)))).join('')||'<p class="muted">暂无成交</p>')+(state.transfers||[]).filter(v=>v.id===t&&v.from&&v.from!=='0x0000000000000000000000000000000000000000'&&!trades.some(s=>s.hashes?.includes(v.hash))).map(v=>row('直接转移 · '+escape(who(v.from))+' → '+escape(who(v.to)),btn('区块 '+v.block,()=>receipt(v.hash)))).join('')+'<div class="actions">'+(o?.kind===2?btn(o.maker===state.address?'查看我的订单':'购买原件 '+id(t),()=>details(o),true):'')+(a.model&&a.owner===state.address?btn('在车库查看配件',()=>openWorkshop({partId:a.id,carId:a.mount||garageCar})):a.model===0&&a.owner===state.address?btn('改装这辆车',()=>openWorkshop({carId:a.id})):'' )+(a.model?btn('查找同款',()=>{modelKey=a.key;tab=1;page='市场';render()}):'')+'</div>')}
 async function viewReplay(r){
  const replay=await api('replay',{id:r.id}),track=replay.trace;
  const duration=track.at(-1)[0];
@@ -512,7 +544,33 @@ async function viewReplay(r){
  slider.oninput=()=>{const time=Number(slider.value);cancelAnimationFrame(raf);cursor=0;inputIndex=0;origin=performance.now()-time*1000;raf=requestAnimationFrame(draw)};
  raf=requestAnimationFrame(draw);
 }
-function market(){body.innerHTML='<div class="label">RAINPORT EXCHANGE</div><div class="toolbar"><h2>交易市场</h2><b class="price">'+cash(state.balance)+'</b></div><div class="flex">'+['按型号买部件','按编号买藏品','买整车'].map((n,i)=>btn(n,()=>{tab=i+1;market()},tab===i+1)).join('')+'</div><div id="marketbody"></div>';const box=find('#marketbody');
+function sellerView(){
+ const orders=state.orders.filter(o=>o.maker===state.address&&o.status===1).reverse();
+ const activeOrders=orders.map(o=>row('<b>'+kinds[o.kind]+' · '+cash(o.price)+'</b><br><small>'+
+  (o.ids.length?o.ids.map(id).join(' / '):badgeModel(o.key))+'</small>',btn('订单 '+o.id,()=>details(o)))).join('');
+ const parts=mine().filter(a=>a.model&&!a.lock).reverse();
+ const partRows=parts.map(part=>{
+  const car=A(part.mount);
+  const blocked=car&&workshopLock(car);
+  const location=blocked||(car?'装在底盘 '+id(car.id):'未装车')+' · '+rarity[part.edition]+'版';
+  const action=car?btn('拆下并出售',()=>detachForSale(part,car),false,!!blocked):btn('出售部件',()=>sellPart(part.id),true);
+  return '<div class="seller-item" data-sell-id="'+part.id+'">'+row('<b>'+badge(part)+'</b><br><small>'+escape(location)+'</small>',action)+'</div>';
+ }).join('');
+ const cars=ownedCars().filter(c=>!c.lock);
+ const carRows=cars.map(car=>{
+  const blocked=workshopLock(car)||(car.parts.every(Boolean)?'':'装齐引擎、轮胎和尾翼后可挂牌');
+  const configuration=[car.id,...car.parts].filter(Boolean).map(id).join(' / ');
+  return '<div class="seller-item" data-sell-id="'+car.id+'">'+row('<b>潮汐 GT '+id(car.id)+'</b><br><small>'+
+   escape(blocked||configuration)+'</small>',btn('整车挂牌',()=>listing(car.id,3),false,!!blocked))+'</div>';
+ }).join('');
+ return '<div class="seller-stock"><section class="box"><h3>我的部件</h3>'+
+  (partRows||'<p class="muted">当前没有未挂牌的部件。</p>')+'</section><section class="box"><h3>我的赛车</h3>'+
+  (carRows||'<p class="muted">当前没有未挂牌的自有赛车。</p>')+'</section></div>'+
+  '<section class="box"><h3>我的在挂订单</h3>'+(activeOrders||'<p class="muted">当前没有在挂订单。</p>')+'</section>';
+}
+function badgeModel(key){return models[Math.floor(key/4)]+' · '+rarity[key%4]+'版'}
+function market(){body.innerHTML='<div class="label">RAINPORT EXCHANGE</div><div class="toolbar"><h2>交易市场</h2><b class="price">'+cash(state.balance)+'</b></div><div class="flex market-tabs">'+['按型号买部件','按编号买藏品','买整车','我要出售'].map((n,i)=>btn(n,()=>{tab=i+1;market()},tab===i+1)).join('')+'</div><div id="marketbody"></div>';const box=find('#marketbody');
+ if(tab===SELL_TAB){box.innerHTML=sellerView();return}
  if(tab===1){const m=Math.floor(modelKey/4),e=modelKey%4;const open=state.orders.filter(o=>o.key===modelKey&&o.status===1),asks=open.filter(o=>o.kind===1).sort((a,b)=>a.price-b.price||a.id-b.id),bids=open.filter(o=>o.kind===4).sort((a,b)=>b.price-a.price||a.id-b.id),ask=asks.find(o=>o.maker!==state.address),bid=bids.find(o=>o.maker!==state.address);const sales=state.orders.filter(o=>o.key===modelKey&&[1,2].includes(o.kind)&&o.status===2&&o.when>=Date.now()/1000-604800).map(o=>o.paid).sort((a,b)=>a-b),median=sales.length?(sales[(sales.length-1)>>1]+sales[sales.length>>1])/2:null;
  const c=A(garageCar),equipped=c?A(c.parts[slot(m)-1]):null;
  const currentModel=equipped?.model||(!c?[1,3,5][slot(m)-1]:null);
@@ -522,13 +580,51 @@ function market(){body.innerHTML='<div class="label">RAINPORT EXCHANGE</div><div
   '5-6':'增加弯中下压力，直道空气阻力更大','6-5':'直道空气阻力更小，弯中下压力减小'
  }[currentModel+'-'+m]||effect[m]);
 
- box.innerHTML='<div class="box"><div class="toolbar"><select id="model">'+models.slice(1).map((v,i)=>'<option value="'+(i+1)+'" '+(m===i+1?'selected':'')+'>'+v+'</option>').join('')+'</select><select id="edition">'+rarity.map((v,i)=>'<option value="'+i+'" '+(e===i?'selected':'')+'>'+v+'版</option>').join('')+'</select></div><p>'+names[slot(m)]+'槽 · '+effect[m]+'</p><small>当前 '+(equipped?badge(equipped):c?'空槽':'借用车 · '+models[currentModel])+' · '+difference+'</small><div class="stats">'+stat('最低卖价',asks.length?cash(asks[0].price):'暂无挂单')+stat('最高求购',bids.length?cash(bids[0].price):'暂无求购')+stat('七日中位价',median===null?'暂无成交':cash(median))+stat('七日成交',sales.length+' 笔')+'</div><div class="actions">'+btn(ask?'买最低价 '+cash(ask.price):'暂无可买同款',()=>details(ask),true,!ask)+btn('挂求购单',()=>modal('求购 '+models[m]+' · '+rarity[e],'<p>最高愿付价将进入托管。低价成交会退回差额，撤单会退还剩余托管款。</p><input id="bidprice" aria-label="最高愿付价" type="number" min="1" value="50"> '+btn('预览求购',()=>{const p=Number(find('#bidprice').value);if(!Number.isSafeInteger(p)||p<1)throw Error('请输入正整数');return tx('bid',[modelKey,p,expiry()],'求购 '+models[m]+' · '+rarity[e]+'版，托管 '+cash(p))},true)))+btn('按最高求购卖出',()=>{const choices=mine().filter(a=>a.key===modelKey&&!a.lock&&!a.mount);modal('选择交付编号',choices.map(a=>row(badge(a),btn('以 '+cash(bid.price)+' 出售',()=>tx('list',[1,a.id,bid.price,expiry()],'按同款出售 '+badge(a)+'，最低成交价 '+cash(bid.price))))).join('')||'没有可出售的空闲同款部件。')},false,!bid)+'</div></div>'+[...asks,...bids].map(o=>row(kinds[o.kind]+' · '+who(o.maker)+' · 订单 '+o.id,btn(cash(o.price),()=>details(o)))).join('');
+ box.innerHTML='<div class="box"><div class="toolbar"><select id="model">'+models.slice(1).map((v,i)=>'<option value="'+(i+1)+'" '+(m===i+1?'selected':'')+'>'+v+'</option>').join('')+'</select><select id="edition">'+rarity.map((v,i)=>'<option value="'+i+'" '+(e===i?'selected':'')+'>'+v+'版</option>').join('')+'</select></div><p>'+names[slot(m)]+'槽 · '+effect[m]+'</p><small>当前 '+(equipped?badge(equipped):c?'空槽':'借用车 · '+models[currentModel])+' · '+difference+'</small><div class="stats">'+stat('最低卖价',asks.length?cash(asks[0].price):'暂无挂单')+stat('最高求购',bids.length?cash(bids[0].price):'暂无求购')+stat('七日中位价',median===null?'暂无成交':cash(median))+stat('七日成交',sales.length+' 笔')+'</div><div class="actions">'+btn(ask?'买最低价 '+cash(ask.price):'暂无可买同款',()=>details(ask),true,!ask)+btn('挂求购单',()=>modal('求购 '+models[m]+' · '+rarity[e],'<p>最高愿付价将进入托管。低价成交会退回差额，撤单会退还剩余托管款。</p><input id="bidprice" aria-label="最高愿付价" type="number" min="1" value="50"> '+btn('预览求购',()=>{const p=Number(find('#bidprice').value);if(!Number.isSafeInteger(p)||p<1)throw Error('请输入正整数');return tx('bid',[modelKey,p,expiry()],'求购 '+models[m]+' · '+rarity[e]+'版，托管 '+cash(p))},true)))+btn('按最高求购卖出',()=>{const choices=mine().filter(a=>a.key===modelKey&&!a.lock&&!a.mount);modal('选择交付编号',choices.map(a=>row(badge(a),btn('以 '+cash(bid.price)+' 出售',()=>tx('list',[1,a.id,bid.price,expiry()],'按同款出售 '+badge(a)+'，最低成交价 '+cash(bid.price))))).join('')||'没有可出售的空闲同款部件。')},false,!bid)+'</div></div>'+[...asks,...bids].map(o=>row(kinds[o.kind]+' · '+escape(who(o.maker))+' · 订单 '+o.id,btn(cash(o.price),()=>details(o)))).join('');
  find('#model').setAttribute('aria-label','部件型号');find('#edition').setAttribute('aria-label','发行版本');find('#model').onchange=ev=>{modelKey=4*+ev.target.value+e;market()};find('#edition').onchange=ev=>{modelKey=m*4+ +ev.target.value;market()};}
- else{const all=state.orders.filter(o=>o.status===1&&o.kind===tab);box.innerHTML=all.map(o=>{const a=A(o.ids[0]);return '<div class="box">'+(tab===2?artFor(a.model,a.edition,a.id):carDisplay({id:o.ids[0],parts:o.ids.slice(1)}))+'<div class="toolbar"><h3>'+badge(a)+'</h3><span class="price">'+cash(o.price)+'</span></div><p class="sub">'+(tab===3?'交付 '+o.ids.map(id).join(' / '):rarity[a.edition]+' · 当前车主 '+who(a.owner))+'</p>'+btn(tab===2?'查看原件展签':'查看整车交付清单',()=>tab===2?label(a.id):details(o),true)+'</div>'}).join('')||'<p>当前没有有效挂单。</p>'}}
-async function receipt(h){const rc=await api('receipt',{hash:h});modal('节点交易回执',row('区块号',parseInt(rc.blockNumber,16))+row('状态',Number(rc.status)?'已确认':'执行回退')+row('交易哈希','<code>'+rc.transactionHash+'</code>')+row('发起地址','<code>'+rc.from+'</code>')+row('合约地址','<code>'+rc.to+'</code>')+row('事件条数',rc.logs.length))}
+ else{const all=state.orders.filter(o=>o.status===1&&o.kind===tab);box.innerHTML=all.map(o=>{const a=A(o.ids[0]);return '<div class="box">'+(tab===2?artFor(a.model,a.edition,a.id):carDisplay({id:o.ids[0],parts:o.ids.slice(1)}))+'<div class="toolbar"><h3>'+badge(a)+'</h3><span class="price">'+cash(o.price)+'</span></div><p class="sub">'+(tab===3?'交付 '+o.ids.map(id).join(' / '):rarity[a.edition]+' · 当前车主 '+escape(who(a.owner)))+'</p>'+btn(tab===2?'查看原件展签':'查看整车交付清单',()=>tab===2?label(a.id):details(o),true)+'</div>'}).join('')||'<p>当前没有有效挂单。</p>'}}
+async function receipt(h){
+ const rc=await api('receipt',{hash:h});
+ const code=v=>'<code>'+escape(v)+'</code>';
+ if(rc.ledger==='fabric'||usesFabric()){
+  const status=rc.validationCode??rc.status;
+  const confirmed=rc.successful??(rc.validationCode!=null?
+   [0,'0','VALID'].includes(rc.validationCode):[true,1,'1','VALID','已确认'].includes(status));
+  modal('Fabric 交易回执',row('区块号',escape(rc.block??'—'))+row('状态',confirmed?'已确认':'执行回退')+
+   row('交易 ID',code(rc.hash))+row('通道',code(rc.channel??state.contracts.chainId))+row('链码',code(rc.contract))+
+   (rc.from?row('发起身份',code(who(rc.from))):'')+
+   (status!=null?row('验证状态',code(status)):''));
+  return;
+ }
+ modal('节点交易回执',row('区块号',parseInt(rc.blockNumber,16))+row('状态',Number(rc.status)?'已确认':'执行回退')+
+  row('交易哈希',code(rc.transactionHash))+row('发起地址',code(rc.from))+row('合约地址',code(rc.to))+row('事件条数',rc.logs.length));
+}
 function details(o){const a=A(o.ids[0]),r=o.kind===3?recordFor(a.id):null;const own=o.maker===state.address,p=o.paid||o.price,fee=Math.floor(p*.02);
- modal(kinds[o.kind]+' · 订单 '+o.id,'<div class="stats">'+stat('总价',cash(p))+stat('手续费',cash(fee))+stat('卖家实收',cash(p-fee))+'</div>'+row('订单状态',status[o.status])+row('有效至',stamp(o.expires))+row('交付清单',o.ids.length?o.ids.map(n=>badge(A(n))).join(' / '):models[Math.floor(o.key/4)]+' · '+rarity[o.key%4])+(o.kind===3?compare({id:o.ids[0],parts:o.ids.slice(1)},r):'')+'<div class="actions">'+(o.status===1&&own?btn('撤销订单',()=>tx('close',[o.id],'撤销订单 '+o.id+(o.kind===4?'，退回 '+cash(o.price):'，释放挂牌资产'))):o.status===1&&o.kind!==4?btn('购买 '+(o.kind===3?'整车 ':'')+id(o.ids[0]),()=>tx('buy',[o.id,o.price],'购买 '+o.ids.map(id).join(' / ')+'，总价 '+cash(p)+'，手续费 '+cash(fee)+'，卖家实收 '+cash(p-fee)),true):'')+(o.hashes||[]).map(h=>btn('回执 '+h.slice(0,9),()=>receipt(h))).join('')+'</div>')}
-function walletView(){const myOrders=state.orders.filter(o=>o.maker===state.address||o.buyer===state.address).slice().reverse();body.innerHTML='<div class="label">DRIVER WALLET</div><div class="toolbar"><h2>演示钱包</h2><select id="walletselect" aria-label="切换钱包">'+['A','B','C'].map(w=>'<option '+(w===wallet?'selected':'')+'>'+w+'</option>').join('')+'</select></div><div class="stats">'+stat('可用余额',cash(state.balance))+stat('求购托管',cash(myOrders.filter(o=>o.kind===4&&o.status===1&&o.maker===state.address).reduce((n,o)=>n+o.price,0)))+stat('持有编号',mine().length)+'</div><p><code>'+escape(state.address)+'</code></p><small>'+(local?'Ganache · chainId 31337 · 区块 '+state.block:'浏览器练习存档 · 交易不提交到节点')+'</small><h3>我的订单</h3>'+(myOrders.map(o=>row(kinds[o.kind]+' · '+status[o.status]+' · '+cash(o.paid||o.price),btn('订单 '+o.id,()=>details(o)))).join('')||'<p class="muted">暂无订单。</p>')+(local?'<details><summary>合约地址与近期签名</summary>'+Object.entries(state.contracts).map(([k,v])=>row(k,'<code>'+v+'</code>')).join('')+state.history.filter(j=>j.w===wallet).slice(0,15).map(j=>row(j.fn+' · 区块 '+j.b,btn('回执',()=>receipt(j.h)))).join('')+'</details>':'');find('#walletselect').onchange=async e=>{wallet=e.target.value;try{sessionStorage.setItem('rp-wallet',wallet)}catch{}selectedCar=0;garageCar=0;resetWorkshop();lastResult=null;ghost=null;ghostRec=null;await safe(async()=>{await reload();render()})}}
+ modal(kinds[o.kind]+' · 订单 '+o.id,'<div class="stats">'+stat('总价',cash(p))+stat('手续费',cash(fee))+stat('卖家实收',cash(p-fee))+'</div>'+row('订单状态',status[o.status])+row('有效至',stamp(o.expires))+row('交付清单',o.ids.length?o.ids.map(n=>badge(A(n))).join(' / '):badgeModel(o.key))+(o.kind===3?compare({id:o.ids[0],parts:o.ids.slice(1)},r):'')+'<div class="actions">'+(o.status===1&&own?btn('撤销订单',()=>tx('close',[o.id],'撤销订单 '+o.id+(o.kind===4?'，退回 '+cash(o.price):'，释放挂牌资产'))):o.status===1&&o.kind!==4?btn('购买 '+(o.kind===3?'整车 ':'')+id(o.ids[0]),()=>tx('buy',[o.id,o.price],'购买 '+o.ids.map(id).join(' / ')+'，总价 '+cash(p)+'，手续费 '+cash(fee)+'，卖家实收 '+cash(p-fee)),true):'')+(o.hashes||[]).map(h=>btn('回执 '+h.slice(0,9),()=>receipt(h))).join('')+'</div>')}
+function walletView(){
+ const fabric=usesFabric();
+ const myOrders=state.orders.filter(o=>o.maker===state.address||o.buyer===state.address).slice().reverse();
+ const escrow=myOrders.filter(o=>o.kind===4&&o.status===1&&o.maker===state.address).reduce((n,o)=>n+o.price,0);
+ const ledgerInfo=fabric?'Hyperledger Fabric · 通道 '+state.contracts.chainId+' · 区块 '+state.block:
+  local?'Ganache · chainId 31337 · 区块 '+state.block:'浏览器练习存档 · 交易不提交到节点';
+ const fields=fabric?[
+  ['通道',state.contracts.chainId],['链码',state.contracts.archive],['网关',state.contracts.rpc],['MSP',state.mspId]
+ ].filter(([,value])=>value):Object.entries(state.contracts);
+ const transactions=local?'<details><summary>'+(fabric?'链码与近期交易':'合约地址与近期签名')+'</summary>'+
+  fields.map(([k,v])=>row(escape(k),'<code>'+escape(v)+'</code>')).join('')+
+  state.history.filter(j=>j.w===wallet).slice(0,15).map(j=>row(escape(j.fn)+' · 区块 '+escape(j.b),btn('回执',()=>receipt(j.h)))).join('')+'</details>':'';
+ body.innerHTML='<div class="label">DRIVER WALLET</div><div class="toolbar"><h2>'+(fabric?'演示身份':'演示钱包')+'</h2>'+
+  '<select id="walletselect" aria-label="'+(fabric?'切换 Fabric 身份':'切换钱包')+'">'+['A','B','C'].map(w=>'<option '+(w===wallet?'selected':'')+'>'+w+'</option>').join('')+'</select></div>'+
+  '<div class="stats">'+stat('可用余额',cash(state.balance))+stat('求购托管',cash(escrow))+stat('持有编号',mine().length)+'</div>'+
+  '<p><code>'+escape(state.address)+'</code></p><small>'+escape(ledgerInfo)+'</small><h3>我的订单</h3>'+
+  (myOrders.map(o=>row(kinds[o.kind]+' · '+status[o.status]+' · '+cash(o.paid||o.price),btn('订单 '+o.id,()=>details(o)))).join('')||'<p class="muted">暂无订单。</p>')+transactions;
+ find('#walletselect').onchange=async e=>{
+  wallet=e.target.value;
+  try{sessionStorage.setItem('rp-wallet',wallet)}catch{}
+  selectedCar=0;garageCar=0;resetWorkshop();lastResult=null;ghost=null;ghostRec=null;
+  await safe(async()=>{await reload();render()})
+ }
+}
 async function openGame(){
  try{
   closeReward();

@@ -1,0 +1,18 @@
+{
+  "ledger": "fabric",
+  "contracts": {
+    "archive": "rainport",
+    "credits": "rainport",
+    "chainId": "rainport",
+    "rpc": "127.0.0.1:17151"
+  },
+  "wallets": {
+    "裁判": "Org1MSP:676e50764a83f5b0d4a445805f1bf41c74bd9fa30c92aee1ab63230c017678d6",
+    "A": "Org1MSP:abab5409d04c98b3cbdd5272e1b46c49f875fbbe07f6874dd90643e2bb37b982",
+    "B": "Org1MSP:91c6a01bc8fcca94e061f92c4640342c7b0afac52e86ade1439f9d4ac506c168",
+    "C": "Org1MSP:88d0ecbe4df2832795167cc20122c8d831080560e8be7d266ccc4742ac43f5ee",
+    "港务车队": "Org1MSP:8110d60e3e7c25cc930af4512c3d02b807415534db7cf791e374bf406b9a09e9",
+    "手续费": "Org1MSP:a0671e5652acb335ed6412ac7b2570ccfd4b64980c9f251a118da25ad834312a"
+  },
+  "startingBlock": 3
+}

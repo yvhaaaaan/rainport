@@ -13,6 +13,50 @@ npm start
 
 **单文件练习**　双击 `practice.html` 可离线游戏。练习资产写入浏览器本地存储，钱包页标明练习模式。要体验真实区块、签名和回执，请使用上方的本地链入口。
 
+### 使用 Hyperledger Fabric
+
+Fabric 模式使用通道 `rainport` 和同名链码。车手身份来自 MSP 证书，车辆、部件、装配、赛果摘要、订单与 CR 余额由链码维护。整车交割和货款分配由同一个 Fabric 交易提交。赛后回放依旧作为本地文件保存，播放前与链上摘要核对。
+
+本地启动脚本支持 Windows x64 与 Linux x64，可直接启动节点和链码服务。需要 Node.js 22.12+、Go、curl、tar 和可下载 GitHub 与 npm 依赖的网络。从项目目录安装依赖并启动 Fabric 2.5.16 节点。
+
+```sh
+npm ci
+npm --prefix fabric ci
+node fabric/local-network.mjs
+```
+
+保留节点窗口。在另一个 PowerShell 窗口执行以下命令，然后打开 [Fabric 版雨港](http://127.0.0.1:8789/)。
+
+```powershell
+node fabric/init.mjs
+$env:RAINPORT_LEDGER='fabric'
+node play.mjs
+```
+
+在 Bash 中用 `RAINPORT_LEDGER=fabric node play.mjs` 启动网页。Fabric 的本地网络、证书和密钥保存在 `.fabric-local/`，比赛文件默认保存在 `data-fabric/`。以太坊版仍通过 `npm start` 启动，默认使用端口 8787。两种模式各自保留资产、订单和履历。
+
+已有开发通道时，部署 [链码](fabric/chaincode/) 后，可通过 `FABRIC_CONFIG` 指定 Gateway JSON。配置需要 `endpoint`、`hostAlias`、`tlsCert`、`channel`、`chaincode` 及 `identities`。身份映射包含裁判、A、B、C、港务车队、手续费。每项填写 `mspId`、`certificate`、`privateKey`，文件路径以配置目录为基准。首次初始化使用 Org1MSP 管理员证书。
+
+当前 Fabric 网络是单组织的本地演示。浏览器选择演示身份，由本机服务使用对应证书签名。抽奖使用确定性模拟随机源。Fabric 钱包页显示真实通道、链码、交易 ID、区块号和验证状态。
+
+七项链上验收会跑三场比赛并买卖演示资产，请在另一套新建的开发链上运行。PowerShell 中可用单独的目录与端口启动。
+
+```powershell
+$env:RAINPORT_FABRIC_NETWORK="$PWD/.fabric-local/acceptance"
+$env:RAINPORT_FABRIC_BASE_PORT='17150'
+node fabric/local-network.mjs
+```
+
+保留这个节点窗口，在另一窗口指向验收网络，初始化后执行测试。脚本按真实赛时推进，完成后把断言、赛果和节点回执写入 `evidence/fabric-*/`。
+
+```powershell
+$env:FABRIC_CONFIG="$PWD/.fabric-local/acceptance/gateway.json"
+node fabric/init.mjs
+node fabric/acceptance.mjs --fresh-local-network
+```
+
+Windows x64 本地 Fabric 2.5.16 实测七项全部通过。三场比赛分别用时 84.823、84.814 和 86.856 秒。整车成交一笔扣 500 CR，卖家实收 490 CR，手续费 10 CR。两个买家同时提交时，一笔通过，另一笔由节点标记为 `MVCC_READ_CONFLICT`，未扣商品款。[七项验收断言](evidence/fabric/checks.json) · [32 份节点回执](evidence/fabric/node-receipts.json) · [试玩版回执截图](evidence/fabric/demo-receipt.png)
+
 ### 实际驾驶
 
 比赛进入全屏追车视角。三秒灯号后起步，发动机音调随转速与自动换挡变化。雨天入弯时提前减速，缓打方向，再沿岸全油门。跟车过近会受到前车阻挡，侧面接触、压路肩与碰护栏会反馈到车速和镜头。右上角可切换声音。浏览器支持 WebGL 2 时使用原创 GT27 三维车模；缺少 WebGL 2 时启用兼容画面。
@@ -42,6 +86,8 @@ npm start
 [查看装配实测回执](evidence/assembly/checks.json) · [换装对比截图](evidence/assembly/comparison.png)
 
 ## 三种交易
+
+个人卖家从「市场 → 我要出售」选择自己的部件或整车。未装车的部件可直接挂牌。选择「拆下并出售」时，先确认拆件，再选择按编号或同款挂牌。没有自有底盘的车手也可以出售部件。「我的在挂订单」可打开订单详情、撤单和查看回执。[个人出售界面](evidence/fabric/seller-screen.png) · [Fabric 挂牌、买入与撤单回执](evidence/fabric/seller-checks.json)
 
 | 想买什么 | 怎么成交 |
 | --- | --- |

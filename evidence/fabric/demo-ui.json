@@ -1,0 +1,15 @@
+{
+  "url": "http://127.0.0.1:8789/",
+  "receipt": {
+    "ledger": "fabric",
+    "hash": "39f8ae7cdd416a6c5f83170cfeb0a3a63edce36bee4e9b2c7b12a923826df229",
+    "block": 3,
+    "blockNumber": 3,
+    "channel": "rainport",
+    "contract": "rainport",
+    "validationCode": "VALID",
+    "successful": true,
+    "status": 1
+  },
+  "ui": "Fabric 交易回执\n关闭\n区块号\n3\n状态\n已确认\n交易 ID\n39f8ae7cdd416a6c5f83170cfeb0a3a63edce36bee4e9b2c7b12a923826df229\n通道\nrainport\n链码\nrainport\n验证状态\nVALID"
+}
