@@ -3,6 +3,7 @@ import path from 'node:path';
 import {randomBytes, createHash} from 'node:crypto';
 import players from './fabric/chaincode/players.js';
 import {createDuelRooms, loadDuelVerifier} from './duel-rooms.mjs';
+import {startingLanes} from './duel-verifier.mjs';
 
 const playerId = /^player:[a-f0-9]{64}$/;
 const raceId = /^0x[a-f0-9]{64}$/;
@@ -12,7 +13,7 @@ const terminal = duel => ['closed', 'settled'].includes(duel.status);
 
 export async function createDuelService(ledger, directory, atomic) {
   const {domain} = await ledger.playerDomain();
-  const verifier = await loadDuelVerifier();
+  const verifier = await loadDuelVerifier(directory);
   const rules = path.join(directory, 'verifiers');
   fs.mkdirSync(rules, {recursive:true});
   fs.writeFileSync(path.join(rules, verifier.hash + '.mjs'), verifier.source);
@@ -29,7 +30,8 @@ export async function createDuelService(ledger, directory, atomic) {
   const rooms = createDuelRooms({
     dir:directory,
     verifierHash:verifier.hash,
-    async start({id, seed, players: entrants}) {
+    legacyPrograms:verifier.legacyPrograms,
+    async start({id, seed, code, players: entrants}) {
       // Retain the proposed manifest across an ambiguous Gateway commit.
       let entry = pending.get(id);
       if (!entry) {
@@ -39,9 +41,9 @@ export async function createDuelService(ledger, directory, atomic) {
           const parts = await Promise.all(car.parts.map(p => ledger.asset(p)));
           return {id:driver, config:[carId, ...car.parts], spec:parts.map(p => p.model)};
         }));
-        const manifest = {id,seed,players:roster,physicsVersion:4,verifierHash:verifier.hash,
-          initial:{step:0,lanes:[-0.35,0.35]},stepMs:10};
-        entry = {manifest, code:null, deadline:0};
+        const manifest = {id,seed,players:roster,finishPolicy:'individual-v1',physicsVersion:4,verifierHash:verifier.hash,
+          initial:{step:0,lanes:startingLanes(roster.length)},stepMs:10};
+        entry = {manifest, code, deadline:0};
         pending.set(id, entry);
         savePending();
       }
@@ -87,13 +89,32 @@ export async function createDuelService(ledger, directory, atomic) {
     if (terminal(state)) return retire(state);
     const entry = pending.get(id);
     if (entry && !entry.deadline) {entry.deadline=state.deadline;savePending();}
-    if (Date.now() >= state.deadline * 1000) {
+    if (state.manifest.finishPolicy === 'individual-v1') {
+      if (state.logs) { forget(id); return state; }
+      const code = entry?.code || rooms.codeFor(id);
+      if (code && rooms.phase(code) === 'racing') {
+        for (const [i, proof] of (state.withdrawalProofs || []).entries()) {
+          if (proof) rooms.withdraw(state.manifest.players[i].id, code);
+        }
+      }
+      const evidence = code && rooms.evidence(code);
+      if (evidence?.id === id) {
+        if (!state.inputHashes) {
+          const hashes = evidence.logs.map(log => createHash('sha256').update(JSON.stringify(log)).digest('hex'));
+          await ledger.anchorDuelInputs(id, hashes, evidence.withdrawals);
+        }
+        await ledger.publishDuelRecords(id, evidence.logs);
+      } else if (state.status === 'racing' && Date.now() >= state.deadline * 1000) {
+        await ledger.expireDuel(id);
+      } else return state;
+    } else if (Date.now() >= state.deadline * 1000) {
       await ledger.expireDuel(id);
     } else if (!state.logs && state.commitments.every(Boolean) && entry?.code) {
       const logs = await rooms.records(state.manifest.players[0].id, entry.code);
       await ledger.revealDuel(id, logs);
     } else return state;
     state = await ledger.duel(id);
+    if (state.manifest.finishPolicy === 'individual-v1' && state.logs) forget(id);
     return terminal(state) ? retire(state) : state;
   }
   function cleanTokens(map) {
@@ -107,7 +128,7 @@ export async function createDuelService(ledger, directory, atomic) {
       cleanTokens(challenges); cleanTokens(session);
       rooms.sweep();
       for (const [id, entry] of pending) {
-        if (!entry.deadline || Date.now() >= entry.deadline * 1000) {
+        if (entry.manifest.finishPolicy === 'individual-v1' || !entry.deadline || Date.now() >= entry.deadline * 1000) {
           try { await atomic(() => reconcile(id)); } catch (err) {
             if (!entry.deadline && (err.reason||err.message).includes('UnknownDuel')) {
               const room = rooms.current(entry.manifest.players[0].id);
@@ -183,22 +204,22 @@ export async function createDuelService(ledger, directory, atomic) {
         if (!raceId.test(b.id)) throw Error('赛事编号无效');
         return atomic(() => reconcile(b.id));
       case 'action': {
-        if (b.envelope?.id !== id || !['list','buy','close','fit','duelCommit','duelConfirm','duelRefuse'].includes(b.envelope.action)) throw Error('玩家操作无效');
+        if (b.envelope?.id !== id || !['list','buy','close','fit','duelCommit','duelConfirm','duelRefuse','duelWithdraw'].includes(b.envelope.action)) throw Error('玩家操作无效');
         return atomic(async () => {
           const receipt = await ledger.playerAction(b.envelope);
           if (b.envelope.action.startsWith('duel')) {
             const duelId=b.envelope.args[0];
-            // Commit acknowledgement belongs to the signed action. A transient
-            // reveal failure is retried by either player's subsequent info poll.
+            // The receipt acknowledges the player's transaction. The steward
+            // retries synchronization independently if the Gateway is interrupted.
             try {await reconcile(duelId);} catch(err){console.error('联机记录同步',err.reason||err.message);}
           }
           return receipt;
         });
       }
       case 'current': return {room:track(await rooms.current(id))};
-      case 'create': return track(await rooms.create(id,b.car));
+      case 'create': return track(await rooms.create(id,b.car,b.capacity));
       case 'join': return track(await rooms.join(id,b.code,b.car));
-      case 'match': return track(await rooms.match(id,b.car));
+      case 'match': return track(await rooms.match(id,b.car,b.capacity));
       case 'poll': return track(await rooms.poll(id,b.code));
       case 'drive': return rooms.drive(id,b.code,b.changes);
       case 'leave': {
@@ -208,7 +229,11 @@ export async function createDuelService(ledger, directory, atomic) {
           let state;
           try {state = await atomic(() => reconcile(frame.id));}
           catch(err){if (frame.manifest || !(err.reason||err.message).includes('UnknownDuel')) throw err;}
-          if(state && !terminal(state))throw Error('请先签名退出本场或等待确认到期');
+          if (state && !terminal(state)) {
+            const seat = state.manifest.players.findIndex(player => player.id === id);
+            const finished = ['withdrawn','dnf','claimed','refused'].includes(state.playerStatus?.[seat]);
+            if (!finished) throw Error('请先签名退赛，或在完赛后领取或放弃自己的奖励');
+          }
         }
         await rooms.leave(id,b.code);
         return {};

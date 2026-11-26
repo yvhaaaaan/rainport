@@ -50,15 +50,26 @@ async function browser(exe) {
   let id = 0;
   function send(method, params = {}) {
     return new Promise((resolve, reject) => {
-      requests.set(++id, {resolve,reject});
+      if(ws.readyState!==WebSocket.OPEN){reject(Error('Browser closed during '+method));return;}
+      const requestId=++id;
+      const timeout=setTimeout(()=>{
+        requests.delete(requestId);
+        reject(Error('Browser timed out during '+method));
+      },30000);
+      requests.set(requestId, {resolve,reject,timeout});
       ws.send(JSON.stringify({id,method,params}));
     });
   }
+  ws.onclose=()=>{
+    for(const request of requests.values()){clearTimeout(request.timeout);request.reject(Error('Browser connection closed'));}
+    requests.clear();
+  };
   ws.onmessage = ({data}) => {
     const m = JSON.parse(data), request = requests.get(m.id);
     if (m.method === 'Page.javascriptDialogOpening') void send('Page.handleJavaScriptDialog',{accept:true});
     if (!request) return;
     requests.delete(m.id);
+    clearTimeout(request.timeout);
     if (m.error) request.reject(Error(m.error.message));
     else request.resolve(m.result);
   };
@@ -116,55 +127,155 @@ async function register(client, alias) {
   return first.player.id;
 }
 
-async function race(a,b,quick = false) {
-  await a.click(quick ? 'match' : 'create');
-  await a.element('#room-code');
-  const code = await a.text('#room-code');
-  if (!quick) await b.fill('#code',code);
-  await b.click(quick ? 'match' : 'join');
-  await Promise.all([a,b].map(c => c.element('#peer-position')));
-  for (const c of [a,b]) assert.equal(await c.js('observed.frame.code'),code);
-  console.log('Started '+(quick?'matched':'invited')+' room '+code);
-  await Promise.all([a,b].map(c => c.accelerator(true)));
-  await Promise.all([a,b].map(c => wait(() => c.js('observed.frame.drivers?.every(d=>d.d>10) && observed.frame.bots.length===6'), 'both cars moving')));
-  await Promise.all([a,b].map(c => wait(async () => /对手 P\d+ · [1-9]\d* m/.test(await c.text('#peer-position')), 'opponent position rendered')));
-  await Promise.all([a,b].map(c => wait(async () => {
-    const phase = await c.js('observed.frame.phase');
-    if (phase === 'closed') throw Error(await c.text('#duel'));
-    if (phase === 'review') return true;
-    // Edge can move a headless tab to the background. The game correctly
-    // releases pedals on blur, so resume the test driver's accelerator.
-    if (await c.js("document.querySelector('[data-key=w]')?.getAttribute('aria-pressed')==='false'")) await c.accelerator(true);
-    return false;
-  }, 'both drivers finish',250000)));
-  await Promise.all([a,b].map(c => c.accelerator(false)));
-  const raceId = await a.js('observed.frame.id');
-  await a.click('commit');
-  await b.click('commit');
-  await Promise.all([a,b].map(c => c.element(c.selector('confirm'))));
-  for(const c of [a,b]) {
-    const display = await c.text('#duel');
-    assert.match(display,/相差 0 ms/);
-    assert.match(display,/名次差 0/);
+async function openRoom(drivers, quick) {
+  const count = drivers.length, [host] = drivers;
+  await host.fill('#capacity',String(count));
+  await host.click(quick ? 'match' : 'create');
+  await host.element('#room-code');
+  const code = await host.text('#room-code');
+  for (let n=1; n<count; n++) {
+    const next = drivers[n];
+    if (quick) await next.fill('#capacity',String(count));
+    else await next.fill('#code',code);
+    await next.click(quick ? 'match' : 'join');
+    if (n<count-1) {
+      await next.element('#room-code');
+      assert.equal(await next.text('#room-code'),code);
+      await wait(() => host.js('observed.frame.members.length === '+(n+1)), 'waiting for more drivers');
+      assert.equal(await host.js('observed.frame.phase'),'waiting');
+    }
   }
-  await a.click('confirm');
-  await wait(() => a.js('observed.info.confirmations.filter(Boolean).length === 1'), 'first signature');
-  assert.equal(await a.js('observed.info.status'),'review');
-  assert.deepEqual(await a.js('observed.info.prizes'),[0,0]);
-  await b.click('confirm');
-  await Promise.all([a,b].map(c => c.element(c.selector('leave'))));
-  const state = await a.js('observed.info');
+  await Promise.all(drivers.map(client => client.element('#peer-position')));
+  for (const c of drivers) {
+    const frame = await c.js('observed.frame');
+    assert.equal(frame.code,code);
+    assert.equal(frame.capacity,count);
+    assert.equal(frame.members.length,count);
+    assert.equal(frame.bots.length,8-count);
+    assert.equal(await c.js("document.querySelectorAll('#peer-position .peer-line').length"),count-1);
+    assert.equal(await c.js("document.querySelectorAll('.human-dot').length"),count-1);
+  }
+  console.log('Started '+count+'-player '+(quick?'matched':'invited')+' room '+code);
+  return code;
+}
+
+async function ledgerState(client,id) {
+  return client.js(`(async()=>{
+    const res=await fetch('/api/duel/info',{method:'POST',headers:{'Content-Type':'application/json',
+      Authorization:'Bearer '+sessionStorage.getItem('duel.token')},body:JSON.stringify({id:${JSON.stringify(id)}})});
+    const state=await res.json();if(!res.ok)throw Error(state.error);return state;
+  })()`);
+}
+
+async function repeatClaim(client,race) {
+  // The normal UI removes the claim button after payment. Exercise a fresh,
+  // authentic signature from the original, non-exportable browser key.
+  const source=fs.readFileSync(new URL('../player-keys.mjs',import.meta.url)).toString('base64');
+  const signature=await client.js(`(async()=>{
+    const {findPlayerKey,signPlayerAction}=await import(${JSON.stringify('data:text/javascript;base64,'+source)});
+    const key=await findPlayerKey(sessionStorage.getItem('duel.alias'));
+    async function api(route,body={}) {
+      const r=await fetch('/api/duel/'+route,{method:'POST',headers:{'Content-Type':'application/json',
+        Authorization:'Bearer '+sessionStorage.getItem('duel.token')},body:JSON.stringify(body)});
+      const json=await r.json();if(!r.ok)throw Error(json.error);return json;
+    }
+    const [{domain},player]=await Promise.all([api('domain'),api('player')]);
+    const before=await api('inventory');
+    await api('action',{envelope:await signPlayerAction(key,domain,player.nonce+1,'duelConfirm',
+      ${JSON.stringify([race.manifest.id,race.inputHashes,race.results,race.resultHash])})});
+    const after=await api('inventory');
+    return {before:before.assets.map(a=>a.id),after:after.assets.map(a=>a.id)};
+  })()`);
+  assert.deepEqual(signature.before,signature.after);
+  const after=await ledgerState(client,race.manifest.id);
+  assert.deepEqual(after.prizes,race.prizes);
+  assert.deepEqual(after.confirmations,race.confirmations);
+}
+
+async function finishRace(drivers,{quick=false,solo=false,refuseLast=false}={}) {
+  const count=drivers.length, finishers=solo?drivers.slice(0,1):drivers;
+  await openRoom(drivers,quick);
+  await Promise.all(drivers.map(c=>c.accelerator(true)));
+  await Promise.all(drivers.map(c=>wait(()=>c.js('observed.frame.drivers?.every(d=>d.d>10)'), 'all cars moving')));
+  await Promise.all(drivers.map(c=>wait(()=>c.js(
+    "Array.from(document.querySelectorAll('#peer-position b')).every(el=>/P\\d+ · [1-9]\\d* m/.test(el.textContent))"), 'each opponent position rendered')));
+  const raceId=await drivers[0].js('observed.frame.id');
+  if(refuseLast){
+    // A short drop releases the pedal on the authoritative timeline. This
+    // driver reconnects with the key still held and later signs that record.
+    const reconnecting=drivers[0], previous=await reconnecting.js('observed.frame.received');
+    await reconnecting.send('Network.enable');
+    const network={latency:0,downloadThroughput:-1,uploadThroughput:-1};
+    try {
+      await reconnecting.send('Network.emulateNetworkConditions',{...network,offline:true});
+      await pause(8000);
+    } finally { await reconnecting.send('Network.emulateNetworkConditions',{...network,offline:false}); }
+    await wait(()=>reconnecting.js('observed.frame.automaticCount>0 && observed.frame.received>'+previous), 'held throttle resumed after reconnect');
+  }
+  if(solo){
+    for(const c of drivers.slice(1)){
+      await c.click('withdraw');
+      await c.element('#car option');
+      await c.accelerator(false);
+    }
+    await wait(()=>drivers[0].js("observed.frame.phase==='racing' && observed.frame.drivers.filter(d=>Number.isInteger(d.dnfStep)).length === "+(count-1)), 'only remaining driver continues');
+  }
+  await Promise.all(finishers.map(c=>wait(async()=>{
+    const phase=await c.js('observed.frame.phase');
+    if(phase==='closed')throw Error(await c.text('#duel'));
+    if(phase==='review')return true;
+    // Blur releases pedals. Resume if a headless browser loses focus.
+    if(await c.js("document.querySelector('[data-key=w]')?.getAttribute('aria-pressed')==='false'"))await c.accelerator(true);
+    return false;
+  }, 'drivers finish',250000)));
+  await Promise.all(finishers.map(c=>c.accelerator(false)));
+  for(const c of finishers){
+    await c.element(c.selector('commit'));
+    await wait(async()=>{
+      const display=await c.text('#duel');
+      return (display.match(/相差 0 ms/g)||[]).length===finishers.length &&
+        (display.match(/名次差 0/g)||[]).length===finishers.length &&
+        (display.match(/与终场记录一致/g)||[]).length===count-finishers.length;
+    },'device replay verified for every driver');
+  }
+  const claimants=refuseLast?finishers.slice(0,-1):finishers;
+  if(refuseLast){
+    const c=finishers.at(-1);
+    await c.click('refuse');
+    await c.element('#car option');
+  }
+  for(const [i,c] of claimants.entries()){
+    await c.click('commit');
+    await c.click('confirm');
+    await c.element(c.selector('leave'));
+    const state=await ledgerState(c,raceId);
+    assert.equal(state.playerStatus[i],'claimed');
+    assert.equal(state.confirmations.filter(Boolean).length,i+1);
+    assert.equal(state.commitments.filter(Boolean).length,i+1);
+    for(let j=i+1;j<count;j++)assert.equal(state.prizes[j],0,'no prize without that player’s claim');
+    if(i===0)await repeatClaim(c,state);
+    await c.click('leave');
+    await c.element('#car option');
+  }
+  const state=await ledgerState(drivers[0],raceId);
   assert.equal(state.status,'settled');
-  assert.equal(state.manifest.id,raceId);
-  assert(state.logs.every(log => log.some(([,step,throttle]) => Number.isInteger(step) && throttle===1)));
-  assert.equal(new Set(state.confirmations.map(p=>p.envelope.id)).size,2);
-  assert(state.confirmations.every(p=>p.resultHash===state.resultHash));
-  await Promise.all([a,b].map(c => c.click('leave')));
-  await Promise.all([a,b].map(c => c.element('#car option')));
+  assert.equal(state.manifest.finishPolicy,'individual-v1');
+  assert.equal(state.results.length,count);
+  assert.equal(state.results.filter(r=>r.rank!==null).length,finishers.length);
+  assert(state.logs.every(log=>log.some(([,step,gas])=>Number.isInteger(step)&&gas===1)));
+  const confirmed=state.confirmations.filter(Boolean);
+  assert.equal(new Set(confirmed.map(p=>p.envelope.id)).size,claimants.length);
+  assert(confirmed.every(p=>p.resultHash===state.resultHash));
+  if(solo){
+    assert(state.results.slice(1).every(r=>r.rank===null&&r.totalMs===null&&Number.isInteger(r.dnfStep)));
+    assert(state.playerStatus.slice(1).every(s=>s==='withdrawn'));
+  }
+  if(refuseLast)assert.equal(state.playerStatus.at(-1),'refused');
+  console.log('Final classifications: '+state.results.map((r,n)=>state.playerStatus[n]+' '+(r.rank===null?'DNF':r.totalMs+' ms')).join(', '));
   return state;
 }
 
-async function trade(seller,buyer,token,raceId) {
+async function trade(seller,buyer,token,raceId,count) {
   await seller.click('inventory');
   await seller.click('offer',token);
   await seller.fill('#ask-kind','2');
@@ -180,7 +291,7 @@ async function trade(seller,buyer,token,raceId) {
   await buyer.element('#proof');
   const provenance = await buyer.text('#detail');
   assert(provenance.includes(raceId));
-  assert.equal((provenance.match(/确认回执/g) || []).length,2);
+  assert.equal((provenance.match(/确认回执/g) || []).length,count);
   await buyer.click('receipt',settled.hashes.at(-1));
   await wait(() => buyer.js('observed.receipt?.validationCode==="VALID"'), 'valid Fabric receipt');
   const receipt = await buyer.js('observed.receipt');
@@ -189,36 +300,34 @@ async function trade(seller,buyer,token,raceId) {
 }
 
 try {
-  const resp = await fetch(url);
+  const resp=await fetch(url);
   assert.equal(resp.headers.get('X-Rainport-Ledger'),'fabric');
   fs.mkdirSync(profileRoot,{recursive:true});
-  const [a,b] = await Promise.all([browser(chrome),browser(second)]);
-  const idA = await register(a,'浏览器甲'), idB = await register(b,'浏览器乙');
-  assert.notEqual(idA,idB);
-  let result = await race(a,b);
-  // Dropping no parts is a legitimate random outcome. Repeat by quick match.
-  for(let i=0; !result.prizes.some(Boolean) && i<8; i++) result=await race(a,b,true);
-  const who = result.prizes.findIndex(Boolean);
-  assert(who>=0,'No reward dropped in nine completed duels');
-  await trade([a,b][who],[b,a][who],result.prizes[who],result.manifest.id);
-  await Promise.all([a,b].map(c=>c.click('lobby')));
-  await a.click('match');
-  await a.element('#room-code');
-  const code = await a.text('#room-code');
-  await b.click('match');
-  await Promise.all([a,b].map(c => c.element('#peer-position')));
-  assert.equal(await b.js('observed.frame.code'),code);
-  await a.click('refuse');
-  await a.element('#car option');
-  await b.element(b.selector('leave'));
-  assert.match(await b.text('#duel'),/本场无奖励/);
-  assert.equal(await b.js('observed.info.reason'),'refused');
-  assert.deepEqual(await b.js('observed.info.prizes'),[0,0]);
-  await b.click('leave');
-  await b.element('#car option');
-  console.log('Two independent browser logins, replay signatures, reward sale, provenance and quick matching passed.');
+  const sizes=process.argv.length>2?process.argv.slice(2).map(Number):[3,4];
+  assert(sizes.every(n=>[2,3,4].includes(n)),'Pass room sizes from 2 to 4, e.g. 3 4');
+  const fleet=await Promise.all(Array.from({length:Math.max(...sizes)},(_,n)=>browser(n===1?second:chrome)));
+  const ids=[];
+  for(const [n,c] of fleet.entries()) ids.push(await register(c,'浏览器车手'+(n+1)));
+  assert.equal(new Set(ids).size,fleet.length);
+
+  for(const [index,count] of sizes.entries()) {
+    const drivers=fleet.slice(0,count);
+    await finishRace(drivers,{quick:index%2===1,refuseLast:index===0&&count>=3});
+  }
+  // Actual drops are probabilistic. Every solo round must settle without a
+  // co-signature. Continue until the sole finisher can sell an actual part.
+  const drivers=fleet.slice(0,sizes.at(-1));
+  let traded=false;
+  for(let attempt=0; !traded&&attempt<9; attempt++) {
+    const state=await finishRace(drivers,{quick:true,solo:true});
+    if(!state.prizes[0])continue;
+    await trade(drivers[0],drivers[1],state.prizes[0],state.manifest.id,1);
+    traded=true;
+  }
+  assert(traded,'The sole finisher claimed each time but drew no parts in nine races');
+  console.log('Verified '+sizes.join(', ')+' player racing, individual replay, withdrawals, repeat claim and transfer of a solo winner’s reward.');
 } catch (error) {
-  for (const client of clients) if (client.text) console.error((await client.text('body')).slice(-800));
+  for (const client of clients) if (client.text) console.error((await client.text('body').catch(()=>'' )).slice(-800));
   throw error;
 } finally {
   for (const client of clients) {

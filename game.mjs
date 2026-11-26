@@ -118,7 +118,7 @@ function lobby(){
  const last=previous.at(-1);
  const active=state.active,carId=active?.config[0]??selectedCar;
  const carName=raceCarName([carId]),blocked=!active&&raceBlock(A(carId));
- const raceAction=usesFabric()?'进入双人联机':active?'继续比赛':blocked?'选择可用车辆':'进入雨港';
+ const raceAction=usesFabric()?'进入多人联机':active?'继续比赛':blocked?'选择可用车辆':'进入雨港';
  const carOptions='<option value="0">港务借用车</option>'+ownedCars().map(car=>{
   const reason=car.id===active?.config[0]?'':raceBlock(car);
   return '<option value="'+car.id+'" '+(reason?'disabled':'')+'>'+raceCarName([car.id])+(reason?' · '+reason:'')+'</option>';

@@ -220,6 +220,8 @@ export async function fabricLedger() {
       openDuel: manifest => relay('OpenDuel', JSON.stringify(manifest)),
       duel: id => evaluate(contract, 'GetDuel', id),
       revealDuel: (id, logs) => relay('RevealDuel', id, JSON.stringify(logs)),
+      anchorDuelInputs: (id, hashes, withdrawals) => relay('AnchorDuelInputs', id, JSON.stringify(hashes), JSON.stringify(withdrawals)),
+      publishDuelRecords: (id, logs) => relay('PublishDuelRecords', id, JSON.stringify(logs)),
       expireDuel: id => relay('ExpireDuel', id),
       asset: id => evaluate(contract, 'GetAsset', id),
       order: id => evaluate(contract, 'GetOrder', id),

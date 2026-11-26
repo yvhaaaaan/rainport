@@ -10,5 +10,10 @@
 #duel .hash{word-break:break-all;font: .88em var(--mono)} #duel pre{white-space:pre-wrap;overflow-wrap:anywhere}
 #duel details{margin-top:12px} #duel .sheet a{color:var(--orange)} #duel .row{flex-wrap:wrap}
 #duel .race-actions{display:flex;gap:8px;align-items:center;color:white} #duel input[type=number]{width:8em}
+#duel #peer-position{display:grid;gap:2px;padding:4px 7px;background:#101719d9;border-radius:4px;font-size:.78rem;font-variant-numeric:tabular-nums}
+#duel .peer-line{display:flex;gap:.7em;justify-content:space-between} #duel .peer-line b{font-weight:600}
+#duel .human-dot{background:#72e3cb;top:-3px;height:9px}
+#duel .race-actions{align-items:flex-start}
+@media(max-width:600px){#duel .race-actions{flex-direction:column;align-items:flex-end}#duel #peer-position{font-size:.67rem}}
 #duel .note{color:var(--dim);line-height:1.6} #duel .good{color:#a3ddc2} #duel .bad{color:#ffaf86}
 @media(max-width:650px){#duel .entry{grid-template-columns:1fr}#duel .coast{min-height:190px}#duel .entry form{padding:20px}}

@@ -21,7 +21,7 @@ const json=x=>JSON.parse(JSON.stringify(x,(k,v)=>typeof v==='bigint'?v.toString(
 const digest=obj=>ethers.keccak256(ethers.toUtf8Bytes(JSON.stringify(obj)));
 const port=Number(process.env.PORT||(ledgerName==='fabric'?8789:8787));
 const errorsZh={
- SignedDuelRequired:'Fabric 正式赛请从双人联机入口发车并由双方签名确认',
+ SignedDuelRequired:'Fabric 正式赛请从多人联机入口发车，完赛后可单独签名领奖',
  AssetListed:'此编号已有有效卖单，请先撤单',PartMounted:'部件仍装在车上，请先拆下',
  CarRacing:'车辆正在比赛',CarAssembled:'底盘上仍装有部件',
  CarListed:'车辆已挂牌，请先撤单',CarUnavailable:'车辆归属、挂牌或参赛状态不允许此操作',

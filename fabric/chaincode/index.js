@@ -123,6 +123,14 @@ class Rainport extends Contract {
     return duels.revealDuel(ctx, id, logsJSON);
   }
 
+  async AnchorDuelInputs(ctx, id, hashesJSON, withdrawalsJSON) {
+    return duels.anchorDuelInputs(ctx, id, hashesJSON, withdrawalsJSON);
+  }
+
+  async PublishDuelRecords(ctx, id, logsJSON) {
+    return duels.publishDuelRecords(ctx, id, logsJSON);
+  }
+
   async ExpireDuel(ctx, id) {
     return duels.expireDuel(ctx, id);
   }
